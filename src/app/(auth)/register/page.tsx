@@ -16,6 +16,8 @@ import {
   Loader2,
   GraduationCap,
   Users,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const CLASS_LEVELS = [
@@ -54,6 +56,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
   const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -226,12 +229,23 @@ export default function RegisterPage() {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
                   <input
-                    type="password"
-                    className="input-field pl-10"
+                    type={showPassword ? "text" : "password"}
+                    className="input-field pl-10 pr-10"
                     placeholder="Min 8 characters"
                     value={form.password}
                     onChange={e => updateForm("password", e.target.value)}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 
