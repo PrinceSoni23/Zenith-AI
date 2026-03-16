@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
@@ -18,11 +18,40 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setAuth } = useAuthStore();
+  const searchParams = useSearchParams();
+  const { setAuth, isAuthenticated, initializeFromStorage } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  const [toastShown, setToastShown] = useState(false);
+  const [wasAlreadyLoggedIn, setWasAlreadyLoggedIn] = useState(false);
+
+  // Hydrate from localStorage and redirect if already logged in
+  useEffect(() => {
+    initializeFromStorage();
+    const isAlreadyLoggedIn = !!localStorage.getItem("token");
+    setWasAlreadyLoggedIn(isAlreadyLoggedIn);
+    setHydrated(true);
+  }, [initializeFromStorage]);
+
+  // Show toast if redirected from protected route (only once)
+  useEffect(() => {
+    if (hydrated && !toastShown && searchParams.get("loginRequired")) {
+      toast.error("You need to login first", { duration: 2500 });
+      setToastShown(true);
+    }
+  }, [hydrated, toastShown, searchParams]);
+
+  // Redirect if already logged in at page load (not after login)
+  useEffect(() => {
+    if (!hydrated) return;
+    if (wasAlreadyLoggedIn && isAuthenticated) {
+      toast.success("You are already logged in", { duration: 2000 });
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router, hydrated, wasAlreadyLoggedIn]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +62,15 @@ export default function LoginPage() {
       const { token, user } = res.data;
       setAuth(user, token);
       toast.success(`Welcome back, ${user.name}! 👋`);
-      router.push("/dashboard");
+
+      // Check if there's a redirect URL stored
+      const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+      if (redirectUrl) {
+        sessionStorage.removeItem("redirectAfterLogin");
+        router.push(redirectUrl);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       toast.error(
@@ -51,13 +88,24 @@ export default function LoginPage() {
         <div className="absolute top-[-80px] right-[-80px] w-96 h-96 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute bottom-[-60px] left-[-60px] w-80 h-80 rounded-full bg-white/5 blur-3xl" />
 
-        <div className="relative z-10 flex items-center gap-3 animate-fade-up stagger-1">
-          <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-white font-black text-xl tracking-tight">
-            Zenith
-          </span>
+        <div className="relative z-10 flex items-center justify-between animate-fade-up stagger-1">
+          <Link
+            href="/"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-white font-black text-xl tracking-tight">
+              Zenith
+            </span>
+          </Link>
+          <Link
+            href="/"
+            className="px-4 py-2 rounded-lg text-white text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            ← Back Home
+          </Link>
         </div>
 
         <div className="relative z-10 animate-slide-up">

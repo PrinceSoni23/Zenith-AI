@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authApi } from "@/lib/api";
@@ -54,10 +54,28 @@ const SUBJECTS = [
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { setAuth } = useAuthStore();
+  const { setAuth, isAuthenticated, initializeFromStorage } = useAuthStore();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  const [wasAlreadyLoggedIn, setWasAlreadyLoggedIn] = useState(false);
+
+  // Hydrate from localStorage and redirect if already logged in
+  useEffect(() => {
+    initializeFromStorage();
+    const isAlreadyLoggedIn = !!localStorage.getItem("token");
+    setWasAlreadyLoggedIn(isAlreadyLoggedIn);
+    setHydrated(true);
+  }, [initializeFromStorage]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (wasAlreadyLoggedIn && isAuthenticated) {
+      toast.success("You are already logged in", { duration: 2000 });
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router, hydrated, wasAlreadyLoggedIn]);
 
   const [form, setForm] = useState({
     name: "",
@@ -110,12 +128,23 @@ export default function RegisterPage() {
       <div className="relative w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-up stagger-1">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center hover:scale-110 transition-transform duration-200">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-black text-xl gradient-text">Zenith</span>
-          </Link>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-black text-xl gradient-text">Zenith</span>
+            </Link>
+            <Link
+              href="/"
+              className="px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 bg-slate-200 dark:bg-dark-800 hover:bg-slate-300 dark:hover:bg-dark-700 transition-colors"
+            >
+              ← Home
+            </Link>
+          </div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100">
             Create your account
           </h1>

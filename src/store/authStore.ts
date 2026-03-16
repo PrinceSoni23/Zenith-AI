@@ -15,29 +15,55 @@ interface AuthState {
   setAuth: (user: User, token: string) => void;
   logout: () => void;
   setLoading: (loading: boolean) => void;
+  initializeFromStorage: () => void;
 }
 
-export const useAuthStore = create<AuthState>(set => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isLoading: false,
-
-  setAuth: (user, token) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+export const useAuthStore = create<AuthState>(set => {
+  // Initialize from localStorage if available
+  const getInitialState = () => {
+    if (typeof window === "undefined") {
+      return { user: null, token: null, isAuthenticated: false };
     }
-    set({ user, token, isAuthenticated: true });
-  },
-
-  logout: () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return { user, token, isAuthenticated: true };
+      } catch {
+        return { user: null, token: null, isAuthenticated: false };
+      }
     }
-    set({ user: null, token: null, isAuthenticated: false });
-  },
+    return { user: null, token: null, isAuthenticated: false };
+  };
 
-  setLoading: isLoading => set({ isLoading }),
-}));
+  const initialState = getInitialState();
+
+  return {
+    ...initialState,
+    isLoading: false,
+
+    setAuth: (user, token) => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+      set({ user, token, isAuthenticated: true });
+    },
+
+    logout: () => {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+      set({ user: null, token: null, isAuthenticated: false });
+    },
+
+    setLoading: isLoading => set({ isLoading }),
+
+    initializeFromStorage: () => {
+      const initialState = getInitialState();
+      set(initialState);
+    },
+  };
+});
