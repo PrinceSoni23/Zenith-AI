@@ -857,7 +857,13 @@ export default function DashboardPage() {
   const [phDismissed, setPhDismissed] = useState(false);
   const [milestone, setMilestone] = useState<number | null>(null);
   const [completingId, setCompletingId] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
   const { user } = useAuthStore();
+
+  // Ensure hydration is complete before rendering greeting
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Extract data from queries
   const stats = dashboardQuery.data?.stats;
@@ -1052,9 +1058,9 @@ export default function DashboardPage() {
           <div className="flex items-start justify-between animate-fade-up stagger-1">
             <div>
               <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                {greeting()},{" "}
+                {isHydrated && greeting()},{" "}
                 <span className="gradient-text">
-                  {user?.name?.split(" ")[0] || "Scholar"}
+                  {isHydrated && (user?.name?.split(" ")[0] || "Scholar")}
                 </span>{" "}
                 👋
               </h1>
