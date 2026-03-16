@@ -854,7 +854,6 @@ export default function DashboardPage() {
   const [phDismissed, setPhDismissed] = useState(false);
   const [milestone, setMilestone] = useState<number | null>(null);
   const [completingId, setCompletingId] = useState<string | null>(null);
-  const [lastUserId, setLastUserId] = useState<string | null>(null);
   const { user } = useAuthStore();
 
   // Extract data from queries
@@ -875,16 +874,25 @@ export default function DashboardPage() {
       }
     : null;
 
-  // Show mentor popup on first dashboard open after user logs in
+  // Show mentor popup once per login (first dashboard open after login)
   useEffect(() => {
-    if (user?.id && user.id !== lastUserId) {
-      // User just logged in (user ID changed)
-      setLastUserId(user.id);
-      if (mentorMsg) {
-        setTimeout(() => setMentorToast(true), 800);
+    // When user ID changes (new login), clear the flag
+    if (user?.id) {
+      const storedUserId = sessionStorage.getItem("mentorShownUserId");
+      if (storedUserId !== user.id) {
+        sessionStorage.removeItem("mentorShown");
+        sessionStorage.setItem("mentorShownUserId", user.id);
       }
     }
-  }, [user?.id, mentorMsg, lastUserId]);
+  }, [user?.id]);
+
+  // Show mentor message only if not shown yet this session
+  useEffect(() => {
+    if (mentorMsg && !sessionStorage.getItem("mentorShown")) {
+      sessionStorage.setItem("mentorShown", "1");
+      setTimeout(() => setMentorToast(true), 800);
+    }
+  }, [mentorMsg]);
 
   // Show milestone celebration when streak updates
   useEffect(() => {
