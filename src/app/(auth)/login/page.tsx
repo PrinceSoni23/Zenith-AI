@@ -31,7 +31,8 @@ export default function LoginPage() {
   // Hydrate from localStorage and redirect if already logged in
   useEffect(() => {
     initializeFromStorage();
-    const isAlreadyLoggedIn = !!localStorage.getItem("token");
+    const isAlreadyLoggedIn =
+      typeof window !== "undefined" && !!localStorage.getItem("token");
     setWasAlreadyLoggedIn(isAlreadyLoggedIn);
     setHydrated(true);
   }, [initializeFromStorage]);
