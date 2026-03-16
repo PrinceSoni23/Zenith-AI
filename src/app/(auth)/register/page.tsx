@@ -20,6 +20,9 @@ import {
   EyeOff,
 } from "lucide-react";
 
+// Prevent static generation for this page
+export const dynamic = "force-dynamic";
+
 const CLASS_LEVELS = [
   "Nursery",
   "LKG",

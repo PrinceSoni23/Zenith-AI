@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authApi } from "@/lib/api";
@@ -16,7 +16,10 @@ import {
   EyeOff,
 } from "lucide-react";
 
-export default function LoginPage() {
+// Prevent static generation for this page
+export const dynamic = "force-dynamic";
+
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuth, isAuthenticated, initializeFromStorage } = useAuthStore();
@@ -252,5 +255,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-dark-950">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      }
+    >
+      <LoginFormContent />
+    </Suspense>
   );
 }

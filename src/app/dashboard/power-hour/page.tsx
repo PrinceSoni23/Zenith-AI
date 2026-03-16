@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { streakApi } from "@/lib/api";

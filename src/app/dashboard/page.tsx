@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
+
 import Sidebar from "@/components/dashboard/Sidebar";
 import { dashboardApi, agentApi, streakApi, leaderboardApi } from "@/lib/api";
 import {

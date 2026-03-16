@@ -2,6 +2,9 @@
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
+// Prevent static generation for dashboard pages
+export const dynamic = "force-dynamic";
+
 export default function DashboardLayout({
   children,
 }: {
