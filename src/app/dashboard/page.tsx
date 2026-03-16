@@ -4,6 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { dashboardApi, agentApi, streakApi, leaderboardApi } from "@/lib/api";
+import {
+  useDashboard,
+  useStreak,
+  useMissions,
+  useDailyFlow,
+  useCompleteTask,
+  useLeaderboard,
+} from "@/hooks/useDashboard";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
@@ -835,115 +843,67 @@ function MilestoneCelebration({
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [mentorMsg, setMentorMsg] = useState<Record<string, string> | null>(
-    null,
-  );
-  const [streakData, setStreakData] = useState<StreakData | null>(null);
-  const [missions, setMissions] = useState<Mission[]>([]);
-  const [completingId, setCompletingId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  // ── React Query hooks (with intelligent caching) ──
+  const dashboardQuery = useDashboard();
+  const streakQuery = useStreak();
+  const missionsQuery = useMissions();
+  const dailyFlowQuery = useDailyFlow(); // Loads AI data in parallel but can fall back to cache
+  const leaderboardQuery = useLeaderboard(); // Non-blocking, loads in background
+
   const [mentorToast, setMentorToast] = useState(false);
   const [phDismissed, setPhDismissed] = useState(false);
   const [milestone, setMilestone] = useState<number | null>(null);
-  const [lbPreview, setLbPreview] = useState<{
-    rank: number | null;
-    top3: { name: string; weeklyScore: number }[];
-  } | null>(null);
+  const [completingId, setCompletingId] = useState<string | null>(null);
   const { user } = useAuthStore();
 
-  const loadData = useCallback(async () => {
-    try {
-      const [dashRes, flowRes, streakRes, missionsRes] = await Promise.all([
-        dashboardApi.getDashboard(),
-        agentApi.getDailyFlow(),
-        streakApi.getStreak(),
-        streakApi.getMissions(),
-      ]);
-      setStats(dashRes.data.data.stats);
-      setProfile(dashRes.data.data.profile);
-      const mentor = flowRes.data.data.mentor;
-      setMentorMsg(mentor);
-      setStreakData(streakRes.data.data);
-      setMissions(missionsRes.data.data.missions || []);
+  // Extract data from queries
+  const stats = dashboardQuery.data?.stats;
+  const profile = dashboardQuery.data?.profile;
+  const mentorMsg = dailyFlowQuery.data?.mentor;
+  const streakData = streakQuery.data;
+  const missions = missionsQuery.data?.missions || [];
+  const lbData = leaderboardQuery.data;
 
-      // Leaderboard preview (non-blocking)
-      try {
-        const lbRes = await leaderboardApi.getLeaderboard();
-        const lb = lbRes.data.data;
-        setLbPreview({
-          rank: lb.myRank,
-          top3: (lb.entries as { name: string; weeklyScore: number }[]).slice(
-            0,
-            3,
-          ),
-        });
-      } catch {
-        // silently skip if leaderboard not available yet
+  const lbPreview = lbData
+    ? {
+        rank: lbData.myRank,
+        top3: (lbData.entries as { name: string; weeklyScore: number }[]).slice(
+          0,
+          3,
+        ),
       }
+    : null;
 
-      // Show mentor pop-up once per session
-      if (mentor && !sessionStorage.getItem("mentorShown")) {
-        sessionStorage.setItem("mentorShown", "1");
-        setTimeout(() => setMentorToast(true), 800);
-      }
-
-      // ── Milestone celebration on first dashboard open after reaching it ──
-      // Fires only once per milestone (persisted in localStorage)
-      const currentStreak: number = streakRes.data.data?.streakDays ?? 0;
-      if (currentStreak in MILESTONES) {
-        const lsKey = `milestone_celebrated_${currentStreak}`;
-        if (!localStorage.getItem(lsKey)) {
-          localStorage.setItem(lsKey, "1");
-          setTimeout(() => setMilestone(currentStreak), 900);
-        }
-      }
-    } catch {
-      toast.error("Failed to load dashboard");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Show mentor popup on first load
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (mentorMsg && !sessionStorage.getItem("mentorShown")) {
+      sessionStorage.setItem("mentorShown", "1");
+      setTimeout(() => setMentorToast(true), 800);
+    }
+  }, [mentorMsg]);
+
+  // Show milestone celebration when streak updates
+  useEffect(() => {
+    const currentStreak = streakData?.streakDays ?? 0;
+    if (currentStreak in MILESTONES) {
+      const lsKey = `milestone_celebrated_${currentStreak}`;
+      if (!localStorage.getItem(lsKey)) {
+        localStorage.setItem(lsKey, "1");
+        setTimeout(() => setMilestone(currentStreak), 900);
+      }
+    }
+  }, [streakData]);
+
+  // ── Complete task with React Query mutation ──
+  const completeTaskMutation = useCompleteTask();
 
   const handleCompleteTask = async (taskId: string) => {
     if (completingId) return;
     setCompletingId(taskId);
     try {
-      const res = await streakApi.completeTask(taskId);
+      const res = await completeTaskMutation.mutateAsync(taskId);
       const { xpEarned, newStreak, message, multiplierActive, shieldEarned } =
         res.data.data;
-
-      // Optimistically update missions list
-      setMissions(prev =>
-        prev.map(m => (m._id === taskId ? { ...m, isCompleted: true } : m)),
-      );
-
-      // Update streak counter
-      if (streakData) {
-        setStreakData(prev =>
-          prev
-            ? {
-                ...prev,
-                streakDays: newStreak,
-                studiedToday: true,
-                xpToday: prev.xpToday + xpEarned,
-                last7Days: {
-                  ...prev.last7Days,
-                  [todayKey()]: true,
-                },
-                // increment local shield count when one was just earned
-                streakShields: shieldEarned
-                  ? (prev.streakShields ?? 0) + 1
-                  : prev.streakShields,
-              }
-            : prev,
-        );
-      }
 
       toast.success(message, {
         icon: shieldEarned ? "🛡️" : multiplierActive ? "⚡" : "🔥",
@@ -972,7 +932,10 @@ export default function DashboardPage() {
     return "Good evening";
   };
 
-  if (loading) {
+  // Show initial loading state only while dashboard data is loading
+  const isInitialLoading = dashboardQuery.isLoading;
+
+  if (isInitialLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-dark-950">
         <div className="flex flex-col items-center gap-4">
@@ -985,7 +948,9 @@ export default function DashboardPage() {
     );
   }
 
-  const completedMissions = missions.filter(m => m.isCompleted).length;
+  const completedMissions = missions.filter(
+    (m: Mission) => m.isCompleted,
+  ).length;
   const missionProgress =
     missions.length > 0 ? (completedMissions / missions.length) * 100 : 0;
 
@@ -999,37 +964,6 @@ export default function DashboardPage() {
           streak={milestone}
           onClose={() => setMilestone(null)}
         />
-      )}
-
-      {/* ── DEV: Milestone animation test panel ── */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2">
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 px-1">
-            🛠 Test Milestones
-          </p>
-          {([7, 14, 30] as const).map(n => (
-            <button
-              key={n}
-              onClick={() => {
-                localStorage.removeItem(`milestone_celebrated_${n}`);
-                setMilestone(n);
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg border transition-all hover:scale-105 active:scale-95"
-              style={{
-                background:
-                  n === 7
-                    ? "linear-gradient(135deg,#f97316,#ef4444)"
-                    : n === 14
-                      ? "linear-gradient(135deg,#a855f7,#6366f1)"
-                      : "linear-gradient(135deg,#eab308,#f97316)",
-                color: "#fff",
-                borderColor: "rgba(255,255,255,0.2)",
-              }}
-            >
-              {MILESTONES[n].emoji} {n}d
-            </button>
-          ))}
-        </div>
       )}
 
       {/* ── Mentor welcome modal — once per session ── */}
@@ -1243,7 +1177,7 @@ export default function DashboardPage() {
                 🏆 Your Badges
               </h2>
               <div className="flex flex-wrap gap-3">
-                {stats.badges.map((badge, i) => (
+                {stats.badges.map((badge: string, i: number) => (
                   <span
                     key={i}
                     className="px-4 py-2 rounded-full text-sm font-semibold bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20 text-primary-700 dark:text-primary-400"

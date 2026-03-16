@@ -25,6 +25,7 @@ import {
   Zap,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react";
 
 const modules = [
@@ -117,15 +118,18 @@ export default function Sidebar() {
         </button>
       )}
 
-      {/* User Info */}
+      {/* User Info - Clickable to Profile */}
       {!collapsed && (
-        <div className="px-4 py-3 border-b border-slate-200 dark:border-dark-700">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        <Link
+          href="/dashboard/profile"
+          className="block px-4 py-3 border-b border-slate-200 dark:border-dark-700 hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors"
+        >
+          <div className="flex items-center gap-3 cursor-pointer group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-white font-bold text-sm flex-shrink-0 group-hover:scale-110 transition-transform">
               {user?.name?.[0]?.toUpperCase() || "S"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold truncate text-slate-900 dark:text-slate-100">
+              <p className="text-sm font-semibold truncate text-slate-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 {user?.name || "Student"}
               </p>
               <p className="text-xs capitalize text-slate-500 dark:text-slate-400">
@@ -133,14 +137,17 @@ export default function Sidebar() {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
       )}
       {collapsed && (
-        <div className="flex justify-center py-3 border-b border-slate-200 dark:border-dark-700">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-white font-bold text-sm">
+        <Link
+          href="/dashboard/profile"
+          className="flex justify-center py-3 border-b border-slate-200 dark:border-dark-700 hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors"
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-white font-bold text-sm hover:scale-110 transition-transform cursor-pointer">
             {user?.name?.[0]?.toUpperCase() || "S"}
           </div>
-        </div>
+        </Link>
       )}
 
       {/* Nav Links */}
