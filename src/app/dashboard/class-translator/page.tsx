@@ -37,9 +37,14 @@ export default function ClassTranslatorPage() {
     if (!content.trim()) return toast.error("Please describe what was taught");
     setLoading(true);
     try {
+      // Extract topic from first line of content or use first 50 chars
+      const topic =
+        content.split("\n")[0].trim().substring(0, 100) || subject || "Concept";
+
       const res = await agentApi.dispatch("class-translator", {
         content,
         subject,
+        topic,
         language,
       });
       console.log("Class Translator Response:", res);

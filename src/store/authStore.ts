@@ -45,8 +45,14 @@ export const useAuthStore = create<AuthState>(set => {
 
     setAuth: (user, token) => {
       if (typeof window !== "undefined") {
+        console.log("[Zustand] setAuth called with user role:", user.role);
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+        console.log("[Zustand] Saved to localStorage - user role:", user.role);
+        console.log(
+          "[Zustand] Verify localStorage user:",
+          localStorage.getItem("user"),
+        );
       }
       set({ user, token, isAuthenticated: true });
     },

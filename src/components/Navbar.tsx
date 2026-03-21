@@ -16,21 +16,48 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [navVisible, setNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show navbar when at the top
+      if (currentScrollY < 20) {
+        setNavVisible(true);
+        setScrolled(false);
+      } else {
+        // Scrolling down - hide navbar
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          setNavVisible(false);
+        }
+        // Scrolling up - show navbar
+        else if (currentScrollY < lastScrollY) {
+          setNavVisible(true);
+        }
+
+        // Add background when scrolled
+        setScrolled(currentScrollY > 20);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [lastScrollY]);
 
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          navVisible ? "translate-y-0" : "-translate-y-full"
+        } ${
           scrolled
-            ? "bg-white/80 dark:bg-dark-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-white/5 shadow-lg shadow-black/5"
+            ? "bg-white/40 dark:bg-dark-900/40 backdrop-blur-2xl border-b border-white/20 dark:border-white/5 shadow-lg shadow-black/5"
             : "bg-transparent"
         }`}
       >
@@ -41,7 +68,7 @@ export default function Navbar() {
               <Zap className="w-4 h-4 text-white" />
             </div>
             <span className="font-black text-lg tracking-tight text-gray-900 dark:text-white">
-              Zen<span className="gradient-text">ith</span>
+              Zen<span className="gradient-text">iith</span>
             </span>
           </Link>
 
@@ -115,7 +142,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="md:hidden border-t border-gray-200/50 dark:border-white/5 bg-white/95 dark:bg-dark-900/95 backdrop-blur-xl animate-slide-down">
+          <div className="md:hidden border-t border-white/20 dark:border-white/5 bg-white/40 dark:bg-dark-900/40 backdrop-blur-2xl animate-slide-down">
             <div className="px-6 py-4 space-y-1">
               {navLinks.map((link, i) => (
                 <a

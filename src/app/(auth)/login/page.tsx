@@ -14,6 +14,8 @@ import {
   Loader2,
   Eye,
   EyeOff,
+  GraduationCap,
+  Users,
 } from "lucide-react";
 
 // Prevent static generation for this page
@@ -25,6 +27,7 @@ function LoginFormContent() {
   const { setAuth, isAuthenticated, initializeFromStorage } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userRole, setUserRole] = useState<"student" | "parent">("student");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -53,7 +56,9 @@ function LoginFormContent() {
     if (!hydrated) return;
     if (wasAlreadyLoggedIn && isAuthenticated) {
       toast.success("You are already logged in", { duration: 2000 });
-      router.push("/dashboard");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const redirectPath = user.role === "parent" ? "/parent" : "/dashboard";
+      router.push(redirectPath);
     }
   }, [isAuthenticated, router, hydrated, wasAlreadyLoggedIn]);
 
@@ -62,18 +67,47 @@ function LoginFormContent() {
     if (!email || !password) return toast.error("Please fill in all fields");
     setLoading(true);
     try {
-      const res = await authApi.login({ email, password });
-      const { token, user } = res.data;
+      console.log("[Login] Attempting login - selected role:", userRole);
+      const res = await authApi.login({ email, password, role: userRole });
+      let { token, user } = res.data;
+
+      console.log("[Login] Backend returned role:", user.role);
+
+      // The backend determines the actual role based on which collection the account is in
+      // Always use the role returned by backend (never override it)
+      if (!user.role) {
+        console.error("[Login] ERROR: Backend did not return a role!");
+        toast.error("Authentication error: role not returned");
+        setLoading(false);
+        return;
+      }
+
+      console.log("[Login] Final user role:", user.role);
       setAuth(user, token);
       toast.success(`Welcome back, ${user.name}! 👋`);
 
-      // Check if there's a redirect URL stored
-      const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+      // For parents, always go to parent page (don't use stored redirect URLs from student sessions)
+      // For students, check if there's a redirect URL stored
+      let redirectUrl = null;
+      if (user.role === "parent") {
+        console.log(
+          "[Login] Parent account detected - clearing any stored redirects",
+        );
+        sessionStorage.removeItem("redirectAfterLogin"); // Clear old redirects
+        redirectUrl = null; // Parents always go to /parent
+      } else {
+        redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+      }
+
       if (redirectUrl) {
+        console.log("[Login] Using stored redirect URL:", redirectUrl);
         sessionStorage.removeItem("redirectAfterLogin");
         router.push(redirectUrl);
       } else {
-        router.push("/dashboard");
+        // Route based on role returned by backend
+        const destination = user.role === "parent" ? "/parent" : "/dashboard";
+        console.log("[Login] Redirecting to:", destination);
+        router.push(destination);
       }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
@@ -162,15 +196,44 @@ function LoginFormContent() {
           <p className="text-sm mb-8 text-slate-500 dark:text-slate-400 animate-fade-up stagger-3">
             Sign in to continue your learning journey.{" "}
             <Link
-              href="/register"
+              href={`/register?role=${userRole}`}
               className="text-primary-600 dark:text-primary-400 font-semibold hover:text-primary-500 transition-colors"
             >
               New here? Sign up
             </Link>
           </p>
 
+          {/* Role Selector */}
+          <div className="mb-6 animate-fade-up stagger-3.5">
+            <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
+              I am a
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {(
+                [
+                  { value: "student", label: "Student", icon: GraduationCap },
+                  { value: "parent", label: "Parent", icon: Users },
+                ] as const
+              ).map(({ value, label, icon: Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setUserRole(value)}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 active:scale-95 ${
+                    userRole === value
+                      ? "border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 scale-[1.02]"
+                      : "border-slate-200 dark:border-dark-700 text-slate-500 dark:text-slate-400 hover:border-primary-300 dark:hover:border-primary-700 hover:scale-[1.02]"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-5">
-            <div className="animate-fade-up stagger-4">
+            <div className="animate-fade-up stagger-5">
               <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
                 Email
               </label>
@@ -187,7 +250,7 @@ function LoginFormContent() {
               </div>
             </div>
 
-            <div className="animate-fade-up stagger-5">
+            <div className="animate-fade-up stagger-6">
               <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
                 Password
               </label>
@@ -215,7 +278,7 @@ function LoginFormContent() {
               </div>
             </div>
 
-            <div className="animate-fade-up stagger-6">
+            <div className="animate-fade-up stagger-7">
               <button
                 type="submit"
                 disabled={loading}
@@ -235,7 +298,7 @@ function LoginFormContent() {
             </div>
           </form>
 
-          <div className="mt-6 p-4 rounded-2xl text-sm bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-7 hover-lift">
+          <div className="mt-6 p-4 rounded-2xl text-sm bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-8 hover-lift">
             <p className="font-semibold mb-1 text-slate-800 dark:text-slate-200">
               Demo credentials
             </p>

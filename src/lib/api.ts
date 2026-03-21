@@ -84,8 +84,13 @@ export const studyLogApi = {
 // ── Parent ──────────────────────────────────────────────────────────────────
 export const parentApi = {
   linkStudent: (data: object) => api.post("/parent/link", data),
-  getInsights: (studentId: string) => api.get(`/parent/insights/${studentId}`),
+  unlinkStudent: (studentId: string) =>
+    api.delete(`/parent/unlink/${studentId}`),
+  getInsights: (studentId: string) => api.get(`/parent/student/${studentId}`), // Using public endpoint
   getLinkedStudents: () => api.get("/parent/students"),
+  getStudent: (studentId: string) => api.get(`/students/${studentId}`),
+  getStudentOverview: (studentId: string) =>
+    api.get(`/students/${studentId}/overview`),
 };
 
 // ── Mentor ──────────────────────────────────────────────────────────────────

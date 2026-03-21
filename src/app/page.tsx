@@ -516,22 +516,30 @@ export default function Home() {
                 className="text-5xl md:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight mb-6"
               >
                 <span className="text-slate-900 dark:text-white">
-                  The AI Tutor
+                  Stop Paying ₹3000/month
                 </span>
                 <br />
-                <span className="gradient-text">That Never Quits</span>
+                <span className="gradient-text">for Tuition</span>
               </h1>
 
               <p
                 ref={subRef}
-                className="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
               >
-                11 specialised AI modules for every study challenge — from
-                crushing distractions to writing perfect essays. Designed for{" "}
+                Get premium AI tutoring with 11+ specialised modules for a
+                fraction of traditional tuition cost. Your child learns 24/7
+                with modules for{" "}
                 <strong className="text-slate-700 dark:text-slate-300">
-                  Nursery to Class 12
-                </strong>
-                .
+                  Maths, Science, Languages & more
+                </strong>{" "}
+                — all in one place.
+              </p>
+
+              <p className="text-lg md:text-xl font-black text-slate-900 dark:text-white max-w-2xl mx-auto lg:mx-0 mb-8">
+                Reach Your Peak with{" "}
+                <span className="bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+                  Zenith
+                </span>
               </p>
 
               <div
@@ -638,6 +646,145 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ PROBLEM/SOLUTION SECTION ═════════════════════════ */}
+      <section className="py-28 px-6 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* PROBLEM SIDE */}
+            <div>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-8 leading-tight">
+                Is your child…
+              </h2>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: "😰",
+                    title: "Struggling with weak topics?",
+                    desc: "Keeps retaking exams on the same subjects",
+                  },
+                  {
+                    icon: "🤐",
+                    title: "Afraid to ask questions?",
+                    desc: "Feels shy or embarrassed in class",
+                  },
+                  {
+                    icon: "🧠",
+                    title: "Forgetting what they study?",
+                    desc: "Learns today, forgets by test day",
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-4 p-5 rounded-2xl bg-slate-100/50 dark:bg-dark-900/60 border border-slate-200 dark:border-dark-800 hover:border-primary-500/40 transition-all duration-300"
+                  >
+                    <span className="text-4xl flex-shrink-0">{item.icon}</span>
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SOLUTION SIDE */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold mb-6 bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                💡 The Solution
+              </div>
+
+              <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-8 leading-tight">
+                Meet the AI Tutor <br />
+                <span className="gradient-text">That Never Gets Tired</span>
+              </h3>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: "⚡",
+                    title: "Solves doubts instantly",
+                    desc: "AI responds 24/7 — no waiting for a teacher",
+                  },
+                  {
+                    icon: "🎓",
+                    title: "Explains like a teacher",
+                    desc: "Breaks down concepts step-by-step in simple language",
+                  },
+                  {
+                    icon: "🎯",
+                    title: "Adapts to your child",
+                    desc: "Learns weak areas and personalises every session",
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-4 p-5 rounded-2xl bg-gradient-to-br from-primary-500/10 to-purple-500/10 dark:from-primary-500/15 dark:to-purple-500/15 border border-primary-500/20 dark:border-primary-500/30 hover:border-primary-500/50 transition-all duration-300"
+                  >
+                    <span className="text-3xl flex-shrink-0">{item.icon}</span>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-white mb-1">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ IMPACT STATEMENT ════════════════════════════════ */}
+      <section className="py-28 px-6 overflow-hidden bg-gradient-to-br from-slate-900 via-primary-900/50 to-slate-950 dark:from-[#0a0a12] dark:via-primary-950/40 dark:to-[#06060a]">
+        <div className="max-w-4xl mx-auto text-center relative">
+          {/* Background orb */}
+          <div className="absolute inset-0 flex justify-center pointer-events-none">
+            <div className="glow-orb w-96 h-96 bg-primary-500 opacity-10 blur-3xl rounded-full" />
+          </div>
+
+          <div className="relative">
+            <h2 className="text-4xl md:text-5xl xl:text-6xl font-black leading-tight mb-8 text-white">
+              It's not that your child
+              <br />
+              <span className="text-slate-400">isn't working hard…</span>
+              <br />
+              they just don't have the{" "}
+              <span className="gradient-text">right system.</span>
+            </h2>
+
+            <p className="text-4xl md:text-5xl xl:text-6xl font-black mb-12">
+              <span className="gradient-text">Zenith AI</span>{" "}
+              <span className="text-white">changes that.</span>
+            </p>
+
+            <div className="flex items-center justify-center gap-4 flex-wrap">
+              <Link
+                href="/register"
+                className="btn-primary text-lg px-10 py-4 rounded-2xl group"
+              >
+                Start Free Trial{" "}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/login"
+                className="btn-secondary text-lg px-10 py-4 rounded-2xl"
+              >
+                Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </section>

@@ -15,13 +15,15 @@ import {
   Save,
   Loader2,
   Zap,
+  Copy,
+  Check,
 } from "lucide-react";
 
 interface StudentProfile {
   _id: string;
   userId: string;
   classLevel: string;
-  board: "CBSE" | "ICSE" | "State" | "IB" | "IGCSE" | "Other";
+  board: string; // Allow custom boards
   subjects: string[];
   preferredLanguage: "english" | "hinglish";
   learningStyle: "visual" | "auditory" | "reading" | "kinesthetic";
@@ -88,6 +90,11 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [customBoard, setCustomBoard] = useState("");
+  const [customSubject, setCustomSubject] = useState("");
+  const [showCustomBoard, setShowCustomBoard] = useState(false);
+  const [showCustomSubject, setShowCustomSubject] = useState(false);
+  const [copiedStudentId, setCopiedStudentId] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -149,6 +156,43 @@ export default function ProfilePage() {
   const handleCancel = () => {
     setFormData(profile || {});
     setIsEditing(false);
+    setShowCustomBoard(false);
+    setShowCustomSubject(false);
+    setCustomBoard("");
+    setCustomSubject("");
+  };
+
+  const copyStudentId = () => {
+    if (profile?.userId) {
+      navigator.clipboard.writeText(profile.userId);
+      setCopiedStudentId(true);
+      toast.success("Student ID copied to clipboard!");
+      setTimeout(() => setCopiedStudentId(false), 2000);
+    }
+  };
+
+  const addCustomBoard = () => {
+    if (customBoard.trim() && formData.board !== customBoard.trim()) {
+      setFormData(prev => ({ ...prev, board: customBoard.trim() }));
+      setCustomBoard("");
+      setShowCustomBoard(false);
+    }
+  };
+
+  const addCustomSubject = () => {
+    if (
+      customSubject.trim() &&
+      !formData.subjects
+        ?.map(s => s.toLowerCase())
+        .includes(customSubject.toLowerCase())
+    ) {
+      setFormData(prev => ({
+        ...prev,
+        subjects: [...(prev.subjects || []), customSubject.trim()],
+      }));
+      setCustomSubject("");
+      setShowCustomSubject(false);
+    }
   };
 
   if (loading) {
@@ -215,6 +259,41 @@ export default function ProfilePage() {
                     {user.email}
                   </p>
                 </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    Student ID (Share with Parents)
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <p className="flex-1 text-base text-slate-600 dark:text-slate-400 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 font-mono break-all">
+                      {profile?.userId}
+                    </p>
+                    <button
+                      onClick={copyStudentId}
+                      className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all flex items-center gap-2 ${
+                        copiedStudentId
+                          ? "bg-green-500 hover:bg-green-600 text-white"
+                          : "bg-blue-500 hover:bg-blue-600 text-white"
+                      }`}
+                      title="Copy Student ID to clipboard"
+                    >
+                      {copiedStudentId ? (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-xs mt-2 text-slate-500 dark:text-slate-400">
+                    Share this ID with your parents so they can access your
+                    learning insights
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -272,7 +351,12 @@ export default function ProfilePage() {
                   <select
                     name="board"
                     value={formData.board || ""}
-                    onChange={handleInputChange}
+                    onChange={e => {
+                      handleInputChange(e);
+                      if (boards.includes(e.target.value)) {
+                        setShowCustomBoard(false);
+                      }
+                    }}
                     className="w-full p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   >
                     <option value="">Select Board</option>
@@ -282,6 +366,64 @@ export default function ProfilePage() {
                       </option>
                     ))}
                   </select>
+
+                  {/* Custom Board Display */}
+                  {formData.board && !boards.includes(formData.board) && (
+                    <div className="mt-3 p-3 rounded-xl bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30">
+                      <p className="text-sm font-semibold text-green-700 dark:text-green-300">
+                        Custom Board:{" "}
+                        <span className="font-bold">{formData.board}</span>
+                        <button
+                          type="button"
+                          onClick={() => setShowCustomBoard(true)}
+                          className="ml-2 text-xs underline hover:no-underline"
+                        >
+                          Change
+                        </button>
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Custom Board Input */}
+                  {showCustomBoard && (
+                    <div className="flex gap-2 mt-3">
+                      <input
+                        type="text"
+                        value={customBoard}
+                        onChange={e => setCustomBoard(e.target.value)}
+                        placeholder="Enter custom board name"
+                        className="input-field flex-1"
+                        onKeyPress={e => e.key === "Enter" && addCustomBoard()}
+                      />
+                      <button
+                        type="button"
+                        onClick={addCustomBoard}
+                        className="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold text-sm transition-all"
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCustomBoard(false);
+                          setCustomBoard("");
+                        }}
+                        className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-700 dark:text-slate-300 font-semibold text-sm transition-all"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {!showCustomBoard && (
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomBoard(true)}
+                      className="mt-3 text-xs text-green-600 dark:text-green-400 hover:underline font-semibold"
+                    >
+                      + Add custom board if not in list
+                    </button>
+                  )}
                 </div>
 
                 {/* Subjects */}
@@ -292,7 +434,7 @@ export default function ProfilePage() {
                       Subjects (Select Multiple)
                     </span>
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
                     {subjects.map(subject => (
                       <label
                         key={subject}
@@ -314,6 +456,76 @@ export default function ProfilePage() {
                       </label>
                     ))}
                   </div>
+
+                  {/* Custom Subjects Display */}
+                  {formData.subjects?.filter(s => !subjects.includes(s))
+                    .length ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                      {formData.subjects
+                        .filter(s => !subjects.includes(s))
+                        .map(subject => (
+                          <label
+                            key={subject}
+                            className="flex items-center gap-3 p-3 rounded-xl border border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 cursor-pointer hover:bg-green-100 dark:hover:bg-green-800/30 transition-all"
+                          >
+                            <input
+                              type="checkbox"
+                              name="subjects"
+                              value={subject}
+                              checked={true}
+                              onChange={handleInputChange}
+                              className="w-4 h-4 cursor-pointer accent-green-500"
+                            />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              {subject}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  ) : null}
+
+                  {/* Custom Subject Input */}
+                  {showCustomSubject && (
+                    <div className="flex gap-2 mb-3">
+                      <input
+                        type="text"
+                        value={customSubject}
+                        onChange={e => setCustomSubject(e.target.value)}
+                        placeholder="Enter custom subject name"
+                        className="input-field flex-1"
+                        onKeyPress={e =>
+                          e.key === "Enter" && addCustomSubject()
+                        }
+                      />
+                      <button
+                        type="button"
+                        onClick={addCustomSubject}
+                        className="px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold text-sm transition-all"
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowCustomSubject(false);
+                          setCustomSubject("");
+                        }}
+                        className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-700 dark:text-slate-300 font-semibold text-sm transition-all"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+
+                  {!showCustomSubject && (
+                    <button
+                      type="button"
+                      onClick={() => setShowCustomSubject(true)}
+                      className="text-xs text-green-600 dark:text-green-400 hover:underline font-semibold"
+                    >
+                      + Add custom subject if not in list
+                    </button>
+                  )}
                 </div>
 
                 {/* Learning Style */}

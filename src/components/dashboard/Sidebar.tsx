@@ -17,7 +17,6 @@ import {
   Calculator,
   HelpCircle,
   MessageSquare,
-  Users,
   Trophy,
   LogOut,
   Sun,
@@ -26,6 +25,8 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  Menu,
+  X,
 } from "lucide-react";
 
 const modules = [
@@ -48,7 +49,6 @@ const modules = [
     label: "Question Bank",
   },
   { href: "/dashboard/mentor", icon: MessageSquare, label: "AI Mentor" },
-  { href: "/dashboard/parent", icon: Users, label: "Parent Dashboard" },
   { href: "/dashboard/leaderboard", icon: Trophy, label: "Leaderboard" },
 ];
 
@@ -59,6 +59,7 @@ export default function Sidebar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -67,18 +68,13 @@ export default function Sidebar() {
     router.push("/login");
   };
 
-  return (
-    <aside
-      className={clsx(
-        "hidden lg:flex flex-col h-screen sticky top-0 transition-all duration-300 flex-shrink-0",
-        collapsed ? "w-[68px]" : "w-60",
-        "bg-white dark:bg-dark-900 border-r border-slate-200 dark:border-dark-700",
-      )}
-    >
+  const sidebarContent = (
+    <>
       {/* Logo + Collapse */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-slate-200 dark:border-dark-700">
         <Link
           href="/dashboard"
+          onClick={() => setMobileOpen(false)}
           className={clsx(
             "flex items-center gap-2.5 group",
             collapsed && "justify-center w-full",
@@ -122,6 +118,7 @@ export default function Sidebar() {
       {!collapsed && (
         <Link
           href="/dashboard/profile"
+          onClick={() => setMobileOpen(false)}
           className="block px-4 py-3 border-b border-slate-200 dark:border-dark-700 hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors"
         >
           <div className="flex items-center gap-3 cursor-pointer group">
@@ -142,6 +139,7 @@ export default function Sidebar() {
       {collapsed && (
         <Link
           href="/dashboard/profile"
+          onClick={() => setMobileOpen(false)}
           className="flex justify-center py-3 border-b border-slate-200 dark:border-dark-700 hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors"
         >
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-accent-purple flex items-center justify-center text-white font-bold text-sm hover:scale-110 transition-transform cursor-pointer">
@@ -158,6 +156,7 @@ export default function Sidebar() {
             <Link
               key={mod.href}
               href={mod.href}
+              onClick={() => setMobileOpen(false)}
               title={collapsed ? mod.label : undefined}
               style={{ animationDelay: `${idx * 40}ms` }}
               className={clsx(
@@ -239,6 +238,51 @@ export default function Sidebar() {
           {!collapsed && <span>Sign Out</span>}
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside
+        className={clsx(
+          "hidden lg:flex flex-col h-screen sticky top-0 transition-all duration-300 flex-shrink-0",
+          collapsed ? "w-[68px]" : "w-60",
+          "bg-white dark:bg-dark-900 border-r border-slate-200 dark:border-dark-700",
+        )}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all active:scale-95"
+        >
+          {mobileOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Sidebar Overlay + Slide-out */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30"
+          onClick={() => setMobileOpen(false)}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <aside
+            className="absolute left-0 top-0 bottom-0 w-64 bg-white dark:bg-dark-900 border-r border-slate-200 dark:border-dark-700 flex flex-col animate-slide-right shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
