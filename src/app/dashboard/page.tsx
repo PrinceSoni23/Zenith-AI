@@ -858,6 +858,7 @@ export default function DashboardPage() {
   const [milestone, setMilestone] = useState<number | null>(null);
   const [completingId, setCompletingId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [lastShownUserId, setLastShownUserId] = useState<string | null>(null);
   const { user } = useAuthStore();
 
   // Ensure hydration is complete before rendering greeting
@@ -873,6 +874,38 @@ export default function DashboardPage() {
   const missions = missionsQuery.data?.missions || [];
   const lbData = leaderboardQuery.data;
 
+  // DEBUG: Log query states
+  useEffect(() => {
+    console.log("[Dashboard] Daily Flow Query State:", {
+      isLoading: dailyFlowQuery.isLoading,
+      isError: dailyFlowQuery.isError,
+      error: dailyFlowQuery.error,
+      data: dailyFlowQuery.data,
+      status: dailyFlowQuery.status,
+    });
+    console.log("[Dashboard] mentorMsg:", mentorMsg);
+    console.log("[Dashboard] mentorToast:", mentorToast);
+    console.log("[Dashboard] lastShownUserId:", lastShownUserId);
+    console.log("[Dashboard] user.id:", user?.id);
+  }, [dailyFlowQuery, mentorMsg, mentorToast, lastShownUserId, user?.id]);
+
+  // FORCE SHOW - for testing
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).forceMentorToast = () => {
+        console.log("[TEST] Forcing mentor toast to true");
+        setMentorToast(true);
+      };
+      (window as any).getMentorData = () => {
+        console.log("Mentor Data:", mentorMsg);
+        console.log("Toast State:", mentorToast);
+      };
+      console.log(
+        "[Dashboard] Test functions available: window.forceMentorToast() and window.getMentorData()",
+      );
+    }
+  }, [mentorMsg, mentorToast]);
+
   const lbPreview = lbData
     ? {
         rank: lbData.myRank,
@@ -883,25 +916,25 @@ export default function DashboardPage() {
       }
     : null;
 
-  // Show mentor popup once per login (first dashboard open after login)
+  // Show mentor popup once per login (when user changes)
   useEffect(() => {
-    // When user ID changes (new login), clear the flag
-    if (user?.id) {
-      const storedUserId = sessionStorage.getItem("mentorShownUserId");
-      if (storedUserId !== user.id) {
-        sessionStorage.removeItem("mentorShown");
-        sessionStorage.setItem("mentorShownUserId", user.id);
-      }
+    if (user?.id && user.id !== lastShownUserId) {
+      console.log("[Dashboard] New login detected! User:", user.id);
+      setLastShownUserId(user.id);
+      // Don't set mentorToast here - let the next effect handle it
     }
-  }, [user?.id]);
+  }, [user?.id, lastShownUserId]);
 
-  // Show mentor message only if not shown yet this session
+  // Show mentor message on every login (once per user load)
   useEffect(() => {
-    if (mentorMsg && !sessionStorage.getItem("mentorShown")) {
-      sessionStorage.setItem("mentorShown", "1");
-      setTimeout(() => setMentorToast(true), 800);
+    if (mentorMsg && user?.id && user.id !== lastShownUserId) {
+      console.log("[Dashboard] Showing mentor message for user:", user.id);
+      setTimeout(() => {
+        console.log("[Dashboard] Displaying mentor toast...");
+        setMentorToast(true);
+      }, 500);
     }
-  }, [mentorMsg]);
+  }, [mentorMsg, user?.id, lastShownUserId]);
 
   // Show milestone celebration when streak updates
   useEffect(() => {
@@ -989,67 +1022,71 @@ export default function DashboardPage() {
 
       {/* ── Mentor welcome modal — once per session ── */}
       {mentorToast && mentorMsg && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ animation: "fadeIn 0.2s ease both" }}
-        >
-          {/* Backdrop */}
+        <>
+          {console.log("[RENDER] Mentor modal IS RENDERING")}
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setMentorToast(false)}
-          />
-          {/* Card */}
-          <div
-            className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700"
-            style={{
-              animation: "slideInUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
-            }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ animation: "fadeIn 0.2s ease both" }}
           >
-            {/* Gradient top bar */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500" />
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={() => setMentorToast(false)}
+            />
+            {/* Card */}
+            <div
+              className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700"
+              style={{
+                animation:
+                  "slideInUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
+              }}
+            >
+              {/* Gradient top bar */}
+              <div className="h-1.5 w-full bg-gradient-to-r from-primary-500 via-purple-500 to-pink-500" />
 
-            <div className="p-7">
-              {/* Icon + heading */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-5 h-5 text-white" />
+              <div className="p-7">
+                {/* Icon + heading */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 dark:text-primary-400">
+                      AI Mentor
+                    </p>
+                    <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
+                      {mentorMsg.greeting ||
+                        `Hey ${user?.name?.split(" ")[0] || "there"} 👋`}
+                    </h2>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 dark:text-primary-400">
-                    AI Mentor
-                  </p>
-                  <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
-                    {mentorMsg.greeting ||
-                      `Hey ${user?.name?.split(" ")[0] || "there"} 👋`}
-                  </h2>
-                </div>
+
+                {/* Message body */}
+                <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 mb-4">
+                  {mentorMsg.todayMessage}
+                </p>
+
+                {/* Action suggestion pill */}
+                {mentorMsg.actionSuggestion && (
+                  <div className="flex items-start gap-2 p-3 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 mb-6">
+                    <span className="text-base leading-none mt-0.5">💡</span>
+                    <p className="text-sm font-semibold text-primary-700 dark:text-primary-300 leading-snug">
+                      {mentorMsg.actionSuggestion}
+                    </p>
+                  </div>
+                )}
+
+                {/* CTA */}
+                <button
+                  onClick={() => setMentorToast(false)}
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary-500 to-purple-600 text-white font-bold text-sm tracking-wide hover:opacity-90 active:scale-[0.98] transition-all duration-150"
+                >
+                  Let&apos;s go! 🚀
+                </button>
               </div>
-
-              {/* Message body */}
-              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 mb-4">
-                {mentorMsg.todayMessage}
-              </p>
-
-              {/* Action suggestion pill */}
-              {mentorMsg.actionSuggestion && (
-                <div className="flex items-start gap-2 p-3 rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 mb-6">
-                  <span className="text-base leading-none mt-0.5">💡</span>
-                  <p className="text-sm font-semibold text-primary-700 dark:text-primary-300 leading-snug">
-                    {mentorMsg.actionSuggestion}
-                  </p>
-                </div>
-              )}
-
-              {/* CTA */}
-              <button
-                onClick={() => setMentorToast(false)}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary-500 to-purple-600 text-white font-bold text-sm tracking-wide hover:opacity-90 active:scale-[0.98] transition-all duration-150"
-              >
-                Let&apos;s go! 🚀
-              </button>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       <main className="flex-1 overflow-y-auto">
