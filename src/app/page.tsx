@@ -309,6 +309,57 @@ export default function Home() {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    /* ── Add typing animation keyframes ────────────────────── */
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes float-bounce {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+      }
+      @keyframes float-rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 40px rgba(99, 102, 241, 0.1); }
+        50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6), 0 0 60px rgba(99, 102, 241, 0.3); }
+      }
+      @keyframes typing {
+        0% { width: 0; }
+        100% { width: 100%; }
+      }
+      @keyframes blink-caret {
+        0%, 49%, 100% { border-right-color: currentColor; }
+        50%, 99% { border-right-color: transparent; }
+      }
+      .typing-text {
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 2px solid;
+        animation: typing 3s steps(30, end) infinite, blink-caret 0.7s step-end infinite;
+      }
+      .float-chip-enhanced {
+        animation: float-bounce 3s ease-in-out infinite !important;
+      }
+      .float-chip-enhanced:nth-child(1) {
+        animation-delay: 0s !important;
+      }
+      .float-chip-enhanced:nth-child(2) {
+        animation-delay: 0.5s !important;
+      }
+      .float-chip-enhanced:nth-child(3) {
+        animation-delay: 1s !important;
+      }
+      .glow-chip {
+        transition: all 0.3s ease;
+      }
+      .glow-chip:hover {
+        box-shadow: 0 0 30px rgba(99F, 102, 241, 0.6), 0 0 60px rgba(99, 102, 241, 0.3) !important;
+        transform: scale(1.05) !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     /* ── Custom magnetic cursor ─────────────────────────── */
     const cursorDot = cursorRef.current?.querySelector(
       ".c-dot",
@@ -373,13 +424,13 @@ export default function Home() {
       .to(statsRef.current, { autoAlpha: 1, y: 0, duration: 0.7 }, "-=0.5");
 
     /* Floating chips bobbing */
-    gsap.to(".float-chip", {
-      y: -10,
-      duration: 2.4,
+    gsap.to(".float-chip-enhanced", {
+      y: -15,
+      duration: 2.5,
       ease: "sine.inOut",
       yoyo: true,
       repeat: -1,
-      stagger: { each: 0.7, from: "random" },
+      stagger: { each: 0.3, from: "start" },
     });
 
     /* Parallax orbs on scroll */
@@ -577,28 +628,31 @@ export default function Home() {
                   className="w-full h-auto drop-shadow-2xl"
                 />
 
-                {/* Floating achievement chips */}
-                <div className="float-chip absolute -top-4 -left-6 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3">
+                {/* Floating achievement chips - ANIMATED */}
+                <div className="float-chip-enhanced glow-chip absolute -top-4 -left-6 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3 backdrop-blur-sm">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-sm shrink-0">
                     🏆
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                      96% on Maths!
+                      96% on Maths Test
                     </p>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                      New personal best
+                      ✓ New personal best
                     </p>
                   </div>
                 </div>
 
-                <div className="float-chip absolute bottom-4 -left-10 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-sm shrink-0">
+                <div className="float-chip-enhanced glow-chip absolute bottom-4 -left-10 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3 backdrop-blur-sm">
+                  <div
+                    className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-sm shrink-0 animate-spin"
+                    style={{ animationDuration: "3s" }}
+                  >
                     🔥
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                      14-day streak
+                      A+ in Science!
                     </p>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400">
                       Keep it up!
@@ -606,15 +660,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="float-chip absolute top-1/3 -right-8 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3">
+                <div className="float-chip-enhanced glow-chip absolute top-1/3 -right-8 bg-white dark:bg-dark-900 rounded-2xl px-4 py-3 shadow-xl border border-slate-100 dark:border-dark-700 flex items-center gap-3 backdrop-blur-sm">
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center text-sm shrink-0">
                     🤖
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                      AI Mentor
+                      AI Mentor Online
                     </p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 typing-text">
                       Daily plan ready
                     </p>
                   </div>
