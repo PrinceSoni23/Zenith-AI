@@ -508,7 +508,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold mb-8 bg-primary-500/10 border-primary-500/30 text-primary-500 dark:text-primary-400"
               >
                 <span className="w-2 h-2 rounded-full bg-primary-400 animate-pulse" />
-                Powered by AI · Built for Indian Schools
+                Enterprise-Grade AI · Your Competitive Edge
               </div>
 
               <h1
@@ -516,10 +516,10 @@ export default function Home() {
                 className="text-5xl md:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight mb-6"
               >
                 <span className="text-slate-900 dark:text-white">
-                  Stop Paying ₹3000/month
+                  Dominate Your Exams.
                 </span>
                 <br />
-                <span className="gradient-text">for Tuition</span>
+                <span className="gradient-text">Master Every Subject.</span>
               </h1>
 
               <p
