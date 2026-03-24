@@ -1,12 +1,12 @@
 ﻿"use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
 import { Calculator, Loader2 } from "lucide-react";
-
-export const dynamic = "force-dynamic";
 
 interface MathResult {
   mode: string;

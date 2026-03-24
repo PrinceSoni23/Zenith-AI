@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { RootLayoutWrapper } from "@/components/RootLayoutWrapper";
 
 export const metadata: Metadata = {
   title: "Zenith | AI Learning Companion for Students",
@@ -35,7 +36,9 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <RootLayoutWrapper>{children}</RootLayoutWrapper>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

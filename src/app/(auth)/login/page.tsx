@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -17,9 +19,6 @@ import {
   GraduationCap,
   Users,
 } from "lucide-react";
-
-// Prevent static generation for this page
-export const dynamic = "force-dynamic";
 
 function LoginFormContent() {
   const router = useRouter();
@@ -183,11 +182,19 @@ function LoginFormContent() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md animate-fade-up">
           {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-8 animate-scale-in stagger-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+          <div className="lg:hidden flex items-center justify-between mb-8 animate-scale-in stagger-1">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-black text-xl gradient-text">Zenith</span>
             </div>
-            <span className="font-black text-xl gradient-text">Zenith</span>
+            <Link
+              href="/"
+              className="px-3 py-1.5 rounded-lg text-primary-600 dark:text-primary-400 text-sm font-semibold bg-primary-50 dark:bg-primary-500/10 hover:bg-primary-100 dark:hover:bg-primary-500/20 transition-colors"
+            >
+              ← Home
+            </Link>
           </div>
 
           <h1 className="text-3xl font-black mb-2 text-slate-900 dark:text-slate-100 animate-fade-up stagger-2">

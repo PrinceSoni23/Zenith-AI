@@ -1,18 +1,12 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { parentApi } from "@/lib/api";
 import toast from "react-hot-toast";
-import {
-  Users,
-  Plus,
-  Trash2,
-  Check,
-  X,
-  Copy,
-  CheckCircle,
-} from "lucide-react";
+import { Users, Plus, Trash2, Check, X, Copy, CheckCircle } from "lucide-react";
 
 interface LinkedChild {
   id: string;
@@ -24,10 +18,10 @@ const STORAGE_KEY = "parent_linked_children";
 
 // Mock student data
 const MOCK_STUDENTS: { [key: string]: LinkedChild } = {
-  "STU001": { id: "STU001", name: "Sarah Johnson", classLevel: "Class 6" },
-  "STU002": { id: "STU002", name: "John Smith", classLevel: "Class 8" },
-  "STU003": { id: "STU003", name: "Emma Davis", classLevel: "Class 7" },
-  "STU004": { id: "STU004", name: "Michael Brown", classLevel: "Class 9" },
+  STU001: { id: "STU001", name: "Sarah Johnson", classLevel: "Class 6" },
+  STU002: { id: "STU002", name: "John Smith", classLevel: "Class 8" },
+  STU003: { id: "STU003", name: "Emma Davis", classLevel: "Class 7" },
+  STU004: { id: "STU004", name: "Michael Brown", classLevel: "Class 9" },
 };
 
 export default function ChildrenPage() {
@@ -80,7 +74,7 @@ export default function ChildrenPage() {
     setLinking(true);
     try {
       const id = studentId.trim();
-      
+
       // Call backend to create the parent-student link
       const response = await parentApi.linkStudent({
         studentUserId: id,
@@ -96,10 +90,10 @@ export default function ChildrenPage() {
 
       try {
         const insightsResponse = await parentApi.getInsights(id);
-        
+
         if (insightsResponse.data?.data?.profile) {
           const profile = insightsResponse.data.data.profile;
-          
+
           studentData = {
             id: id,
             name: profile.name || "Unknown",
@@ -109,14 +103,14 @@ export default function ChildrenPage() {
       } catch (insightsError: any) {
         // Silently handle errors - use fallback data
         const mockData = MOCK_STUDENTS[id];
-        
+
         if (mockData) {
           studentData = mockData;
         }
       }
 
       // Check if already linked
-      const alreadyLinked = children.some((c) => c.id === studentData.id);
+      const alreadyLinked = children.some(c => c.id === studentData.id);
       if (alreadyLinked) {
         toast.error("This child is already linked");
         setLinking(false);
@@ -128,13 +122,14 @@ export default function ChildrenPage() {
       localStorage.setItem(parentStorageKey, JSON.stringify(updatedChildren));
       setStudentId("");
       toast.success(`Child linked! Redirecting to dashboard...`);
-      
+
       // Redirect to parent dashboard to see the child's data load
       setTimeout(() => {
         window.location.href = "/parent";
       }, 1500);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Failed to link child";
+      const errorMessage =
+        error.response?.data?.message || "Failed to link child";
       toast.error(errorMessage);
     } finally {
       setLinking(false);
@@ -146,14 +141,15 @@ export default function ChildrenPage() {
       try {
         // Call backend to remove the parent-student link
         await parentApi.unlinkStudent(id);
-        
+
         // Remove from local state and localStorage
-        const updatedChildren = children.filter((c) => c.id !== id);
+        const updatedChildren = children.filter(c => c.id !== id);
         setChildren(updatedChildren);
         localStorage.setItem(parentStorageKey, JSON.stringify(updatedChildren));
         toast.success("Child unlinked successfully");
       } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to unlink child";
+        const errorMessage =
+          error.response?.data?.message || "Failed to unlink child";
         toast.error(errorMessage);
       }
     }
@@ -194,7 +190,7 @@ export default function ChildrenPage() {
               <input
                 type="text"
                 value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
+                onChange={e => setStudentId(e.target.value)}
                 placeholder="Paste your child's Student ID here..."
                 className="flex-1 px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
               />
@@ -237,67 +233,67 @@ export default function ChildrenPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {children.map((child) => {
+            {children.map(child => {
               return (
-              <div
-                key={child.id}
-                className="rounded-2xl p-6 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600 hover:shadow-lg transition-all"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
-                        {child.name.charAt(0)}
+                <div
+                  key={child.id}
+                  className="rounded-2xl p-6 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-600 hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg">
+                          {child.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                            {child.name}
+                          </h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {child.classLevel}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                          {child.name}
-                        </h3>
+                      <div className="flex items-center gap-2 mt-4">
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {child.classLevel}
+                          ID:{" "}
                         </p>
+                        <code className="text-xs font-mono bg-slate-200 dark:bg-slate-900 px-3 py-1 rounded text-slate-800 dark:text-slate-200">
+                          {child.id}
+                        </code>
+                        <button
+                          onClick={() => copyToClipboard(child.id)}
+                          className={`p-2 rounded-lg transition-all ${
+                            copiedId === child.id
+                              ? "bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400"
+                              : "bg-slate-200 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-800"
+                          }`}
+                        >
+                          {copiedId === child.id ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        ID:{" "}
-                      </p>
-                      <code className="text-xs font-mono bg-slate-200 dark:bg-slate-900 px-3 py-1 rounded text-slate-800 dark:text-slate-200">
-                        {child.id}
-                      </code>
-                      <button
-                        onClick={() => copyToClipboard(child.id)}
-                        className={`p-2 rounded-lg transition-all ${
-                          copiedId === child.id
-                            ? "bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400"
-                            : "bg-slate-200 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-800"
-                        }`}
+
+                    <div className="flex gap-2">
+                      <a
+                        href={`/parent/analytics?childId=${child.id}`}
+                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold hover:from-blue-600 hover:to-cyan-700 transition-all"
                       >
-                        {copiedId === child.id ? (
-                          <CheckCircle className="w-4 h-4" />
-                        ) : (
-                          <Copy className="w-4 h-4" />
-                        )}
+                        View Analytics
+                      </a>
+                      <button
+                        onClick={() => handleRemoveChild(child.id)}
+                        className="px-4 py-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 transition-all font-semibold"
+                      >
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    <a
-                      href={`/parent/analytics?childId=${child.id}`}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-semibold hover:from-blue-600 hover:to-cyan-700 transition-all"
-                    >
-                      View Analytics
-                    </a>
-                    <button
-                      onClick={() => handleRemoveChild(child.id)}
-                      className="px-4 py-2 rounded-lg bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-500/20 transition-all font-semibold"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
                 </div>
-              </div>
               );
             })}
           </div>

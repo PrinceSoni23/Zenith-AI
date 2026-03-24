@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -567,7 +569,7 @@ export default function AboutPage() {
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <section
         ref={heroRef}
-        className="relative h-screen flex items-center justify-center pt-20 pb-8 overflow-hidden"
+        className="relative min-h-screen flex items-center justify-center pt-16 sm:pt-20 pb-8 px-4 sm:px-6 overflow-hidden"
       >
         {/* Background gradient blobs */}
         <div className="absolute inset-0 pointer-events-none">
@@ -576,9 +578,9 @@ export default function AboutPage() {
           <div className="orb-3 absolute bottom-20 left-[40%] w-72 h-72 rounded-full opacity-20 blur-3xl bg-cyan-500" />
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center">
           {/* Badge strip */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             {[
               "NUR → Class 12",
               "CBSE · ICSE · State",
@@ -587,15 +589,16 @@ export default function AboutPage() {
             ].map(b => (
               <span
                 key={b}
-                className="hero-badge inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/80 dark:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 backdrop-blur-sm shadow-sm"
+                className="hero-badge inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold bg-white/80 dark:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 backdrop-blur-sm shadow-sm"
               >
-                <CheckCircle className="w-3.5 h-3.5 text-green-500" />
-                {b}
+                <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-500" />
+                <span className="hidden sm:inline">{b}</span>
+                <span className="sm:hidden">{b.split(" · ")[0]}</span>
               </span>
             ))}
           </div>
 
-          <h1 className="hero-title text-5xl md:text-7xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white mb-5">
+          <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white mb-3 sm:mb-5">
             <span className="block">Every Student's</span>
             <span className="block bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               AI Learning
@@ -603,7 +606,7 @@ export default function AboutPage() {
             <span className="block">Companion</span>
           </h1>
 
-          <p className="hero-sub max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
+          <p className="hero-sub max-w-2xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-6 sm:mb-8">
             11 AI-powered modules built around the{" "}
             <span className="font-bold text-slate-900 dark:text-white">
               real pain points
@@ -612,27 +615,27 @@ export default function AboutPage() {
             parents involved.
           </p>
 
-          <div className="hero-sub flex items-center justify-center gap-4 flex-wrap">
+          <div className="hero-sub flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
             <Link
               href="/register"
-              className="btn-primary px-8 py-3 text-base rounded-2xl"
+              className="btn-primary px-5 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl"
             >
-              Start AI Journey <ArrowRight className="w-4 h-4" />
+              Start AI Journey <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4" />
             </Link>
             <Link
               href="#features"
-              className="btn-secondary px-8 py-3 text-base rounded-2xl"
+              className="btn-secondary px-5 sm:px-8 py-2.5 sm:py-3 text-xs sm:text-base rounded-xl sm:rounded-2xl"
             >
               Explore Features
             </Link>
           </div>
 
           {/* Scrolling module chips */}
-          <div className="mt-10 flex flex-wrap justify-center gap-2">
+          <div className="mt-6 sm:mt-10 flex flex-wrap justify-center gap-1.5 sm:gap-2">
             {features.map(f => (
               <span
                 key={f.id}
-                className="px-3 py-1 rounded-xl text-xs font-semibold bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300"
+                className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300"
               >
                 {f.label}
               </span>
@@ -642,30 +645,30 @@ export default function AboutPage() {
       </section>
 
       {/* ── STATS ─────────────────────────────────────────────────────────── */}
-      <section ref={statsRef} className="py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="section-heading text-center text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-12">
+      <section ref={statsRef} className="py-12 sm:py-16 lg:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="section-heading text-center text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-8 sm:mb-12">
             Built for{" "}
             <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
               real impact
             </span>
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {stats.map(s => {
               const Icon = s.icon;
               return (
                 <div
                   key={s.label}
-                  className="stat-card rounded-2xl p-5 text-center bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 backdrop-blur-sm"
+                  className="stat-card rounded-lg sm:rounded-2xl p-3 sm:p-5 text-center bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 backdrop-blur-sm"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-3">
-                    <Icon className="w-5 h-5 text-white" />
+                  <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <Icon className="w-4 sm:w-5 h-4 sm:h-5 text-white" />
                   </div>
-                  <p className="text-2xl font-black text-slate-900 dark:text-white">
+                  <p className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white">
                     {s.value}
                     <span className="text-indigo-500">{s.suffix}</span>
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-tight">
+                  <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 leading-tight">
                     {s.label}
                   </p>
                 </div>
@@ -676,26 +679,26 @@ export default function AboutPage() {
       </section>
 
       {/* ── CHARTS SECTION ────────────────────────────────────────────────── */}
-      <section ref={chartsRef} className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="section-heading text-center text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">
+      <section ref={chartsRef} className="py-12 sm:py-16 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="section-heading text-center text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 sm:mb-4">
             Why students{" "}
             <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
               struggle
             </span>{" "}
             — and how we fix it
           </h2>
-          <p className="section-heading text-center text-slate-500 dark:text-slate-400 mb-14 max-w-xl mx-auto">
+          <p className="section-heading text-center text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 mb-8 sm:mb-14 max-w-xl mx-auto">
             Data-backed insights into the exact problems our 11 modules solve
           </p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
             {/* Pie — pain point distribution */}
-            <div className="chart-card lg:col-span-1 rounded-3xl p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">
+            <div className="chart-card lg:col-span-1 rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1">
                 Top Student Pain Points
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 sm:mb-6">
                 % of students affected by each issue
               </p>
               <ResponsiveContainer width="100%" height={220}>
@@ -758,14 +761,14 @@ export default function AboutPage() {
             </div>
 
             {/* Area — improvement over time */}
-            <div className="chart-card lg:col-span-2 rounded-3xl p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">
+            <div className="chart-card lg:col-span-2 rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1">
                 Student Performance Over 8 Weeks
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 sm:mb-6">
                 Average score improvement with daily AI usage
               </p>
-              <ResponsiveContainer width="100%" height={260}>
+              <ResponsiveContainer width="100%" height={220}>
                 <AreaChart
                   data={improvementData}
                   margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
@@ -815,16 +818,16 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Bar — before/after by subject */}
-            <div className="chart-card rounded-3xl p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">
+            <div className="chart-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1">
                 Before vs After — By Subject
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 sm:mb-6">
                 Average test scores before and after using Zenith
               </p>
-              <ResponsiveContainer width="100%" height={240}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart
                   data={subjectData}
                   margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
@@ -885,14 +888,14 @@ export default function AboutPage() {
             </div>
 
             {/* Radar — skill coverage */}
-            <div className="chart-card rounded-3xl p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
-              <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1">
+            <div className="chart-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 bg-white/70 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/8 shadow-sm backdrop-blur-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1">
                 AI Coverage Across Skills
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 sm:mb-4">
                 How effectively each learning dimension is addressed
               </p>
-              <ResponsiveContainer width="100%" height={260}>
+              <ResponsiveContainer width="100%" height={240}>
                 <RadarChart
                   data={radarData}
                   margin={{ top: 10, right: 20, bottom: 10, left: 20 }}
@@ -938,20 +941,20 @@ export default function AboutPage() {
       </section>
 
       {/* ── FEATURES DEEP DIVE ────────────────────────────────────────────── */}
-      <section id="features" className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="section-heading text-center text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">
+      <section id="features" className="py-12 sm:py-16 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="section-heading text-center text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 sm:mb-4">
             11 modules.{" "}
             <span className="bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent">
               11 problems solved.
             </span>
           </h2>
-          <p className="section-heading text-center text-slate-500 dark:text-slate-400 mb-20 max-w-xl mx-auto">
+          <p className="section-heading text-center text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 mb-10 sm:mb-20 max-w-xl mx-auto">
             Every module is built around a specific, real pain point every
             school student faces.
           </p>
 
-          <div className="space-y-20">
+          <div className="space-y-12 sm:space-y-16 lg:space-y-20">
             {features.map((f, i) => {
               const Icon = f.icon;
               const isEven = i % 2 === 0;
@@ -961,40 +964,40 @@ export default function AboutPage() {
                   ref={el => {
                     featureRefs.current[i] = el;
                   }}
-                  className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} items-center gap-10 lg:gap-16`}
+                  className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} items-center gap-6 sm:gap-8 lg:gap-16`}
                 >
                   {/* Visual side */}
                   <div className="w-full lg:w-5/12 flex-shrink-0">
                     <div
-                      className={`rounded-3xl p-8 ${f.lightBg} border ${f.border} relative overflow-hidden`}
+                      className={`rounded-2xl sm:rounded-3xl p-5 sm:p-8 ${f.lightBg} border ${f.border} relative overflow-hidden`}
                     >
                       {/* Background number */}
                       <span
-                        className="absolute -right-4 -bottom-6 text-[120px] font-black leading-none select-none pointer-events-none opacity-[0.06]"
+                        className="absolute -right-4 -bottom-6 text-[80px] sm:text-[120px] font-black leading-none select-none pointer-events-none opacity-[0.06]"
                         style={{ color: f.accent }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>
 
                       {/* Pain label */}
-                      <div className="pain-label inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6 bg-white/60 dark:bg-black/40 border border-white/40 dark:border-white/15 text-slate-700 dark:text-slate-200">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <div className="pain-label inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold mb-4 sm:mb-6 bg-white/60 dark:bg-black/40 border border-white/40 dark:border-white/15 text-slate-700 dark:text-slate-200">
+                        <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-red-400" />
                         Pain: {f.pain}
                       </div>
 
                       {/* Icon + title */}
-                      <div className="flex items-center gap-4 mb-6">
+                      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                         <div
-                          className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center shadow-lg flex-shrink-0`}
+                          className={`w-12 sm:w-14 h-12 sm:h-14 rounded-lg sm:rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center shadow-lg flex-shrink-0`}
                         >
-                          <Icon className="w-7 h-7 text-white" />
+                          <Icon className="w-6 sm:w-7 h-6 sm:h-7 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                          <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
                             {f.label}
                           </h3>
                           <p
-                            className="text-sm font-medium mt-0.5"
+                            className="text-xs sm:text-sm font-medium mt-0.5"
                             style={{ color: f.accent }}
                           >
                             {f.tagline}
@@ -1003,18 +1006,18 @@ export default function AboutPage() {
                       </div>
 
                       {/* Details */}
-                      <ul className="space-y-3 mb-8">
+                      <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                         {f.details.map(d => (
                           <li
                             key={d}
-                            className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-200"
+                            className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200"
                           >
                             <div
-                              className="w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center"
+                              className="w-4 sm:w-5 h-4 sm:h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center"
                               style={{ background: `${f.accent}25` }}
                             >
                               <CheckCircle
-                                className="w-3 h-3"
+                                className="w-2 sm:w-3 h-2 sm:h-3"
                                 style={{ color: f.accent }}
                               />
                             </div>
@@ -1025,12 +1028,12 @@ export default function AboutPage() {
 
                       {/* Stat pill */}
                       <div
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-white"
+                        className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold text-white"
                         style={{
                           background: `linear-gradient(135deg, ${f.accent}, ${f.accent}bb)`,
                         }}
                       >
-                        <Target className="w-4 h-4" />
+                        <Target className="w-3 sm:w-4 h-3 sm:h-4" />
                         {f.stat}
                       </div>
                     </div>
@@ -1038,25 +1041,25 @@ export default function AboutPage() {
 
                   {/* Text side */}
                   <div className="w-full lg:w-7/12">
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                       <span
-                        className="text-6xl font-black opacity-15 leading-none"
+                        className="text-4xl sm:text-6xl font-black opacity-15 leading-none"
                         style={{ color: f.accent }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-700 to-transparent" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-3 leading-tight">
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 sm:mb-3 leading-tight">
                       {f.label}
                     </h3>
                     <p
-                      className="text-lg font-semibold mb-5"
+                      className="text-base sm:text-lg font-semibold mb-4 sm:mb-5"
                       style={{ color: f.accent }}
                     >
                       "{f.pain}"
                     </p>
-                    <p className="text-slate-600 dark:text-slate-400 text-base leading-relaxed mb-8">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8">
                       {f.tagline}. This module was built specifically to solve
                       this exact daily frustration that{" "}
                       <span className="font-semibold text-slate-900 dark:text-white">
@@ -1068,13 +1071,14 @@ export default function AboutPage() {
 
                     <Link
                       href={f.href}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                      className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-2xl text-xs sm:text-sm font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                       style={{
                         background: `linear-gradient(135deg, ${f.accent}, ${f.accent}cc)`,
                         boxShadow: `0 4px 20px ${f.accent}40`,
                       }}
                     >
-                      Try {f.label} <ArrowRight className="w-4 h-4" />
+                      Try {f.label}{" "}
+                      <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4" />
                     </Link>
                   </div>
                 </div>
@@ -1085,19 +1089,19 @@ export default function AboutPage() {
       </section>
 
       {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-      <section className="py-24">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="section-heading text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">
+      <section className="py-12 sm:py-16 lg:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 sm:mb-4">
             Up and running in{" "}
             <span className="bg-gradient-to-r from-green-500 to-teal-500 bg-clip-text text-transparent">
               60 seconds
             </span>
           </h2>
-          <p className="section-heading text-slate-500 dark:text-slate-400 mb-16 max-w-md mx-auto">
+          <p className="section-heading text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 mb-10 sm:mb-16 max-w-md mx-auto">
             No setup, no confusion. Just open, pick a module, and start
             learning.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 step: "01",
@@ -1120,25 +1124,28 @@ export default function AboutPage() {
             ].map(s => (
               <div
                 key={s.step}
-                className="stat-card relative rounded-3xl p-8 bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/8 text-left"
+                className="stat-card relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/8 text-left"
               >
                 <span
-                  className="text-6xl font-black leading-none block mb-4 opacity-15"
+                  className="text-4xl sm:text-6xl font-black leading-none block mb-3 sm:mb-4 opacity-15"
                   style={{ color: s.color }}
                 >
                   {s.step}
                 </span>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3">
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-2 sm:mb-3">
                   {s.title}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                   {s.desc}
                 </p>
                 <div
-                  className="absolute top-6 right-6 w-8 h-8 rounded-xl flex items-center justify-center"
+                  className="absolute top-4 sm:top-6 right-4 sm:right-6 w-7 sm:w-8 h-7 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center"
                   style={{ background: `${s.color}20` }}
                 >
-                  <CheckCircle className="w-4 h-4" style={{ color: s.color }} />
+                  <CheckCircle
+                    className="w-3 sm:w-4 h-3 sm:h-4"
+                    style={{ color: s.color }}
+                  />
                 </div>
               </div>
             ))}
@@ -1147,28 +1154,28 @@ export default function AboutPage() {
       </section>
 
       {/* ── FOR PARENTS ───────────────────────────────────────────────────── */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-12 sm:py-16 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-teal-50 dark:bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-500/30 mb-6">
-              <Users className="w-4 h-4" />
+          <div className="text-center mb-10 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-teal-50 dark:bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-500/30 mb-4 sm:mb-6">
+              <Users className="w-3 sm:w-4 h-3 sm:h-4" />
               For Parents
             </div>
-            <h2 className="section-heading text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">
+            <h2 className="section-heading text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 sm:mb-4">
               Know exactly how your child{" "}
               <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
                 is studying.
               </span>
             </h2>
-            <p className="section-heading text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+            <p className="section-heading text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
               No marks. No pressure. Just clear, honest progress — visible to
               you in seconds.
             </p>
           </div>
 
           {/* Feature grid */}
-          <div className="grid md:grid-cols-2 gap-5 mb-12">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-5 mb-8 sm:mb-12">
             {[
               {
                 icon: "🔥",
@@ -1197,21 +1204,21 @@ export default function AboutPage() {
             ].map(item => (
               <div
                 key={item.title}
-                className="stat-card group flex gap-5 p-6 rounded-2xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/8 hover:border-teal-300 dark:hover:border-teal-500/40 transition-all duration-200 hover:-translate-y-0.5"
+                className="stat-card group flex gap-3 sm:gap-5 p-4 sm:p-6 rounded-lg sm:rounded-2xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/8 hover:border-teal-300 dark:hover:border-teal-500/40 transition-all duration-200 hover:-translate-y-0.5"
               >
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-2xl flex-shrink-0">
+                <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-lg sm:rounded-2xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                   {item.icon}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <h3 className="font-black text-base text-slate-900 dark:text-white">
+                  <div className="flex items-center gap-2 mb-1 sm:mb-1.5 flex-wrap">
+                    <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white">
                       {item.title}
                     </h3>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20">
+                    <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-500/20">
                       {item.tag}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -1221,73 +1228,78 @@ export default function AboutPage() {
 
           {/* Bottom callout bar */}
           <div
-            className="relative rounded-2xl overflow-hidden p-7 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-teal-200 dark:border-teal-500/30"
+            className="relative rounded-lg sm:rounded-2xl overflow-hidden p-5 sm:p-7 md:p-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-6 border border-teal-200 dark:border-teal-500/30"
             style={{
               background:
                 "linear-gradient(135deg, rgba(20,184,166,0.07) 0%, rgba(6,182,212,0.07) 100%)",
             }}
           >
             <div>
-              <p className="font-black text-xl text-slate-900 dark:text-white mb-1">
+              <p className="font-black text-lg sm:text-xl text-slate-900 dark:text-white mb-1">
                 Your child studies. You stay informed. 🤝
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 No nagging needed — the data speaks for itself.
               </p>
             </div>
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-2xl text-sm font-bold text-white whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              className="inline-flex items-center gap-2 px-5 sm:px-7 py-2 sm:py-3 rounded-lg sm:rounded-2xl text-xs sm:text-sm font-bold text-white whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               style={{
                 background: "linear-gradient(135deg, #14b8a6, #06b6d4)",
                 boxShadow: "0 4px 20px rgba(20,184,166,0.35)",
               }}
             >
-              Create parent account <ArrowRight className="w-4 h-4" />
+              Create parent account{" "}
+              <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────────────── */}
-      <section className="py-24">
-        <div ref={ctaRef} className="max-w-4xl mx-auto px-6 text-center">
+      <section className="py-12 sm:py-16 lg:py-24">
+        <div
+          ref={ctaRef}
+          className="max-w-4xl mx-auto px-4 sm:px-6 text-center"
+        >
           <div
-            className="relative rounded-3xl overflow-hidden p-12 md:p-20 border border-indigo-200 dark:border-indigo-500/30"
+            className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-6 sm:p-12 md:p-20 border border-indigo-200 dark:border-indigo-500/30"
             style={{
               background:
                 "linear-gradient(135deg, rgba(99,102,241,0.07) 0%, rgba(139,92,246,0.07) 50%, rgba(236,72,153,0.05) 100%)",
             }}
           >
             {/* Background orbs */}
-            <div className="absolute top-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl bg-indigo-400 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl bg-purple-400 translate-x-1/2 translate-y-1/2 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-32 sm:w-64 h-32 sm:h-64 rounded-full opacity-20 blur-3xl bg-indigo-400 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-32 sm:w-64 h-32 sm:h-64 rounded-full opacity-20 blur-3xl bg-purple-400 translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 mb-8">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/30 mb-6 sm:mb-8">
+                <Sparkles className="w-3 sm:w-4 h-3 sm:h-4" />
                 24/7 AI Support
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 sm:mb-6 leading-tight">
                 Ready to study{" "}
                 <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
                   smarter?
                 </span>
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 mb-6 sm:mb-10 max-w-xl mx-auto leading-relaxed">
                 Join thousands of students using Zenith to understand more,
                 remember more, and stress less.
               </p>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
+              <div className="flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
                 <Link
                   href="/register"
-                  className="btn-primary px-10 py-3.5 text-base rounded-2xl"
+                  className="btn-primary px-6 sm:px-10 py-2.5 sm:py-3.5 text-xs sm:text-base rounded-lg sm:rounded-2xl"
                 >
-                  Start your Smart Journey <ArrowRight className="w-4 h-4" />
+                  Start your Smart Journey{" "}
+                  <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4" />
                 </Link>
                 <Link
                   href="/"
-                  className="btn-secondary px-8 py-3.5 text-base rounded-2xl"
+                  className="btn-secondary px-5 sm:px-8 py-2.5 sm:py-3.5 text-xs sm:text-base rounded-lg sm:rounded-2xl"
                 >
                   Back to Home
                 </Link>
@@ -1298,18 +1310,18 @@ export default function AboutPage() {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 dark:border-white/5 py-10 bg-white dark:bg-gray-900">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
+      <footer className="border-t border-slate-200 dark:border-white/5 py-8 sm:py-10 bg-white dark:bg-gray-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-white" />
+            <div className="w-6 sm:w-7 h-6 sm:h-7 rounded-lg sm:rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <Zap className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-white" />
             </div>
             <span className="font-bold text-slate-700 dark:text-slate-300">
               Zenith
             </span>
             <span>— AI Learning Companion for every student</span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link
               href="/"
               className="hover:text-slate-700 dark:hover:text-slate-200 transition-colors"

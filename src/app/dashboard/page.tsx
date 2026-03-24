@@ -1,9 +1,9 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-
-export const dynamic = "force-dynamic";
 
 import Sidebar from "@/components/dashboard/Sidebar";
 import { dashboardApi, agentApi, streakApi, leaderboardApi } from "@/lib/api";
@@ -150,66 +150,66 @@ function PowerHourInline({
   const { mins, secs, msLeft } = useCountdown(endsAt);
   if (msLeft === 0) return null;
   return (
-    <div className="relative overflow-hidden rounded-2xl border px-5 py-3.5 bg-gradient-to-r from-yellow-400/10 via-amber-400/10 to-orange-400/10 dark:from-yellow-500/15 dark:via-amber-500/15 dark:to-orange-500/15 border-yellow-400/40 dark:border-yellow-500/30 shadow-lg shadow-yellow-400/10 animate-fade-up">
+    <div className="relative overflow-hidden rounded-2xl border px-3 sm:px-5 py-3 sm:py-3.5 bg-gradient-to-r from-yellow-400/10 via-amber-400/10 to-orange-400/10 dark:from-yellow-500/15 dark:via-amber-500/15 dark:to-orange-500/15 border-yellow-400/40 dark:border-yellow-500/30 shadow-lg shadow-yellow-400/10 animate-fade-up">
       {/* shimmer sweep */}
       <div className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2.5s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-yellow-300/10 to-transparent" />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         {/* left: icon + text */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="relative shrink-0">
+        <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div className="relative shrink-0 mt-0.5 sm:mt-0">
             <div className="absolute inset-0 rounded-full bg-yellow-400/30 animate-ping" />
-            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-md shadow-yellow-500/30">
-              <Zap className="w-5 h-5 text-white fill-white" />
+            <div className="relative w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-md shadow-yellow-500/30">
+              <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-white fill-white" />
             </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5 flex-wrap">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5 flex-wrap">
               ⚡ Power Hour Active!
-              <span className="font-semibold text-yellow-600 dark:text-yellow-400 text-xs bg-yellow-400/15 dark:bg-yellow-400/20 px-2 py-0.5 rounded-full border border-yellow-400/30">
-                2× XP on every task
+              <span className="font-semibold text-yellow-600 dark:text-yellow-400 text-[10px] sm:text-xs bg-yellow-400/15 dark:bg-yellow-400/20 px-1.5 sm:px-2 py-0.5 rounded-full border border-yellow-400/30 flex-shrink-0">
+                2× XP
               </span>
             </p>
-            <p className="text-xs text-yellow-600/80 dark:text-yellow-400/70 mt-0.5">
-              Complete missions now to earn double XP!
+            <p className="text-[11px] sm:text-xs text-yellow-600/80 dark:text-yellow-400/70 mt-0.5 line-clamp-1">
+              Complete missions for double XP!
             </p>
           </div>
         </div>
 
         {/* right: countdown + dismiss */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1">
-            <div className="flex flex-col items-center bg-yellow-500/15 dark:bg-yellow-400/10 rounded-lg px-2 py-1 border border-yellow-400/20 min-w-[36px]">
-              <span className="text-lg font-black tabular-nums text-yellow-700 dark:text-yellow-300 leading-none">
+            <div className="flex flex-col items-center bg-yellow-500/15 dark:bg-yellow-400/10 rounded-lg px-1.5 sm:px-2 py-0.5 border border-yellow-400/20 min-w-[30px] sm:min-w-[36px]">
+              <span className="text-sm sm:text-lg font-black tabular-nums text-yellow-700 dark:text-yellow-300 leading-none">
                 {String(mins).padStart(2, "0")}
               </span>
-              <span className="text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
+              <span className="text-[7px] sm:text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
                 min
               </span>
             </div>
-            <span className="text-yellow-500 font-black text-lg leading-none mb-2">
+            <span className="text-yellow-500 font-black text-sm sm:text-lg leading-none mb-1 sm:mb-2">
               :
             </span>
-            <div className="flex flex-col items-center bg-yellow-500/15 dark:bg-yellow-400/10 rounded-lg px-2 py-1 border border-yellow-400/20 min-w-[36px]">
-              <span className="text-lg font-black tabular-nums text-yellow-700 dark:text-yellow-300 leading-none">
+            <div className="flex flex-col items-center bg-yellow-500/15 dark:bg-yellow-400/10 rounded-lg px-1.5 sm:px-2 py-0.5 border border-yellow-400/20 min-w-[30px] sm:min-w-[36px]">
+              <span className="text-sm sm:text-lg font-black tabular-nums text-yellow-700 dark:text-yellow-300 leading-none">
                 {String(secs).padStart(2, "0")}
               </span>
-              <span className="text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
+              <span className="text-[7px] sm:text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
                 sec
               </span>
             </div>
           </div>
           <button
             onClick={onDismiss}
-            className="p-1.5 rounded-lg text-yellow-600/60 dark:text-yellow-400/50 hover:text-yellow-700 dark:hover:text-yellow-300 hover:bg-yellow-400/10 transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg text-yellow-600/60 dark:text-yellow-400/50 hover:text-yellow-700 dark:hover:text-yellow-300 hover:bg-yellow-400/10 transition-colors flex-shrink-0"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
           </button>
         </div>
       </div>
 
       {/* draining progress bar */}
-      <div className="mt-3 h-1 rounded-full bg-yellow-400/15 overflow-hidden">
+      <div className="mt-2 sm:mt-3 h-1 rounded-full bg-yellow-400/15 overflow-hidden">
         <div
           className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 transition-all duration-1000"
           style={{ width: `${(msLeft / (60 * 60 * 1000)) * 100}%` }}
@@ -271,21 +271,21 @@ function PowerHourScheduleCard({
     const [lockedH, lockedM] = powerHourTime.split(":").map(Number);
 
     return (
-      <div className="rounded-2xl border border-yellow-400/30 dark:border-yellow-500/20 bg-yellow-400/5 dark:bg-yellow-500/5 px-5 py-4">
+      <div className="rounded-2xl border border-yellow-400/30 dark:border-yellow-500/20 bg-yellow-400/5 dark:bg-yellow-500/5 px-4 sm:px-5 py-4">
         {/* Header row */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow shadow-yellow-400/30">
-            <Zap className="w-5 h-5 text-white fill-white" />
+        <div className="flex items-start sm:items-center gap-2 sm:gap-3 mb-4">
+          <div className="relative w-9 sm:w-10 h-9 sm:h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow shadow-yellow-400/30 mt-1 sm:mt-0">
+            <Zap className="w-4 sm:w-5 h-4 sm:h-5 text-white fill-white" />
             {/* lock badge */}
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-white dark:bg-dark-900 flex items-center justify-center border border-yellow-400/40">
-              <Lock className="w-2.5 h-2.5 text-yellow-500" />
+            <div className="absolute -bottom-1 -right-1 w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full bg-white dark:bg-dark-900 flex items-center justify-center border border-yellow-400/40">
+              <Lock className="w-2 sm:w-2.5 h-2 sm:h-2.5 text-yellow-500" />
             </div>
           </div>
-          <div>
-            <p className="text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs sm:text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5 flex-wrap">
               ⚡ Power Hour — Locked In
             </p>
-            <p className="text-xs text-yellow-600/70 dark:text-yellow-400/60">
+            <p className="text-[11px] sm:text-xs text-yellow-600/70 dark:text-yellow-400/60 mt-0.5 line-clamp-2">
               Fires every day at{" "}
               <span className="font-bold font-mono text-yellow-700 dark:text-yellow-300">
                 {fmtTime(powerHourTime)}
@@ -296,15 +296,15 @@ function PowerHourScheduleCard({
         </div>
 
         {/* Greyed-out read-only pickers */}
-        <div className="flex items-center gap-3 flex-wrap mb-3 opacity-50 pointer-events-none select-none">
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap mb-3 opacity-50 pointer-events-none select-none">
+          <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-[10px] uppercase tracking-wider text-slateate-400 font-semibold">
               Hour
             </label>
             <select
               disabled
               value={lockedH}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-100 dark:bg-dark-800 text-sm font-bold text-slate-500 dark:text-slate-500 cursor-not-allowed"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-100 dark:bg-dark-800 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-500 cursor-not-allowed"
             >
               {Array.from({ length: 24 }, (_, i) => {
                 const period = i >= 12 ? "PM" : "AM";
@@ -317,14 +317,14 @@ function PowerHourScheduleCard({
               })}
             </select>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
               Minute
             </label>
             <select
               disabled
               value={lockedM}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-100 dark:bg-dark-800 text-sm font-bold text-slate-500 dark:text-slate-500 cursor-not-allowed"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-100 dark:bg-dark-800 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-500 cursor-not-allowed"
             >
               {[0, 15, 30, 45].map(m => (
                 <option key={m} value={m}>
@@ -333,28 +333,27 @@ function PowerHourScheduleCard({
               ))}
             </select>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-[10px] uppercase tracking-wider text-transparent select-none">
               Go
             </label>
             <button
               disabled
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-400 text-sm font-black cursor-not-allowed"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-400 text-xs sm:text-sm font-black cursor-not-allowed whitespace-nowrap w-full sm:w-auto"
             >
-              <Lock className="w-4 h-4" />
-              Locked
+              <Lock className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+              <span>Locked</span>
             </button>
           </div>
         </div>
 
         {/* Cannot-change notice */}
-        <div className="flex items-start gap-2 rounded-xl bg-yellow-400/10 dark:bg-yellow-500/10 border border-yellow-400/20 px-3 py-2">
-          <Lock className="w-3.5 h-3.5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-yellow-700 dark:text-yellow-400 leading-snug">
-            This cannot be changed until{" "}
-            <span className="font-bold">{resetDateLabel}</span>. You have{" "}
-            {daysLeft} day{daysLeft !== 1 ? "s" : ""} of 2× XP remaining this
-            month!
+        <div className="flex items-start gap-2 rounded-xl bg-yellow-400/10 dark:bg-yellow-500/10 border border-yellow-400/20 px-2.5 sm:px-3 py-1.5 sm:py-2">
+          <Lock className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+          <p className="text-[11px] sm:text-xs text-yellow-700 dark:text-yellow-400 leading-snug">
+            Cannot change until{" "}
+            <span className="font-bold">{resetDateLabel}</span>. {daysLeft} day
+            {daysLeft !== 1 ? "s" : ""} of 2× XP left!
           </p>
         </div>
       </div>
@@ -363,38 +362,35 @@ function PowerHourScheduleCard({
 
   // ── UNLOCKED STATE — pick a time ─────────────────────────────────────────
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-dark-700 bg-white dark:bg-dark-900 px-5 py-4">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow shadow-yellow-400/20">
-          <Zap className="w-4 h-4 text-white fill-white" />
+    <div className="rounded-2xl border border-slate-200 dark:border-dark-700 bg-white dark:bg-dark-900 px-4 sm:px-5 py-4">
+      <div className="flex items-start sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className="w-8 sm:w-8 h-8 sm:h-8 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow shadow-yellow-400/20 mt-1 sm:mt-0">
+          <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-white fill-white" />
         </div>
-        <div>
-          <p className="text-sm font-black text-slate-900 dark:text-slate-100">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100">
             Set Your Power Hour
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5 line-clamp-2">
             Pick a time — every day this month you get{" "}
             <span className="text-yellow-600 dark:text-yellow-400 font-bold">
               2× XP
-            </span>{" "}
-            for 1 hour.{" "}
-            <span className="text-red-500 dark:text-red-400 font-semibold">
-              Choose carefully — locked until {resetDateLabel}!
             </span>
+            . Choose carefully — locked until {resetDateLabel}!
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-2 sm:gap-3 flex-wrap">
         {/* Hour picker */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full sm:w-auto">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
             Hour
           </label>
           <select
             value={hour}
             onChange={e => setHour(Number(e.target.value))}
-            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-50 dark:bg-dark-800 text-sm font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+            className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-50 dark:bg-dark-800 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 w-full sm:w-auto"
           >
             {Array.from({ length: 24 }, (_, i) => {
               const period = i >= 12 ? "PM" : "AM";
@@ -409,14 +405,14 @@ function PowerHourScheduleCard({
         </div>
 
         {/* Minute picker */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full sm:w-auto">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
             Minute
           </label>
           <select
             value={minute}
             onChange={e => setMinute(Number(e.target.value))}
-            className="px-3 py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-50 dark:bg-dark-800 text-sm font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+            className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 dark:border-dark-700 bg-slate-50 dark:bg-dark-800 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/40 w-full sm:w-auto"
           >
             {[0, 15, 30, 45].map(m => (
               <option key={m} value={m}>
@@ -427,22 +423,22 @@ function PowerHourScheduleCard({
         </div>
 
         {/* Lock In button */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full sm:w-auto">
           <label className="text-[10px] uppercase tracking-wider text-transparent select-none">
             Go
           </label>
           <button
             onClick={handleLock}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-sm font-black shadow shadow-yellow-400/30 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs sm:text-sm font-black shadow shadow-yellow-400/30 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 whitespace-nowrap w-full sm:w-auto"
           >
-            <Lock className="w-4 h-4" />
+            <Lock className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
             {saving ? "Saving…" : "Lock In"}
           </button>
         </div>
 
-        <p className="text-xs text-slate-400 dark:text-slate-500 self-end pb-2">
-          {daysLeft} day{daysLeft !== 1 ? "s" : ""} remaining this month
+        <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 w-full sm:w-auto">
+          {daysLeft} day{daysLeft !== 1 ? "s" : ""} left
         </p>
       </div>
     </div>
@@ -1090,27 +1086,27 @@ export default function DashboardPage() {
       )}
 
       <main className="flex-1 overflow-y-auto">
-        <div className="p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-4 sm:space-y-6">
           {/* ── Header ── */}
-          <div className="flex items-start justify-between animate-fade-up stagger-1">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-0 animate-fade-up stagger-1">
             <div>
-              <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                 {isHydrated && greeting()},{" "}
                 <span className="gradient-text">
                   {isHydrated && (user?.name?.split(" ")[0] || "Scholar")}
                 </span>{" "}
                 👋
               </h1>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                 {profile?.classLevel ? `${profile.classLevel} · ` : ""}
                 {profile?.board
                   ? `${profile.board} Board`
                   : "Set up your profile to get started"}
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-semibold bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 hover-lift border-glow">
+            <div className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 hover-lift border-glow flex-shrink-0">
               <Target className="w-4 h-4 text-primary-500" />
-              <span>Level Up Mode</span>
+              <span className="hidden sm:inline">Level Up Mode</span>
             </div>
           </div>
 
@@ -1118,16 +1114,18 @@ export default function DashboardPage() {
           {streakData?.powerHourActive &&
             streakData.powerHourEnds &&
             !phDismissed && (
-              <PowerHourInline
-                powerHourEnds={streakData.powerHourEnds}
-                onDismiss={() => setPhDismissed(true)}
-              />
+              <div className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+                <PowerHourInline
+                  powerHourEnds={streakData.powerHourEnds}
+                  onDismiss={() => setPhDismissed(true)}
+                />
+              </div>
             )}
 
           {/* ── Streak Hero ── */}
           <StreakHero streakData={streakData} stats={stats} />
 
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* ── Today's Missions ── */}
             <MissionsTile
               missions={missions}
@@ -1138,26 +1136,26 @@ export default function DashboardPage() {
             />
 
             {/* ── Quick Modules ── */}
-            <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-5">
-              <div className="flex items-center gap-2 mb-5">
+            <div className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-5">
+              <div className="flex items-center gap-2 mb-4 sm:mb-5">
                 <Zap className="w-5 h-5 text-primary-500" />
-                <h2 className="font-bold text-lg text-slate-900 dark:text-slate-100">
+                <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
                   Quick Start
                 </h2>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3">
                 {quickModules.map((mod, idx) => (
                   <Link
                     key={mod.href}
                     href={mod.href}
-                    className={`group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:scale-[1.03] bg-slate-50 dark:bg-dark-800 border border-slate-100 dark:border-dark-700 hover:border-primary-300 dark:hover:border-primary-700 animate-scale-in border-glow stagger-${idx + 1}`}
+                    className={`group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl transition-all duration-200 hover:scale-[1.03] bg-slate-50 dark:bg-dark-800 border border-slate-100 dark:border-dark-700 hover:border-primary-300 dark:hover:border-primary-700 animate-scale-in border-glow stagger-${idx + 1}`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${mod.gradient} flex items-center justify-center flex-shrink-0`}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br ${mod.gradient} flex items-center justify-center flex-shrink-0`}
                     >
-                      <mod.icon className="w-4 h-4 text-white" />
+                      <mod.icon className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-white" />
                     </div>
-                    <span className="text-sm font-semibold leading-tight text-slate-800 dark:text-slate-200">
+                    <span className="text-xs sm:text-sm font-semibold leading-tight text-slate-800 dark:text-slate-200 text-center sm:text-left">
                       {mod.label}
                     </span>
                   </Link>
@@ -1168,32 +1166,37 @@ export default function DashboardPage() {
 
           {/* ── Leaderboard Teaser ── */}
           {lbPreview && (
-            <div className="rounded-2xl p-5 bg-gradient-to-br from-indigo-900/40 to-purple-900/30 border border-indigo-500/20 animate-fade-up">
-              <div className="flex items-center justify-between mb-4">
+            <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-indigo-900/40 to-purple-900/30 border border-indigo-500/20 animate-fade-up">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-3 sm:mb-4">
                 <div className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-yellow-400" />
-                  <h2 className="font-bold text-base text-slate-100">
+                  <Trophy className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                  <h2 className="font-bold text-sm sm:text-base text-slate-100">
                     Weekly Leaderboard
                   </h2>
                 </div>
                 <Link
                   href="/dashboard/leaderboard"
-                  className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold"
+                  className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold w-fit"
                 >
                   Full board <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
-              <div className="space-y-2 mb-4">
+              <div className="space-y-2 mb-3 sm:mb-4">
                 {lbPreview.top3.map((entry, i) => {
                   const medals = ["🥇", "🥈", "🥉"];
                   return (
-                    <div key={i} className="flex items-center gap-3 text-sm">
-                      <span className="text-base w-5">{medals[i]}</span>
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm"
+                    >
+                      <span className="text-base w-4 flex-shrink-0">
+                        {medals[i]}
+                      </span>
                       <span className="flex-1 text-slate-200 truncate">
                         {entry.name}
                       </span>
-                      <span className="text-indigo-300 font-bold tabular-nums">
+                      <span className="text-indigo-300 font-bold tabular-nums flex-shrink-0">
                         {entry.weeklyScore} XP
                       </span>
                     </div>
@@ -1201,16 +1204,16 @@ export default function DashboardPage() {
                 })}
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/10">
-                <div className="flex items-center gap-1.5 text-sm text-slate-400">
-                  <Flame className="w-4 h-4 text-orange-400" />
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 pt-3 border-t border-white/10">
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-400">
+                  <Flame className="w-4 h-4 text-orange-400 flex-shrink-0" />
                   {lbPreview.rank ? (
-                    <span>
+                    <span className="whitespace-nowrap">
                       You&apos;re{" "}
                       <span className="text-white font-bold">
                         #{lbPreview.rank}
                       </span>{" "}
-                      this week
+                      <span className="hidden sm:inline">this week</span>
                     </span>
                   ) : (
                     <span className="text-slate-500">
@@ -1220,7 +1223,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/dashboard/leaderboard"
-                  className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-colors w-fit"
                 >
                   View all
                 </Link>
@@ -1230,15 +1233,15 @@ export default function DashboardPage() {
 
           {/* ── Badges ── */}
           {stats?.badges && stats.badges.length > 0 && (
-            <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
-              <h2 className="font-bold text-lg mb-4 text-slate-900 dark:text-slate-100">
+            <div className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
+              <h2 className="font-bold text-base sm:text-lg mb-3 sm:mb-4 text-slate-900 dark:text-slate-100">
                 🏆 Your Badges
               </h2>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {stats.badges.map((badge: string, i: number) => (
                   <span
                     key={i}
-                    className="px-4 py-2 rounded-full text-sm font-semibold bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20 text-primary-700 dark:text-primary-400"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20 text-primary-700 dark:text-primary-400 whitespace-nowrap"
                   >
                     {badge}
                   </span>
@@ -1309,67 +1312,68 @@ function StreakHero({
       {/* Subtle noise texture overlay */}
       <div className="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIvPjwvc3ZnPg==')]" />
 
-      <div className="relative p-6 lg:p-7">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+      <div className="relative p-4 sm:p-5 lg:p-7">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           {/* Fire + Streak number */}
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
             <span
               ref={fireRef}
-              className="text-5xl lg:text-6xl leading-none select-none"
+              className="text-4xl sm:text-5xl lg:text-6xl leading-none select-none"
               style={{ textShadow: "0 0 30px rgba(251,146,60,0.8)" }}
             >
               🔥
             </span>
-            <div>
-              <div className="flex items-end gap-2">
-                <p className="text-6xl lg:text-7xl font-black text-white leading-none tracking-tight">
+            <div className="min-w-0">
+              <div className="flex items-end gap-1.5 sm:gap-2">
+                <p className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight flex-shrink-0">
                   {streak}
                 </p>
                 {/* ── Shield badge ── */}
                 {(streakData?.streakShields ?? 0) > 0 ? (
                   <div
                     title={`${streakData?.streakShields} Streak Shield${(streakData?.streakShields ?? 0) > 1 ? "s" : ""} — earned at every 7-day milestone. Auto-used if you miss a day.`}
-                    className="group relative mb-1.5 flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/20 border border-white/30 backdrop-blur-sm cursor-default select-none hover:bg-white/30 transition-colors"
+                    className="group relative mb-1 sm:mb-1.5 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-white/20 border border-white/30 backdrop-blur-sm cursor-default select-none hover:bg-white/30 transition-colors flex-shrink-0"
                   >
-                    <span className="text-base leading-none">🛡️</span>
-                    <span className="text-sm font-black text-white leading-none">
+                    <span className="text-xs sm:text-base leading-none">
+                      🛡️
+                    </span>
+                    <span className="text-xs sm:text-sm font-black text-white leading-none">
                       {streakData?.streakShields}
                     </span>
                     {/* tooltip */}
-                    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
+                    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-2 sm:px-3 py-1.5 sm:py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
                       🛡️ Streak Shield
                       {(streakData?.streakShields ?? 0) > 1 ? "s" : ""}
                       <br />
                       <span className="text-slate-300">
-                        Earned every 7 days. Automatically saves your streak if
-                        you miss a day.
+                        Earned every 7 days. Auto-saves if you miss a day.
                       </span>
                     </div>
                   </div>
                 ) : (
                   <div
                     title="No shields yet. Reach a 7-day streak to earn one!"
-                    className="group relative mb-1.5 flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/10 border border-white/15 cursor-default select-none hover:bg-white/15 transition-colors"
+                    className="group relative mb-1 sm:mb-1.5 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-white/10 border border-white/15 cursor-default select-none hover:bg-white/15 transition-colors flex-shrink-0"
                   >
-                    <span className="text-base leading-none opacity-40">
+                    <span className="text-xs sm:text-base leading-none opacity-40">
                       🛡️
                     </span>
-                    <span className="text-sm font-black text-white/40 leading-none">
+                    <span className="text-xs sm:text-sm font-black text-white/40 leading-none">
                       0
                     </span>
                     {/* tooltip */}
-                    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
+                    <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-2 sm:px-3 py-1.5 sm:py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
                       🛡️ Streak Shield
                       <br />
                       <span className="text-slate-300">
-                        Earn one at every 7-day milestone. It auto-saves your
-                        streak if you miss a day.
+                        Earn at every 7-day milestone. Auto-saves your streak if
+                        you miss a day.
                       </span>
                     </div>
                   </div>
                 )}
               </div>
-              <p className="text-white/80 text-sm font-semibold mt-0.5 tracking-wide uppercase">
+              <p className="text-white/80 text-xs sm:text-sm font-semibold mt-0.5 sm:mt-1 tracking-wide uppercase">
                 Day Streak
               </p>
             </div>
@@ -1379,17 +1383,20 @@ function StreakHero({
           <div className="hidden sm:block w-px h-16 bg-white/20 flex-shrink-0" />
 
           {/* Right column */}
-          <div className="flex-1 min-w-0 space-y-4">
+          <div className="flex-1 min-w-0 space-y-3 sm:space-y-4">
             {/* 7-day activity dots */}
             <div>
-              <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mb-2">
+              <p className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-1.5 sm:mb-2">
                 Last 7 Days
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 sm:gap-2">
                 {dotDays.map((d, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1">
+                  <div
+                    key={i}
+                    className="flex flex-col items-center gap-0.5 sm:gap-1"
+                  >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
+                      className={`w-6 sm:w-8 h-6 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300
                         ${d.isToday ? "ring-2 ring-white ring-offset-2 ring-offset-transparent scale-110" : ""}
                         ${
                           d.active
@@ -1398,12 +1405,12 @@ function StreakHero({
                         }`}
                     >
                       {d.active && (
-                        <span className="text-orange-500 text-xs font-black">
+                        <span className="text-orange-500 text-[8px] sm:text-xs font-black">
                           ✓
                         </span>
                       )}
                     </div>
-                    <span className="text-white/60 text-[10px] font-medium">
+                    <span className="text-white/60 text-[8px] sm:text-[10px] font-medium">
                       {d.label}
                     </span>
                   </div>
@@ -1413,15 +1420,15 @@ function StreakHero({
 
             {/* XP progress bar */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">
+              <div className="flex items-center justify-between mb-1 sm:mb-1.5">
+                <p className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-widest">
                   XP to {nextMilestone}-Day Badge
                 </p>
-                <p className="text-white text-xs font-bold">
+                <p className="text-white text-[10px] sm:text-xs font-bold">
                   {xp} / {nextMilestone * 10} XP
                 </p>
               </div>
-              <div className="h-2.5 rounded-full bg-white/20 overflow-hidden">
+              <div className="h-2 sm:h-2.5 rounded-full bg-white/20 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-white transition-all duration-700 ease-out"
                   style={{ width: `${xpProgress}%` }}
@@ -1433,7 +1440,7 @@ function StreakHero({
           {/* Today's status badge */}
           <div className="flex-shrink-0 self-start sm:self-center">
             <div
-              className={`px-4 py-2 rounded-xl font-bold text-sm transition-all duration-500 ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-500 whitespace-nowrap ${
                 studiedToday
                   ? "bg-white text-orange-600"
                   : "bg-white/20 border border-white/30 text-white"
@@ -1441,7 +1448,7 @@ function StreakHero({
             >
               {studiedToday ? "✅ Done today!" : "⏳ Not yet today"}
             </div>
-            <p className="text-white/60 text-xs text-center mt-1.5 font-medium">
+            <p className="text-white/60 text-[10px] sm:text-xs text-center mt-1 sm:mt-1.5 font-medium">
               Score: {streakData?.studyScore ?? stats?.studyScore ?? 0} pts
             </p>
           </div>
@@ -1469,16 +1476,16 @@ function MissionsTile({
   const allDone = missions.length > 0 && completedCount === missions.length;
 
   return (
-    <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-4">
+    <div className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between mb-3 sm:mb-5">
         <div className="flex items-center gap-2">
           <Target className="w-5 h-5 text-orange-500" />
-          <h2 className="font-bold text-lg text-slate-900 dark:text-slate-100">
-            Today&apos;s Missions
+          <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
+            Today's Missions
           </h2>
           {allDone && (
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">
+            <span className="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 flex-shrink-0">
               All done! 🎉
             </span>
           )}
@@ -1495,14 +1502,14 @@ function MissionsTile({
 
       {/* XP progress bar */}
       {missions.length > 0 && (
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           <div className="h-1.5 rounded-full bg-slate-100 dark:bg-dark-700 overflow-hidden">
             <div
               className="h-full rounded-full bg-gradient-to-r from-orange-400 to-rose-500 transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
             {completedCount === 0
               ? "Complete missions to build your streak 🔥"
               : allDone
@@ -1514,19 +1521,19 @@ function MissionsTile({
 
       {/* Mission list */}
       {missions.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+        <div className="text-center py-6 sm:py-8">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             No missions yet — your Study Planner will generate them.
           </p>
           <Link
             href="/dashboard/study-planner"
-            className="inline-block mt-3 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"
+            className="inline-block mt-2 sm:mt-3 text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"
           >
             Generate my plan →
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {missions.map((mission, i) => (
             <MissionCard
               key={mission._id}
@@ -1555,8 +1562,8 @@ function ProgressRing({
   const circ = 2 * Math.PI * r;
   const offset = circ - (progress / 100) * circ;
   return (
-    <div className="relative w-12 h-12 flex-shrink-0">
-      <svg className="w-12 h-12 -rotate-90" viewBox="0 0 44 44">
+    <div className="relative w-10 sm:w-12 h-10 sm:h-12 flex-shrink-0">
+      <svg className="w-10 sm:w-12 h-10 sm:h-12 -rotate-90" viewBox="0 0 44 44">
         <circle
           cx="22"
           cy="22"
@@ -1585,7 +1592,7 @@ function ProgressRing({
           </linearGradient>
         </defs>
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-700 dark:text-slate-300">
+      <span className="absolute inset-0 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-700 dark:text-slate-300">
         {label}
       </span>
     </div>
@@ -1616,7 +1623,7 @@ function MissionCard({
 
   return (
     <div
-      className={`group relative flex items-center gap-3 p-4 rounded-xl transition-all duration-300 cursor-pointer border
+      className={`group relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl transition-all duration-300 cursor-pointer border
         animate-slide-right ${staggerCls}
         ${
           done
@@ -1628,54 +1635,58 @@ function MissionCard({
       onClick={() => !done && !isCompleting && onComplete(mission._id)}
     >
       {/* Check button */}
-      <div className="flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
-        {done ? (
-          <CheckCircle2 className="w-5 h-5 text-green-500" />
-        ) : isCompleting ? (
-          <div className="w-5 h-5 rounded-full border-2 border-orange-400 border-t-transparent animate-spin" />
-        ) : (
-          <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-orange-400 transition-colors" />
-        )}
-      </div>
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <div className="flex-shrink-0 transition-transform duration-200 group-hover:scale-110">
+          {done ? (
+            <CheckCircle2 className="w-5 h-5 text-green-500" />
+          ) : isCompleting ? (
+            <div className="w-5 h-5 rounded-full border-2 border-orange-400 border-t-transparent animate-spin" />
+          ) : (
+            <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600 group-hover:text-orange-400 transition-colors" />
+          )}
+        </div>
 
-      {/* Text */}
-      <div className="flex-1 min-w-0">
-        <p
-          className={`text-sm font-semibold truncate ${
-            done
-              ? "line-through text-slate-400 dark:text-slate-500"
-              : "text-slate-800 dark:text-slate-200"
-          }`}
-        >
-          {mission.title}
-        </p>
-        <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-xs text-slate-500 dark:text-slate-400">
-            {mission.subject}
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <p
+            className={`text-xs sm:text-sm font-semibold truncate ${
+              done
+                ? "line-through text-slate-400 dark:text-slate-500"
+                : "text-slate-800 dark:text-slate-200"
+            }`}
+          >
+            {mission.title}
+          </p>
+          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+            <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
+              {mission.subject}
+            </span>
+            <span className="text-slate-300 dark:text-slate-600 text-[10px] sm:text-xs">
+              ·
+            </span>
+            <Clock className="w-3 h-3 text-slate-400 flex-shrink-0" />
+            <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
+              {mission.estimatedMinutes} min
+            </span>
+          </div>
+        </div>
+
+        {/* XP badge + Priority */}
+        <div className="flex gap-1.5 flex-shrink-0 sm:ml-auto">
+          {/* XP badge */}
+          <span className="flex items-center gap-0.5 px-1.5 sm:px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 text-[10px] sm:text-xs font-bold whitespace-nowrap">
+            <Star className="w-3 h-3" />+{mission.scoreReward || 10}
           </span>
-          <span className="text-slate-300 dark:text-slate-600 text-xs">·</span>
-          <Clock className="w-3 h-3 text-slate-400" />
-          <span className="text-xs text-slate-500 dark:text-slate-400">
-            {mission.estimatedMinutes} min
+          {/* Priority */}
+          <span
+            className={`text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap ${
+              priorityColors[mission.priority] ||
+              "text-slate-500 bg-slate-100 dark:bg-dark-700"
+            }`}
+          >
+            {mission.priority}
           </span>
         </div>
-      </div>
-
-      {/* XP badge + Priority */}
-      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-        {/* XP badge */}
-        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 text-xs font-bold">
-          <Star className="w-3 h-3" />+{mission.scoreReward || 10}
-        </span>
-        {/* Priority */}
-        <span
-          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-            priorityColors[mission.priority] ||
-            "text-slate-500 bg-slate-100 dark:bg-dark-700"
-          }`}
-        >
-          {mission.priority}
-        </span>
       </div>
     </div>
   );
