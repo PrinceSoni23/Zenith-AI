@@ -11,30 +11,49 @@ function PageTransitionLoaderContent() {
   const { isLoading, hideLoader } = useLoading();
   const previousPathRef = useRef<string>("");
   const loaderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initialTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle route changes - hide loader when page is ready
   useEffect(() => {
     const currentPath = pathname + searchParams.toString();
 
-    // Clear any existing timeout
+    // Always clean up previous timeouts
     if (loaderTimeoutRef.current) {
       clearTimeout(loaderTimeoutRef.current);
       loaderTimeoutRef.current = null;
     }
+    if (initialTimeoutRef.current) {
+      clearTimeout(initialTimeoutRef.current);
+      initialTimeoutRef.current = null;
+    }
 
-    // Only hide loader if route actually changed
-    if (previousPathRef.current && previousPathRef.current !== currentPath) {
-      // Route changed, hide loader after smooth delay
-      loaderTimeoutRef.current = setTimeout(() => {
+    if (!isLoading) {
+      previousPathRef.current = currentPath;
+      return;
+    }
+
+    // Loader is on
+    if (!previousPathRef.current) {
+      // Haven't set previousPath yet - first effect run (loader just turned on)
+      previousPathRef.current = currentPath;
+      // Set initial timeout for same-link clicks
+      initialTimeoutRef.current = setTimeout(() => {
         hideLoader();
-        loaderTimeoutRef.current = null;
-      }, 300);
-    } else if (isLoading && previousPathRef.current) {
-      // Same route clicked - hide loader after timeout to prevent infinite loader
-      loaderTimeoutRef.current = setTimeout(() => {
-        hideLoader();
-        loaderTimeoutRef.current = null;
+        initialTimeoutRef.current = null;
       }, 1500);
+      return;
+    }
+
+    // Check if route changed
+    if (previousPathRef.current !== currentPath) {
+      // Route changed! Clear the initial timeout and set shorter one for navigation
+      if (initialTimeoutRef.current) {
+        clearTimeout(initialTimeoutRef.current);
+        initialTimeoutRef.current = null;
+      }
+      loaderTimeoutRef.current = setTimeout(() => {
+        hideLoader();
+      }, 300);
     }
 
     previousPathRef.current = currentPath;
@@ -42,6 +61,9 @@ function PageTransitionLoaderContent() {
     return () => {
       if (loaderTimeoutRef.current) {
         clearTimeout(loaderTimeoutRef.current);
+      }
+      if (initialTimeoutRef.current) {
+        clearTimeout(initialTimeoutRef.current);
       }
     };
   }, [pathname, searchParams, hideLoader, isLoading]);

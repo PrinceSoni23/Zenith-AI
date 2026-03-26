@@ -6,6 +6,7 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   HelpCircle,
   Loader2,
@@ -38,38 +39,29 @@ interface QGenResult {
 
 type DifficultyTab = "easy" | "medium" | "hard" | "thinking";
 
-const TAB_CONFIG = [
-  {
-    key: "easy" as DifficultyTab,
-    label: "Easy",
-    Icon: Lightbulb,
-    active:
-      "bg-green-100 dark:bg-green-500/20 border-green-300 dark:border-green-500/40 text-green-700 dark:text-green-400",
-  },
-  {
-    key: "medium" as DifficultyTab,
-    label: "Medium",
-    Icon: Zap,
-    active:
-      "bg-yellow-100 dark:bg-yellow-500/20 border-yellow-300 dark:border-yellow-500/40 text-yellow-700 dark:text-yellow-400",
-  },
-  {
-    key: "hard" as DifficultyTab,
-    label: "Hard",
-    Icon: Flame,
-    active:
-      "bg-red-100 dark:bg-red-500/20 border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400",
-  },
-  {
-    key: "thinking" as DifficultyTab,
-    label: "Thinking",
-    Icon: Brain,
-    active:
-      "bg-purple-100 dark:bg-purple-500/20 border-purple-300 dark:border-purple-500/40 text-purple-700 dark:text-purple-400",
-  },
-];
+const DIFFICULTY_KEYS = {
+  easy: "question_generator.easy",
+  medium: "question_generator.medium",
+  hard: "question_generator.hard",
+  thinking: "question_generator.thinking",
+} as const;
+
+const DIFFICULTY_ICONS = {
+  easy: Lightbulb,
+  medium: Zap,
+  hard: Flame,
+  thinking: Brain,
+} as const;
+
+const DIFFICULTY_COLORS = {
+  easy: "bg-green-100 dark:bg-green-500/20 border-green-300 dark:border-green-500/40 text-green-700 dark:text-green-400",
+  medium: "bg-yellow-100 dark:bg-yellow-500/20 border-yellow-300 dark:border-yellow-500/40 text-yellow-700 dark:text-yellow-400",
+  hard: "bg-red-100 dark:bg-red-500/20 border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400",
+  thinking: "bg-purple-100 dark:bg-purple-500/20 border-purple-300 dark:border-purple-500/40 text-purple-700 dark:text-purple-400",
+} as const;
 
 export default function QuestionGeneratorPage() {
+  const { t, language } = useTranslation();
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [count, setCount] = useState("3");
@@ -80,16 +72,45 @@ export default function QuestionGeneratorPage() {
     new Set(),
   );
 
+  // Build TAB_CONFIG with translations
+  const TAB_CONFIG = [
+    {
+      key: "easy" as DifficultyTab,
+      label: t(DIFFICULTY_KEYS.easy),
+      Icon: DIFFICULTY_ICONS.easy,
+      active: DIFFICULTY_COLORS.easy,
+    },
+    {
+      key: "medium" as DifficultyTab,
+      label: t(DIFFICULTY_KEYS.medium),
+      Icon: DIFFICULTY_ICONS.medium,
+      active: DIFFICULTY_COLORS.medium,
+    },
+    {
+      key: "hard" as DifficultyTab,
+      label: t(DIFFICULTY_KEYS.hard),
+      Icon: DIFFICULTY_ICONS.hard,
+      active: DIFFICULTY_COLORS.hard,
+    },
+    {
+      key: "thinking" as DifficultyTab,
+      label: t(DIFFICULTY_KEYS.thinking),
+      Icon: DIFFICULTY_ICONS.thinking,
+      active: DIFFICULTY_COLORS.thinking,
+    },
+  ];
+
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !topic.trim()) {
-      toast.error("Please fill in both subject and topic");
+      toast.error(t("common.fill_fields"));
       return;
     }
     setLoading(true);
     setRevealedAnswers(new Set());
     try {
       const res = await agentApi.dispatch("question-generator", {
+        preferredLanguage: language,
         content: `Generate questions on ${topic}`,
         subject,
         topic,
@@ -97,9 +118,9 @@ export default function QuestionGeneratorPage() {
       });
       setResult(res.data.data);
       setActiveTab("easy");
-      toast.success(`${res.data.data.totalQuestions} questions generated!`);
+      toast.success(t("question_generator.generated", {count: res.data.data.totalQuestions}));
     } catch {
-      toast.error("Failed to generate questions. Please try again.");
+      toast.error(t("question_generator.error"));
     } finally {
       setLoading(false);
     }
@@ -126,49 +147,49 @@ export default function QuestionGeneratorPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                Question Generator
+                {t("question_generator.title")}
               </h1>
               <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                Generate practice questions at all difficulty levels
+                {t("question_generator.subtitle")}
               </p>
             </div>
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
             <h2 className="text-base font-bold mb-4 text-slate-900 dark:text-slate-100">
-              Generate questions for any topic
+              {t("question_generator.for_any_topic")}
             </h2>
             <form onSubmit={handleGenerate} className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Subject
+                    {t("question_generator.subject")}
                   </label>
                   <input
                     type="text"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
-                    placeholder="e.g., Physics"
+                    placeholder={t("question_generator.subject_placeholder")}
                     className="input-field"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Topic
+                    {t("question_generator.topic")}
                   </label>
                   <input
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
-                    placeholder="e.g., Newton's Laws"
+                    placeholder={t("question_generator.topic_placeholder")}
                     className="input-field"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Per Level
+                    {t("question_generator.per_level")}
                   </label>
                   <select
                     value={count}
@@ -190,12 +211,11 @@ export default function QuestionGeneratorPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Generating
-                    questions…
+                    <Loader2 className="w-4 h-4 animate-spin" /> {t("question_generator.generating")}
                   </>
                 ) : (
                   <>
-                    <HelpCircle className="w-4 h-4" /> Generate Questions
+                    <HelpCircle className="w-4 h-4" /> {t("question_generator.generate")}
                   </>
                 )}
               </button>
@@ -207,7 +227,7 @@ export default function QuestionGeneratorPage() {
               {result.topicCoverage && result.topicCoverage.length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                    Coverage:
+                    {t("question_generator.coverage_label")}
                   </span>
                   {result.topicCoverage.map((t, i) => (
                     <span
@@ -218,7 +238,7 @@ export default function QuestionGeneratorPage() {
                     </span>
                   ))}
                   <span className="ml-auto text-sm font-medium text-slate-500 dark:text-slate-400">
-                    {result.totalQuestions} total
+                    {result.totalQuestions} {t("question_generator.total")}
                   </span>
                 </div>
               )}
@@ -284,11 +304,11 @@ export default function QuestionGeneratorPage() {
                         >
                           {revealed ? (
                             <>
-                              <ChevronUp className="w-4 h-4" /> Hide Answer
+                              <ChevronUp className="w-4 h-4" /> {t("question_generator.hide")}
                             </>
                           ) : (
                             <>
-                              <ChevronDown className="w-4 h-4" /> Show Answer
+                              <ChevronDown className="w-4 h-4" /> {t("question_generator.reveal")}
                             </>
                           )}
                         </button>
@@ -310,7 +330,7 @@ export default function QuestionGeneratorPage() {
                 </div>
               ) : (
                 <div className="rounded-2xl p-10 text-center text-sm bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-500 dark:text-slate-400">
-                  No questions generated for this level
+                  {t("question_generator.no_questions")}
                 </div>
               )}
             </div>

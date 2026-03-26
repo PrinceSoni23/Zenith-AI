@@ -346,10 +346,11 @@ function PieTooltip({
   payload,
 }: {
   active?: boolean;
-  payload?: { name: string; value: number; payload: { color: string } }[];
+  payload?: { name: string; value: number; payload?: { color: string } }[];
 }) {
   if (active && payload && payload.length) {
     const d = payload[0];
+    if (!d?.payload?.color) return null;
     return (
       <div
         className="shadow-2xl rounded-2xl overflow-hidden"

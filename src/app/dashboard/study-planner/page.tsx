@@ -6,6 +6,7 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   Calendar,
   Loader2,
@@ -41,6 +42,7 @@ const taskTypeIcons: Record<string, string> = {
 };
 
 export default function StudyPlannerPage() {
+  const { t } = useTranslation();
   const [result, setResult] = useState<PlanResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
@@ -50,9 +52,9 @@ export default function StudyPlannerPage() {
     try {
       const res = await agentApi.getDailyFlow();
       setResult(res.data.data.tasks as PlanResult);
-      toast.success("Daily plan generated!");
+      toast.success(t("study_planner.generated"));
     } catch {
-      toast.error("Failed to generate plan.");
+      toast.error(t("study_planner.error"));
     } finally {
       setLoading(false);
     }
@@ -85,10 +87,10 @@ export default function StudyPlannerPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                  Study Planner
+                  {t("study_planner.title")}
                 </h1>
                 <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                  Get your personalised daily micro-tasks
+                  {t("study_planner.subtitle")}
                 </p>
               </div>
             </div>
@@ -99,11 +101,11 @@ export default function StudyPlannerPage() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Planning…
+                  <Loader2 className="w-4 h-4 animate-spin" /> {t("study_planner.generating")}
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" /> Generate Plan
+                  <Sparkles className="w-4 h-4" /> {t("study_planner.generate")}
                 </>
               )}
             </button>
@@ -113,18 +115,17 @@ export default function StudyPlannerPage() {
             <div className="rounded-2xl p-16 text-center bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
               <Calendar className="w-12 h-12 mx-auto mb-4 text-primary-500" />
               <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-slate-100">
-                Your daily plan is waiting
+                {t("study_planner.waiting")}
               </h3>
               <p className="text-sm mb-6 text-slate-500 dark:text-slate-400">
-                Click &quot;Generate Plan&quot; to get AI-powered micro-tasks
-                for today
+                {t("study_planner.click_generate")}
               </p>
               <button
                 onClick={generatePlan}
                 disabled={loading}
                 className="btn-primary"
               >
-                Generate My Plan
+                {t("study_planner.generate")}
               </button>
             </div>
           )}
@@ -135,18 +136,18 @@ export default function StudyPlannerPage() {
                 <div className="rounded-2xl p-5 flex items-center justify-between bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20">
                   <div>
                     <p className="text-sm font-medium text-primary-600 dark:text-primary-400">
-                      Total Study Time Today
+                      {t("study_planner.total_time")}
                     </p>
                     <p className="text-3xl font-black text-primary-600 dark:text-primary-400">
-                      {result.totalEstimatedMinutes} min
+                      {result.totalEstimatedMinutes} {t("study_planner.min")}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-primary-500">
-                      {result.todaysTasks?.length || 0} tasks
+                      {result.todaysTasks?.length || 0} {t("study_planner.tasks_label")}
                     </p>
                     <p className="text-sm font-semibold text-primary-600 dark:text-primary-400">
-                      {completedTasks.size} done
+                      {completedTasks.size} {t("study_planner.done")}
                     </p>
                   </div>
                 </div>
@@ -156,7 +157,7 @@ export default function StudyPlannerPage() {
                 <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Progress
+                      {t("study_planner.progress")}
                     </p>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
                       {completedTasks.size}/{result.todaysTasks.length}
@@ -201,7 +202,7 @@ export default function StudyPlannerPage() {
                             </span>
                           </div>
                           <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
-                            {task.subject} · {task.estimatedMinutes} min
+                            {task.subject} · {task.estimatedMinutes} {t("study_planner.min")}
                           </p>
                           {task.description && (
                             <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
@@ -220,7 +221,7 @@ export default function StudyPlannerPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <Target className="w-5 h-5 text-purple-500" />
                     <h3 className="font-bold text-purple-600 dark:text-purple-400">
-                      Weekly Goals
+                      {t("study_planner.weekly_goals")}
                     </h3>
                   </div>
                   <ul className="space-y-2 animate-fade-up">
@@ -240,7 +241,7 @@ export default function StudyPlannerPage() {
               {result.studyTip && (
                 <div className="rounded-2xl p-5 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20">
                   <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                    <span className="font-bold">💡 Tip: </span>
+                    <span className="font-bold">{t("study_planner.study_tip")} </span>
                     {result.studyTip}
                   </p>
                 </div>

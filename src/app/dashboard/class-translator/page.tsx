@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
+import { useTranslation } from "@/hooks/useTranslation";
 import toast from "react-hot-toast";
 import {
   Brain,
@@ -32,6 +33,7 @@ export default function ClassTranslatorPage() {
   const [language, setLanguage] = useState("english");
   const [result, setResult] = useState<TranslatorResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async () => {
     if (!content.trim()) return toast.error("Please describe what was taught");
@@ -74,10 +76,10 @@ export default function ClassTranslatorPage() {
               </div>
               <div>
                 <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
-                  Class Translator
+                  {t("class_translator.title")}
                 </h1>
                 <p className="text-sm mt-1 text-slate-500 dark:text-slate-400">
-                  Turn confusing lessons into fun explanations! 🚀
+                  {t("class_translator.subtitle")}
                 </p>
               </div>
             </div>
@@ -91,11 +93,11 @@ export default function ClassTranslatorPage() {
                   <span className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-xs font-bold">
                     1
                   </span>
-                  What Subject?
+                  {t("class_translator.subject")}?
                 </label>
                 <input
                   className="input-field rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="Math, Science, History..."
+                  placeholder={t("class_translator.subject")}
                   value={subject}
                   onChange={e => setSubject(e.target.value)}
                 />
@@ -123,11 +125,11 @@ export default function ClassTranslatorPage() {
                 <span className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                   2
                 </span>
-                What Was Taught Today?
+                {t("class_translator.content")}?
               </label>
               <textarea
                 className="input-field min-h-[160px] resize-none rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                placeholder="Paste what your teacher taught... You can write in your own words! 📝"
+                placeholder={t("class_translator.content")}
                 value={content}
                 onChange={e => setContent(e.target.value)}
               />
@@ -147,7 +149,7 @@ export default function ClassTranslatorPage() {
                 </>
               ) : (
                 <>
-                  <Zap className="w-5 h-5" /> Make it Super Simple!
+                  <Zap className="w-5 h-5" /> {t("class_translator.explain")}
                 </>
               )}
             </button>
@@ -216,7 +218,7 @@ export default function ClassTranslatorPage() {
                 >
                   <ResultCard
                     icon={<Lightbulb className="w-6 h-6" />}
-                    title="Simple Explanation"
+                    title={t("class_translator.simple_explanation")}
                     content={result.simpleExplanation}
                     gradient="from-blue-500 to-cyan-500"
                     bgGradient="from-blue-50 to-cyan-50 dark:from-blue-500/10 dark:to-cyan-500/10"
@@ -229,7 +231,7 @@ export default function ClassTranslatorPage() {
                 >
                   <ResultCard
                     icon={<Globe className="w-6 h-6" />}
-                    title="Real-Life Example"
+                    title={t("class_translator.real_life_example")}
                     content={result.realLifeExample}
                     gradient="from-green-500 to-emerald-500"
                     bgGradient="from-green-50 to-emerald-50 dark:from-green-500/10 dark:to-emerald-500/10"
@@ -251,7 +253,7 @@ export default function ClassTranslatorPage() {
                           <span className="text-xl">🔑</span>
                         </div>
                         <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
-                          Key Points (The Most Important!)
+                          {t("class_translator.key_points")}
                         </h3>
                       </div>
 

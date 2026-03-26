@@ -48,8 +48,33 @@ export const dashboardApi = {
 
 // ── AI Agents ───────────────────────────────────────────────────────────────
 export const agentApi = {
-  dispatch: (agentType: string, payload: object) =>
-    api.post("/agents/dispatch", { agentType, ...payload }),
+  dispatch: (agentType: string, payload: object) => {
+    const payloadObj = payload as any;
+    const dashboardLanguage =
+      (typeof window !== "undefined"
+        ? localStorage.getItem("studentLanguage")
+        : null) || "english";
+
+    // Always include preferredLanguage (for agents that don't have page-level override)
+    // If page has language parameter, it will override preferredLanguage in backend
+    const requestBody: any = {
+      agentType,
+      preferredLanguage: dashboardLanguage,
+      ...payloadObj,
+    };
+
+    console.log(
+      "[agentApi.dispatch] Dashboard language (preferredLanguage):",
+      dashboardLanguage,
+    );
+    console.log(
+      "[agentApi.dispatch] Page-level language override:",
+      payloadObj?.language,
+    );
+    console.log("[agentApi.dispatch] Final request body:", requestBody);
+
+    return api.post("/agents/dispatch", requestBody);
+  },
   getDailyFlow: () => api.get("/agents/daily-flow"),
 };
 
@@ -95,16 +120,36 @@ export const parentApi = {
 
 // ── Mentor ──────────────────────────────────────────────────────────────────
 export const mentorApi = {
-  getMessage: () => api.get("/mentor/message"),
-  chat: (messages: Array<{ role: "user" | "assistant"; content: string }>) =>
-    fetch(`${API_URL}/mentor/chat`, {
+  getMessage: (preferredLanguage?: string) => {
+    const language =
+      preferredLanguage ||
+      (typeof window !== "undefined"
+        ? localStorage.getItem("studentLanguage")
+        : null) ||
+      "english";
+    return api.get("/mentor/message", {
+      params: { preferredLanguage: language },
+    });
+  },
+  chat: (
+    messages: Array<{ role: "user" | "assistant"; content: string }>,
+    preferredLanguage?: string,
+  ) => {
+    const language =
+      preferredLanguage ||
+      (typeof window !== "undefined"
+        ? localStorage.getItem("studentLanguage")
+        : null) ||
+      "english";
+    return fetch(`${API_URL}/mentor/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${typeof window !== "undefined" ? localStorage.getItem("token") || "" : ""}`,
       },
-      body: JSON.stringify({ messages }),
-    }),
+      body: JSON.stringify({ messages, preferredLanguage: language }),
+    });
+  },
 };
 
 // ── Profile ──────────────────────────────────────────────────────────────────

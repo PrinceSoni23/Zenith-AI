@@ -7,6 +7,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi, studyLogApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   RotateCcw,
   Brain,
@@ -105,6 +106,7 @@ function writeCache(key: string, data: RevisionResult) {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FlipCard({ card, index }: { card: FlashCard; index: number }) {
+  const { t } = useTranslation();
   const [flipped, setFlipped] = useState(false);
   const colors = [
     {
@@ -141,7 +143,7 @@ function FlipCard({ card, index }: { card: FlashCard; index: number }) {
             <BookOpen className="w-4 h-4 text-slate-400" />
           </div>
           <p className="text-xs uppercase tracking-widest font-bold mb-2 text-slate-400 dark:text-slate-500">
-            Tap to reveal
+            {t("revision.tap_to_reveal")}
           </p>
           <p className="font-semibold text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
             {card.front}
@@ -229,6 +231,7 @@ function TopicCard({
   loadingTopic: string | null;
   isCached: boolean;
 }) {
+  const { t } = useTranslation();
   const isLoading = loadingTopic === `${group.subject}-${group.topic}`;
   const subjectColors: Record<string, string> = {
     maths: "from-blue-500 to-indigo-500",
@@ -266,7 +269,7 @@ function TopicCard({
               </span>
               {isCached && (
                 <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                  <CheckCircle2 className="w-3 h-3" /> Cached
+                  <CheckCircle2 className="w-3 h-3" /> {t("revision.cached")}
                 </span>
               )}
             </div>
@@ -276,11 +279,11 @@ function TopicCard({
             <div className="flex flex-wrap items-center gap-3 mt-2">
               <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <Clock className="w-3.5 h-3.5" />
-                {group.totalMinutes} min total
+                {group.totalMinutes} {t("common.time_min")} {t("revision.total")}
               </span>
               <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <BookOpen className="w-3.5 h-3.5" />
-                {group.sessions} session{group.sessions !== 1 ? "s" : ""}
+                {group.sessions} {group.sessions !== 1 ? t("revision.sessions") : t("revision.session")}
               </span>
               <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <Calendar className="w-3.5 h-3.5" />
@@ -338,6 +341,7 @@ function TopicCard({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function RevisionPage() {
+  const { t } = useTranslation();
   const user = useAuthStore(s => s.user);
   const [logs, setLogs] = useState<StudyLogEntry[]>([]);
   const [logsLoading, setLogsLoading] = useState(true);
@@ -358,7 +362,7 @@ export default function RevisionPage() {
       const res = await studyLogApi.getAll({ limit: 500 });
       setLogs(res.data.data as StudyLogEntry[]);
     } catch {
-      toast.error("Could not load your study history.");
+      toast.error(t("revision.load_error"));
     } finally {
       setLogsLoading(false);
     }
@@ -446,7 +450,7 @@ export default function RevisionPage() {
         });
         setSessionKey(k => k + 1);
         setLoadingTopic(null);
-        toast.success("Loaded from your saved revision 📚");
+        toast.success(t("revision.loaded_cached"));
         return;
       }
     }
@@ -460,13 +464,13 @@ export default function RevisionPage() {
       const result = res.data.data as RevisionResult;
       setActiveResult({ result, topic: group.topic, subject: group.subject });
       setSessionKey(k => k + 1);
-      toast.success("Revision session ready! 🎉");
+      toast.success(t("revision.ready"));
       if (cacheKey) {
         writeCache(cacheKey, result);
         setCachedTopics(prev => new Set(prev).add(cacheKey));
       }
     } catch {
-      toast.error("Failed to generate revision. Please try again.");
+      toast.error(t("revision.error"));
     } finally {
       setLoadingTopic(null);
     }

@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import { leaderboardApi } from "@/lib/api";
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   Trophy,
   Flame,
@@ -102,6 +103,7 @@ function initials(name: string) {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LeaderboardPage() {
+  const { t } = useTranslation();
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -116,16 +118,16 @@ export default function LeaderboardPage() {
       setData(res.data.data);
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
-      setError(e?.response?.data?.message || "Failed to load leaderboard");
+      setError(e?.response?.data?.message || t("leaderboard.load_error"));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     load();
-  }, [load]);
+  }, []);
 
   const { days, hours, minutes, seconds } = useCountdown(data?.resetIn ?? 0);
 
@@ -141,7 +143,7 @@ export default function LeaderboardPage() {
               <span className="absolute inset-0 rounded-full animate-ping bg-yellow-400/20" />
             </div>
             <p className="text-slate-400 text-sm tracking-wide">
-              Loading leaderboard…
+              {t("common.loading")}
             </p>
           </div>
         </main>
@@ -158,14 +160,14 @@ export default function LeaderboardPage() {
           <div className="text-center space-y-4 px-6">
             <Trophy className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto" />
             <p className="text-slate-700 dark:text-slate-300 font-semibold">
-              Couldn&apos;t load leaderboard
+              {t("leaderboard.load_error")}
             </p>
             <p className="text-slate-500 text-sm">{error}</p>
             <button
               onClick={() => load()}
               className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
             >
-              Try again
+              {t("common.try_again")}
             </button>
           </div>
         </main>
@@ -188,11 +190,11 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-2 mb-1">
                 <Crown className="w-4 h-4 text-yellow-500" />
                 <span className="text-xs font-semibold uppercase tracking-widest text-yellow-600 dark:text-yellow-400/80">
-                  Weekly Rankings
+                  {t("leaderboard.weekly")}
                 </span>
               </div>
               <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                Leaderboard
+                {t("leaderboard.title")}
               </h1>
               <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5" />
@@ -218,13 +220,13 @@ export default function LeaderboardPage() {
           {data.myEntry && (
             <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-600/10 p-4 animate-fade-up stagger-2">
               <p className="text-xs uppercase tracking-widest text-indigo-500 dark:text-indigo-400 mb-3 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5" /> Your Standing This Week
+                <Zap className="w-3.5 h-3.5" /> {t("leaderboard.standings")}
               </p>
               <div className="flex items-center gap-4">
                 {/* Big rank */}
                 <div className="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 shrink-0 shadow-lg shadow-indigo-500/20">
                   <span className="text-xs text-indigo-200 font-semibold leading-none">
-                    Rank
+                    {t("leaderboard.rank")}
                   </span>
                   <span className="text-2xl font-black text-white leading-tight">
                     #{data.myRank}
@@ -235,7 +237,7 @@ export default function LeaderboardPage() {
                 <div className="flex-1 grid grid-cols-2 gap-2">
                   <div className="rounded-xl bg-white dark:bg-white/5 border border-indigo-100 dark:border-indigo-500/20 px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      XP this week
+                      {t("leaderboard.xp_week")}
                     </p>
                     <p className="text-base font-black text-indigo-600 dark:text-indigo-300">
                       {data.myEntry.weeklyScore}
@@ -243,7 +245,7 @@ export default function LeaderboardPage() {
                   </div>
                   <div className="rounded-xl bg-white dark:bg-white/5 border border-indigo-100 dark:border-indigo-500/20 px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                      Streak
+                      {t("leaderboard.streak")}
                     </p>
                     <p className="text-base font-black text-orange-500 dark:text-orange-400 flex items-center gap-1">
                       <Flame className="w-4 h-4" />
@@ -264,7 +266,7 @@ export default function LeaderboardPage() {
                     <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
                       {gap > 0 ? (
                         <>
-                          You&apos;re{" "}
+                          {t("leaderboard.behind")}{" "}
                           <span className="text-indigo-600 dark:text-indigo-300 font-bold">
                             {gap} XP
                           </span>{" "}
@@ -272,12 +274,11 @@ export default function LeaderboardPage() {
                           <span className="font-semibold text-slate-700 dark:text-slate-200">
                             {above.name.split(" ")[0]}
                           </span>{" "}
-                          (#{above.rank}) — keep going! 🔥
+                          (#{above.rank}) — {t("leaderboard.keep_going")} 🔥
                         </>
                       ) : (
                         <>
-                          You&apos;re tied with the person above you — push
-                          harder! 💪
+                          {t("leaderboard.tied")} — {t("leaderboard.push_harder")} 💪
                         </>
                       )}
                     </p>
@@ -290,14 +291,14 @@ export default function LeaderboardPage() {
           <div className="rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-white/[0.03] p-4 animate-fade-up stagger-2">
             <div className="flex items-center gap-2 mb-3 text-slate-400 dark:text-slate-500 text-xs uppercase tracking-widest">
               <Clock className="w-3.5 h-3.5" />
-              Resets on Monday
+              {t("leaderboard.info")}
             </div>
             <div className="grid grid-cols-4 gap-2">
               {[
-                { val: days, label: "Days" },
-                { val: hours, label: "Hours" },
-                { val: minutes, label: "Mins" },
-                { val: seconds, label: "Secs" },
+                { val: days, label: t("common.days") },
+                { val: hours, label: t("common.hours") },
+                { val: minutes, label: t("common.mins") },
+                { val: seconds, label: t("common.secs") },
               ].map(({ val, label }) => (
                 <div
                   key={label}
@@ -318,7 +319,7 @@ export default function LeaderboardPage() {
           {podium.length > 0 && (
             <div className="rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] p-5 animate-fade-up stagger-3">
               <p className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-6 text-center">
-                🏆 This Week&apos;s Top 3
+                🏆 {t("leaderboard.top3")}
               </p>
               <div className="flex items-end justify-center gap-4">
                 {podium.map(entry => {
@@ -354,7 +355,7 @@ export default function LeaderboardPage() {
                         <p
                           className={`text-xs font-bold truncate max-w-[72px] ${entry.isMe ? "text-indigo-500 dark:text-indigo-300" : "text-slate-700 dark:text-slate-200"}`}
                         >
-                          {entry.isMe ? "You" : entry.name.split(" ")[0]}
+                          {entry.isMe ? t("common.you") : entry.name.split(" ")[0]}
                         </p>
                         <p className={`text-sm font-black ${cfg.text}`}>
                           {entry.weeklyScore}
@@ -399,7 +400,7 @@ export default function LeaderboardPage() {
           {rest.length > 0 && (
             <div className="space-y-1.5 animate-fade-up stagger-4">
               <p className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1 mb-3">
-                Rankings
+                {t("leaderboard.rankings")}
               </p>
               {rest.map((entry, idx) => {
                 // Show a "···" gap separator when jumping to user's row and they're not adjacent
@@ -492,17 +493,17 @@ export default function LeaderboardPage() {
               </div>
               <div>
                 <p className="text-slate-700 dark:text-slate-300 font-semibold">
-                  No activity yet
+                  {t("leaderboard.empty")}
                 </p>
                 <p className="text-slate-500 text-sm mt-1">
-                  Complete daily missions to earn XP and climb the board!
+                  {t("leaderboard.empty_desc")}
                 </p>
               </div>
               <Link
                 href="/dashboard"
                 className="mt-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors"
               >
-                Go to Missions →
+                {t("leaderboard.go_missions")}
               </Link>
             </div>
           )}
@@ -511,25 +512,25 @@ export default function LeaderboardPage() {
           <div className="rounded-2xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-white/[0.02] p-4">
             <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-yellow-500" />
-              Badges awarded on Monday reset
+              {t("leaderboard.badges_info")}
             </p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 {
                   emoji: "🥇",
-                  label: "Weekly Champion",
+                  label: t("leaderboard.champion"),
                   color:
                     "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-500/10 border-yellow-200 dark:border-yellow-500/20",
                 },
                 {
                   emoji: "🥈",
-                  label: "Runner-up",
+                  label: t("leaderboard.runner_up"),
                   color:
                     "text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-500/10 border-slate-200 dark:border-slate-500/20",
                 },
                 {
                   emoji: "🥉",
-                  label: "Third Place",
+                  label: t("leaderboard.third_place"),
                   color:
                     "text-amber-700 dark:text-amber-500 bg-amber-50 dark:bg-amber-700/10 border-amber-200 dark:border-amber-700/20",
                 },
@@ -555,7 +556,7 @@ export default function LeaderboardPage() {
           <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/95 dark:bg-indigo-950/95 border border-indigo-200 dark:border-indigo-500/50 backdrop-blur-md shadow-xl shadow-indigo-100/50 dark:shadow-indigo-900/40">
             <div className="flex flex-col items-center w-8 shrink-0">
               <span className="text-[10px] text-indigo-400 dark:text-indigo-500 font-semibold leading-none">
-                YOU
+                {t("leaderboard.you")}
               </span>
               <span className="text-sm font-black text-indigo-600 dark:text-indigo-300">
                 #{data.myRank}
@@ -576,7 +577,7 @@ export default function LeaderboardPage() {
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">
                     {gap > 0
                       ? `${gap} XP behind ${above.name.split(" ")[0]} (#${above.rank})`
-                      : "Tied with rank above!"}
+                      : t("leaderboard.tied_above")}
                   </p>
                 );
               })()}

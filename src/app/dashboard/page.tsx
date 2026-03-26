@@ -16,6 +16,7 @@ import {
   useLeaderboard,
 } from "@/hooks/useDashboard";
 import { useAuthStore } from "@/store/authStore";
+import { useTranslation } from "@/hooks/useTranslation";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
 import {
@@ -146,6 +147,7 @@ function PowerHourInline({
   powerHourEnds: string;
   onDismiss: () => void;
 }) {
+  const { t } = useTranslation();
   const endsAt = new Date(powerHourEnds);
   const { mins, secs, msLeft } = useCountdown(endsAt);
   if (msLeft === 0) return null;
@@ -165,13 +167,13 @@ function PowerHourInline({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5 flex-wrap">
-              ⚡ Power Hour Active!
+              {t("dashboard.power_hour_active")}
               <span className="font-semibold text-yellow-600 dark:text-yellow-400 text-[10px] sm:text-xs bg-yellow-400/15 dark:bg-yellow-400/20 px-1.5 sm:px-2 py-0.5 rounded-full border border-yellow-400/30 flex-shrink-0">
-                2× XP
+                {t("dashboard.double_xp")}
               </span>
             </p>
             <p className="text-[11px] sm:text-xs text-yellow-600/80 dark:text-yellow-400/70 mt-0.5 line-clamp-1">
-              Complete missions for double XP!
+              {t("dashboard.complete_missions")}
             </p>
           </div>
         </div>
@@ -184,7 +186,7 @@ function PowerHourInline({
                 {String(mins).padStart(2, "0")}
               </span>
               <span className="text-[7px] sm:text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
-                min
+                {t("common.time_min")}
               </span>
             </div>
             <span className="text-yellow-500 font-black text-sm sm:text-lg leading-none mb-1 sm:mb-2">
@@ -195,7 +197,7 @@ function PowerHourInline({
                 {String(secs).padStart(2, "0")}
               </span>
               <span className="text-[7px] sm:text-[8px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50">
-                sec
+                {t("common.time_sec")}
               </span>
             </div>
           </div>
@@ -230,6 +232,7 @@ function PowerHourScheduleCard({
   powerHourSetThisMonth?: boolean;
   onLocked: (time: string) => void;
 }) {
+  const { t } = useTranslation();
   const [hour, setHour] = useState(20);
   const [minute, setMinute] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -283,14 +286,14 @@ function PowerHourScheduleCard({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-1.5 flex-wrap">
-              ⚡ Power Hour — Locked In
+              {t("dashboard.power_hour_locked_in")}
             </p>
             <p className="text-[11px] sm:text-xs text-yellow-600/70 dark:text-yellow-400/60 mt-0.5 line-clamp-2">
-              Fires every day at{" "}
+              {t("dashboard.fires_every_day_at")}{" "}
               <span className="font-bold font-mono text-yellow-700 dark:text-yellow-300">
                 {fmtTime(powerHourTime)}
               </span>{" "}
-              for 60 minutes
+              {t("dashboard.for_60_minutes")}
             </p>
           </div>
         </div>
@@ -299,7 +302,7 @@ function PowerHourScheduleCard({
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap mb-3 opacity-50 pointer-events-none select-none">
           <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-[10px] uppercase tracking-wider text-slateate-400 font-semibold">
-              Hour
+              {t("dashboard.hour")}
             </label>
             <select
               disabled
@@ -319,7 +322,7 @@ function PowerHourScheduleCard({
           </div>
           <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-              Minute
+              {t("dashboard.minute")}
             </label>
             <select
               disabled
@@ -342,7 +345,7 @@ function PowerHourScheduleCard({
               className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-400 text-xs sm:text-sm font-black cursor-not-allowed whitespace-nowrap w-full sm:w-auto"
             >
               <Lock className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-              <span>Locked</span>
+              <span>{t("dashboard.locked")}</span>
             </button>
           </div>
         </div>
@@ -351,9 +354,10 @@ function PowerHourScheduleCard({
         <div className="flex items-start gap-2 rounded-xl bg-yellow-400/10 dark:bg-yellow-500/10 border border-yellow-400/20 px-2.5 sm:px-3 py-1.5 sm:py-2">
           <Lock className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
           <p className="text-[11px] sm:text-xs text-yellow-700 dark:text-yellow-400 leading-snug">
-            Cannot change until{" "}
-            <span className="font-bold">{resetDateLabel}</span>. {daysLeft} day
-            {daysLeft !== 1 ? "s" : ""} of 2× XP left!
+            {t("dashboard.cannot_change_power_hour", {
+              date: resetDateLabel,
+              days: daysLeft,
+            })}
           </p>
         </div>
       </div>
@@ -369,14 +373,14 @@ function PowerHourScheduleCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100">
-            Set Your Power Hour
+            {t("dashboard.set_power_hour")}
           </p>
           <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug mt-0.5 line-clamp-2">
-            Pick a time — every day this month you get{" "}
+            {t("dashboard.power_hour_form_helper")} —{" "}
             <span className="text-yellow-600 dark:text-yellow-400 font-bold">
-              2× XP
+              {t("dashboard.double_xp")}
             </span>
-            . Choose carefully — locked until {resetDateLabel}!
+            . {t("dashboard.lock_in_notice", { date: resetDateLabel })}
           </p>
         </div>
       </div>
@@ -385,7 +389,7 @@ function PowerHourScheduleCard({
         {/* Hour picker */}
         <div className="flex flex-col gap-1 w-full sm:w-auto">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-            Hour
+            {t("dashboard.hour")}
           </label>
           <select
             value={hour}
@@ -407,7 +411,7 @@ function PowerHourScheduleCard({
         {/* Minute picker */}
         <div className="flex flex-col gap-1 w-full sm:w-auto">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-            Minute
+            {t("dashboard.minute")}
           </label>
           <select
             value={minute}
@@ -433,12 +437,12 @@ function PowerHourScheduleCard({
             className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs sm:text-sm font-black shadow shadow-yellow-400/30 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 whitespace-nowrap w-full sm:w-auto"
           >
             <Lock className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-            {saving ? "Saving…" : "Lock In"}
+            {saving ? t("common.saving") : t("dashboard.lock_in")}
           </button>
         </div>
 
         <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 w-full sm:w-auto">
-          {daysLeft} day{daysLeft !== 1 ? "s" : ""} left
+          {t("dashboard.power_hour_days_left", { days: daysLeft })}
         </p>
       </div>
     </div>
@@ -462,27 +466,27 @@ const MILESTONES: Record<
   7: {
     emoji: "🔥",
     particles: ["🔥", "⭐", "✨", "💥", "🌟", "🔥", "⭐", "💫", "🔥", "✨"],
-    badge: "Week Warrior",
-    title: "7-DAY STREAK!",
-    subtitle: "You studied 7 days in a row. Incredible focus!",
+    badge: "milestone.7day_badge",
+    title: "milestone.7day_title",
+    subtitle: "milestone.7day_subtitle",
     colors: ["#f97316", "#ef4444"],
     bg: "from-orange-600/30 via-red-600/20 to-pink-600/20",
   },
   14: {
     emoji: "⚡",
     particles: ["⚡", "💜", "🌙", "✨", "⭐", "⚡", "💫", "🔮", "⚡", "🌟"],
-    badge: "Fortnight Force",
-    title: "14-DAY STREAK!",
-    subtitle: "Two weeks straight. You're building a real habit!",
+    badge: "milestone.14day_badge",
+    title: "milestone.14day_title",
+    subtitle: "milestone.14day_subtitle",
     colors: ["#a855f7", "#6366f1"],
     bg: "from-purple-600/30 via-indigo-600/20 to-violet-600/20",
   },
   30: {
     emoji: "👑",
     particles: ["👑", "🌟", "💛", "✨", "🏆", "👑", "⭐", "💎", "👑", "🌟"],
-    badge: "Monthly Master",
-    title: "30-DAY STREAK!",
-    subtitle: "A full month of learning. You are absolutely legendary.",
+    badge: "milestone.30day_badge",
+    title: "milestone.30day_title",
+    subtitle: "milestone.30day_subtitle",
     colors: ["#eab308", "#f97316"],
     bg: "from-yellow-500/30 via-amber-500/20 to-orange-500/20",
   },
@@ -532,8 +536,18 @@ function MilestoneCelebration({
   streak: number;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const m = MILESTONES[streak];
   if (!m) return null;
+
+  // Milestone-specific translation keys
+  const milestoneData: Record<number, { titleKey: string; subtitleKey: string; badgeKey: string }> = {
+    7: { titleKey: "milestone.7day_title", subtitleKey: "milestone.7day_subtitle", badgeKey: "milestone.7day_badge" },
+    14: { titleKey: "milestone.14day_title", subtitleKey: "milestone.14day_subtitle", badgeKey: "milestone.14day_badge" },
+    30: { titleKey: "milestone.30day_title", subtitleKey: "milestone.30day_subtitle", badgeKey: "milestone.30day_badge" },
+  };
+
+  const mData = milestoneData[streak] || { titleKey: m.title, subtitleKey: m.subtitle, badgeKey: m.badge };
 
   // ── Heavy confetti sequence ──────────────────────────────────────────────
   useEffect(() => {
@@ -700,12 +714,12 @@ function MilestoneCelebration({
 
       {/* ── Floating celebratory words ── */}
       {[
-        "AMAZING!",
-        "YOU DID IT!",
-        "LEGENDARY!",
-        "ON FIRE!",
-        "UNSTOPPABLE!",
-      ].map((word, i) => (
+        "milestone.amazing_word",
+        "milestone.you_did_it_word",
+        "milestone.legendary_word",
+        "milestone.on_fire_word",
+        "milestone.unstoppable_word",
+      ].map((wordKey, i) => (
         <span
           key={i}
           className="absolute font-black text-white/10 select-none pointer-events-none uppercase tracking-widest"
@@ -719,7 +733,7 @@ function MilestoneCelebration({
             opacity: 0.12,
           }}
         >
-          {word}
+          {t(wordKey)}
         </span>
       ))}
 
@@ -789,7 +803,7 @@ function MilestoneCelebration({
                 {streak}
               </p>
               <p className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4">
-                Day Streak
+                {t("milestone.day_streak_label")}
               </p>
 
               {/* Badge pill */}
@@ -800,7 +814,7 @@ function MilestoneCelebration({
                 }}
               >
                 <Star className="w-4 h-4 fill-white" />
-                {m.badge}
+                {t(mData.badgeKey)}
               </div>
 
               {/* Title */}
@@ -808,12 +822,12 @@ function MilestoneCelebration({
                 className="text-2xl font-black mb-2 animate-[fadeIn_0.4s_ease_0.6s_both]"
                 style={{ color: m.colors[0] }}
               >
-                {m.title}
+                {t(mData.titleKey)}
               </h2>
 
               {/* Subtitle */}
               <p className="text-sm text-white/60 leading-relaxed mb-6 animate-[fadeIn_0.4s_ease_0.7s_both]">
-                {m.subtitle}
+                {t(mData.subtitleKey)}
               </p>
 
               {/* CTA */}
@@ -824,12 +838,12 @@ function MilestoneCelebration({
                   background: `linear-gradient(135deg, ${m.colors[0]}, ${m.colors[1]})`,
                 }}
               >
-                Keep it up! 🚀
+                {t("milestone.keep_it_up_cta")}
               </button>
 
               {/* Auto-dismiss hint */}
               <p className="text-white/25 text-xs mt-3 animate-[fadeIn_0.4s_ease_1.2s_both]">
-                Closes automatically in a few seconds
+                {t("milestone.auto_closes_hint")}
               </p>
             </div>
           </div>
@@ -842,6 +856,8 @@ function MilestoneCelebration({
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+  
   // ── React Query hooks (with intelligent caching) ──
   const dashboardQuery = useDashboard();
   const streakQuery = useStreak();
@@ -977,9 +993,9 @@ export default function DashboardPage() {
 
   const greeting = () => {
     const h = new Date().getHours();
-    if (h < 12) return "Good morning";
-    if (h < 17) return "Good afternoon";
-    return "Good evening";
+    if (h < 12) return t("greeting.morning");
+    if (h < 17) return t("greeting.afternoon");
+    return t("greeting.evening");
   };
 
   // Show initial loading state only while dashboard data is loading
@@ -991,7 +1007,7 @@ export default function DashboardPage() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 animate-pulse" />
           <p className="text-sm animate-pulse text-slate-500 dark:text-slate-400">
-            Loading your dashboard…
+            {t("dashboard.loading")}
           </p>
         </div>
       </div>
@@ -1048,11 +1064,11 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-widest text-primary-500 dark:text-primary-400">
-                      AI Mentor
+                      {t("mentor.title")}
                     </p>
                     <h2 className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
                       {mentorMsg.greeting ||
-                        `Hey ${user?.name?.split(" ")[0] || "there"} 👋`}
+                        `${t("greeting.hey")} ${user?.name?.split(" ")[0] || t("dashboard.default_user_name")} 👋`}
                     </h2>
                   </div>
                 </div>
@@ -1077,7 +1093,7 @@ export default function DashboardPage() {
                   onClick={() => setMentorToast(false)}
                   className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary-500 to-purple-600 text-white font-bold text-sm tracking-wide hover:opacity-90 active:scale-[0.98] transition-all duration-150"
                 >
-                  Let&apos;s go! 🚀
+                  {t("mentor.modal_cta")}
                 </button>
               </div>
             </div>
@@ -1093,7 +1109,7 @@ export default function DashboardPage() {
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                 {isHydrated && greeting()},{" "}
                 <span className="gradient-text">
-                  {isHydrated && (user?.name?.split(" ")[0] || "Scholar")}
+                  {isHydrated && (user?.name?.split(" ")[0] || t("dashboard.default_user_name"))}
                 </span>{" "}
                 👋
               </h1>
@@ -1101,12 +1117,12 @@ export default function DashboardPage() {
                 {profile?.classLevel ? `${profile.classLevel} · ` : ""}
                 {profile?.board
                   ? `${profile.board} Board`
-                  : "Set up your profile to get started"}
+                  : t("dashboard.setup_profile_hint")}
               </p>
             </div>
             <div className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 hover-lift border-glow flex-shrink-0">
               <Target className="w-4 h-4 text-primary-500" />
-              <span className="hidden sm:inline">Level Up Mode</span>
+              <span className="hidden sm:inline">{t("dashboard.level_up_mode_badge")}</span>
             </div>
           </div>
 
@@ -1140,7 +1156,7 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2 mb-4 sm:mb-5">
                 <Zap className="w-5 h-5 text-primary-500" />
                 <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
-                  Quick Start
+                  {t("dashboard.quick_start")}
                 </h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3">
@@ -1171,14 +1187,14 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-yellow-400 flex-shrink-0" />
                   <h2 className="font-bold text-sm sm:text-base text-slate-100">
-                    Weekly Leaderboard
+                    {t("leaderboard.weekly")}
                   </h2>
                 </div>
                 <Link
                   href="/dashboard/leaderboard"
                   className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold w-fit"
                 >
-                  Full board <ChevronRight className="w-3.5 h-3.5" />
+                  {t("dashboard.leaderboard_full_board_link")} <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
@@ -1209,15 +1225,11 @@ export default function DashboardPage() {
                   <Flame className="w-4 h-4 text-orange-400 flex-shrink-0" />
                   {lbPreview.rank ? (
                     <span className="whitespace-nowrap">
-                      You&apos;re{" "}
-                      <span className="text-white font-bold">
-                        #{lbPreview.rank}
-                      </span>{" "}
-                      <span className="hidden sm:inline">this week</span>
+                      {t("dashboard.leaderboard_your_rank", { rank: lbPreview.rank })}
                     </span>
                   ) : (
                     <span className="text-slate-500">
-                      Complete missions to rank up!
+                      {t("dashboard.leaderboard_no_rank_hint")}
                     </span>
                   )}
                 </div>
@@ -1225,7 +1237,7 @@ export default function DashboardPage() {
                   href="/dashboard/leaderboard"
                   className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-colors w-fit"
                 >
-                  View all
+                  {t("common.view_all")}
                 </Link>
               </div>
             </div>
@@ -1235,7 +1247,7 @@ export default function DashboardPage() {
           {stats?.badges && stats.badges.length > 0 && (
             <div className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
               <h2 className="font-bold text-base sm:text-lg mb-3 sm:mb-4 text-slate-900 dark:text-slate-100">
-                🏆 Your Badges
+                {t("dashboard.your_badges")}
               </h2>
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {stats.badges.map((badge: string, i: number) => (
@@ -1272,6 +1284,7 @@ function StreakHero({
   streakData: StreakData | null;
   stats: DashboardStats | null;
 }) {
+  const { t } = useTranslation();
   const fireRef = useRef<HTMLSpanElement>(null);
   const streak = streakData?.streakDays ?? stats?.streakDays ?? 0;
   const xp = streakData?.xpToday ?? 0;
@@ -1285,7 +1298,7 @@ function StreakHero({
     const entries = Object.entries(streakData.last7Days).sort(([a], [b]) =>
       a < b ? -1 : 1,
     );
-    const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    const dayLabels = ["su", "mo", "tu", "we", "th", "fr", "sa"].map(day => t(`common.day_abbr_${day}`));
     entries.forEach(([dateStr, active]) => {
       const d = new Date(dateStr + "T12:00:00");
       const isToday = dateStr === todayKey();
@@ -1293,7 +1306,7 @@ function StreakHero({
     });
   } else {
     // Skeleton dots
-    ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach((label, i) =>
+    ["su", "mo", "tu", "we", "th", "fr", "sa"].map(day => t(`common.day_abbr_${day}`)).forEach((label, i) =>
       dotDays.push({ label, active: false, isToday: i === 6 }),
     );
   }
@@ -1331,7 +1344,9 @@ function StreakHero({
                 {/* ── Shield badge ── */}
                 {(streakData?.streakShields ?? 0) > 0 ? (
                   <div
-                    title={`${streakData?.streakShields} Streak Shield${(streakData?.streakShields ?? 0) > 1 ? "s" : ""} — earned at every 7-day milestone. Auto-used if you miss a day.`}
+                    title={t("dashboard.shield_earned_tooltip", { 
+                      count: streakData?.streakShields ?? 0 
+                    })}
                     className="group relative mb-1 sm:mb-1.5 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-white/20 border border-white/30 backdrop-blur-sm cursor-default select-none hover:bg-white/30 transition-colors flex-shrink-0"
                   >
                     <span className="text-xs sm:text-base leading-none">
@@ -1342,17 +1357,18 @@ function StreakHero({
                     </span>
                     {/* tooltip */}
                     <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-2 sm:px-3 py-1.5 sm:py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
-                      🛡️ Streak Shield
-                      {(streakData?.streakShields ?? 0) > 1 ? "s" : ""}
+                      {t("dashboard.streak_shield_singular")}
                       <br />
                       <span className="text-slate-300">
-                        Earned every 7 days. Auto-saves if you miss a day.
+                        {t("dashboard.shield_earned_tooltip", { 
+                          count: streakData?.streakShields ?? 0 
+                        })}
                       </span>
                     </div>
                   </div>
                 ) : (
                   <div
-                    title="No shields yet. Reach a 7-day streak to earn one!"
+                    title={t("dashboard.no_shields_yet_hint")}
                     className="group relative mb-1 sm:mb-1.5 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-white/10 border border-white/15 cursor-default select-none hover:bg-white/15 transition-colors flex-shrink-0"
                   >
                     <span className="text-xs sm:text-base leading-none opacity-40">
@@ -1363,18 +1379,17 @@ function StreakHero({
                     </span>
                     {/* tooltip */}
                     <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 sm:w-52 rounded-xl bg-slate-900 text-white text-xs font-medium px-2 sm:px-3 py-1.5 sm:py-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-xl z-10 text-center leading-snug">
-                      🛡️ Streak Shield
+                      {t("dashboard.streak_shield_singular")}
                       <br />
                       <span className="text-slate-300">
-                        Earn at every 7-day milestone. Auto-saves your streak if
-                        you miss a day.
+                        {t("dashboard.no_shields_yet_hint")}
                       </span>
                     </div>
                   </div>
                 )}
               </div>
               <p className="text-white/80 text-xs sm:text-sm font-semibold mt-0.5 sm:mt-1 tracking-wide uppercase">
-                Day Streak
+                {t("dashboard.day_streak_label")}
               </p>
             </div>
           </div>
@@ -1387,7 +1402,7 @@ function StreakHero({
             {/* 7-day activity dots */}
             <div>
               <p className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-1.5 sm:mb-2">
-                Last 7 Days
+                {t("dashboard.last_7_days")}
               </p>
               <div className="flex gap-1.5 sm:gap-2">
                 {dotDays.map((d, i) => (
@@ -1422,7 +1437,7 @@ function StreakHero({
             <div>
               <div className="flex items-center justify-between mb-1 sm:mb-1.5">
                 <p className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-widest">
-                  XP to {nextMilestone}-Day Badge
+                  {t("dashboard.xp_to")} {nextMilestone}{t("dashboard.day_badge_suffix")}
                 </p>
                 <p className="text-white text-[10px] sm:text-xs font-bold">
                   {xp} / {nextMilestone * 10} XP
@@ -1446,10 +1461,10 @@ function StreakHero({
                   : "bg-white/20 border border-white/30 text-white"
               }`}
             >
-              {studiedToday ? "✅ Done today!" : "⏳ Not yet today"}
+              {studiedToday ? t("dashboard.done_today") : t("dashboard.not_yet")}
             </div>
             <p className="text-white/60 text-[10px] sm:text-xs text-center mt-1 sm:mt-1.5 font-medium">
-              Score: {streakData?.studyScore ?? stats?.studyScore ?? 0} pts
+              {t("dashboard.score_label")} {streakData?.studyScore ?? stats?.studyScore ?? 0} {t("common.points_abbr")}
             </p>
           </div>
         </div>
@@ -1473,6 +1488,7 @@ function MissionsTile({
   completingId: string | null;
   onComplete: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const allDone = missions.length > 0 && completedCount === missions.length;
 
   return (
@@ -1482,11 +1498,11 @@ function MissionsTile({
         <div className="flex items-center gap-2">
           <Target className="w-5 h-5 text-orange-500" />
           <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
-            Today's Missions
+            {t("dashboard.todays_missions")}
           </h2>
           {allDone && (
             <span className="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 flex-shrink-0">
-              All done! 🎉
+              {t("dashboard.all_done")}
             </span>
           )}
         </div>
@@ -1511,10 +1527,13 @@ function MissionsTile({
           </div>
           <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
             {completedCount === 0
-              ? "Complete missions to build your streak 🔥"
+              ? t("dashboard.missions_0_complete_msg")
               : allDone
-                ? "Streak secured for today! 🔥"
-                : `${missions.length - completedCount} mission${missions.length - completedCount !== 1 ? "s" : ""} left`}
+                ? t("dashboard.missions_100_complete_msg")
+                : t("dashboard.missions_partial_complete_msg", { 
+                    remaining: missions.length - completedCount,
+                    plural: missions.length - completedCount !== 1 ? "s" : ""
+                  })}
           </p>
         </div>
       )}
@@ -1523,13 +1542,13 @@ function MissionsTile({
       {missions.length === 0 ? (
         <div className="text-center py-6 sm:py-8">
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            No missions yet — your Study Planner will generate them.
+            {t("dashboard.no_missions_empty_state")}
           </p>
           <Link
             href="/dashboard/study-planner"
             className="inline-block mt-2 sm:mt-3 text-xs sm:text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 transition-colors"
           >
-            Generate my plan →
+            {t("dashboard.generate_plan_link")}
           </Link>
         </div>
       ) : (
@@ -1612,6 +1631,7 @@ function MissionCard({
   isCompleting: boolean;
   onComplete: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const done = mission.isCompleted;
   const priorityColors: Record<string, string> = {
     high: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10",
@@ -1666,7 +1686,7 @@ function MissionCard({
             </span>
             <Clock className="w-3 h-3 text-slate-400 flex-shrink-0" />
             <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400">
-              {mission.estimatedMinutes} min
+              {mission.estimatedMinutes} {t("common.time_min")}
             </span>
           </div>
         </div>

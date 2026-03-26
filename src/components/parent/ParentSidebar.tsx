@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   LayoutDashboard,
   Users,
@@ -22,6 +23,7 @@ export default function ParentSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
@@ -138,6 +140,20 @@ export default function ParentSidebar() {
 
         {/* Footer */}
         <div className="p-3 space-y-2">
+          {/* Language Selector */}
+          <select
+            value={language}
+            onChange={e =>
+              setLanguage(e.target.value as "english" | "hinglish" | "hindi")
+            }
+            className="w-full flex items-center px-4 py-2.5 rounded-lg bg-slate-800/30 text-slate-300 border border-slate-700/30 hover:bg-slate-800/60 transition-all cursor-pointer text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            title="Select language"
+          >
+            <option value="english">🇬🇧 English</option>
+            <option value="hinglish">🇮🇳 Hinglish</option>
+            <option value="hindi">हिंदी (Hindi)</option>
+          </select>
+
           <Link
             href="/"
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/30 transition-all group"

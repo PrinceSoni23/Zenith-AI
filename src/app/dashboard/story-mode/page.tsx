@@ -6,6 +6,7 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   BookOpen,
   Loader2,
@@ -27,6 +28,7 @@ interface StoryResult {
 }
 
 export default function StoryModePage() {
+  const { t } = useTranslation();
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ export default function StoryModePage() {
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !topic.trim()) {
-      toast.error("Please fill in both subject and topic");
+      toast.error(t("common.fill_fields"));
       return;
     }
     setLoading(true);
@@ -46,9 +48,9 @@ export default function StoryModePage() {
         topic,
       });
       setResult(res.data.data);
-      toast.success("Your story is ready!");
+      toast.success(t("story_mode.ready"));
     } catch {
-      toast.error("Failed to generate story. Please try again.");
+      toast.error(t("story_mode.error"));
     } finally {
       setLoading(false);
     }
@@ -65,42 +67,42 @@ export default function StoryModePage() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                Story Mode
+                {t("sidebar.story_mode")}
               </h1>
               <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                Turn any topic into an engaging story that makes concepts stick
+                {t("story_mode.subtitle")}
               </p>
             </div>
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
             <h2 className="text-base font-bold mb-4 text-slate-900 dark:text-slate-100">
-              What do you want to learn through a story?
+              {t("story_mode.what_learn")}
             </h2>
             <form onSubmit={handleGenerate} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Subject
+                    {t("story_mode.subject")}
                   </label>
                   <input
                     type="text"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
-                    placeholder="e.g., Science, History"
+                    placeholder={t("story_mode.subject_example")}
                     className="input-field"
                     required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Topic / Chapter
+                    {t("story_mode.topic")}
                   </label>
                   <input
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
-                    placeholder="e.g., Photosynthesis, World War II"
+                    placeholder={t("story_mode.topic_example")}
                     className="input-field"
                     required
                   />
@@ -113,12 +115,11 @@ export default function StoryModePage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Crafting your
-                    story…
+                    <Loader2 className="w-4 h-4 animate-spin" /> {t("story_mode.generating")}
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" /> Generate Story
+                    <Sparkles className="w-4 h-4" /> {t("story_mode.generate")}
                   </>
                 )}
               </button>
@@ -152,7 +153,7 @@ export default function StoryModePage() {
                   <div className="flex items-center gap-2 mb-4">
                     <Users className="w-5 h-5 text-blue-500" />
                     <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                      Characters
+                      {t("story_mode.characters")}
                     </h3>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -182,7 +183,7 @@ export default function StoryModePage() {
                 <div className="flex items-center gap-2 mb-3">
                   <Star className="w-5 h-5 text-yellow-500" />
                   <h3 className="font-bold text-yellow-600 dark:text-yellow-400">
-                    Moral / Lesson
+                    {t("story_mode.moral")}
                   </h3>
                 </div>
                 <p className="italic leading-relaxed text-sm text-slate-700 dark:text-slate-300">
@@ -196,7 +197,7 @@ export default function StoryModePage() {
                     <div className="flex items-center gap-2 mb-4">
                       <Lightbulb className="w-5 h-5 text-yellow-500" />
                       <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                        Concepts Explained
+                        {t("story_mode.concepts")}
                       </h3>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -218,7 +219,7 @@ export default function StoryModePage() {
                     <div className="flex items-center gap-2 mb-4">
                       <MessageCircle className="w-5 h-5 text-green-500" />
                       <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                        Discussion Questions
+                        {t("story_mode.discussion")}
                       </h3>
                     </div>
                     <div className="space-y-2">
@@ -244,7 +245,7 @@ export default function StoryModePage() {
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles className="w-5 h-5 text-purple-500" />
                     <h3 className="font-bold text-purple-600 dark:text-purple-400">
-                      Fun Fact!
+                      {t("story_mode.fun_fact")}
                     </h3>
                   </div>
                   <p className="text-sm text-slate-700 dark:text-slate-300">

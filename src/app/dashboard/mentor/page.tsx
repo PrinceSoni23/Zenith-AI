@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { mentorApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   MessageSquare,
   Loader2,
@@ -127,6 +128,7 @@ function TypingDots() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function MentorPage() {
+  const { t, language } = useTranslation();
   const [tab, setTab] = useState<"brief" | "chat">("brief");
 
   // ── Daily Brief state ────────────────────────────────────────────────────
@@ -155,10 +157,10 @@ export default function MentorPage() {
   const fetchMentorMessage = async (isRefresh = false) => {
     isRefresh ? setRefreshing(true) : setLoading(true);
     try {
-      const res = await mentorApi.getMessage();
+      const res = await mentorApi.getMessage(language);
       setMentorData(res.data.data);
     } catch {
-      toast.error("Failed to load mentor message");
+      toast.error(t("mentor.load_error"));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -177,7 +179,7 @@ export default function MentorPage() {
   const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);
     setMoodSaved(true);
-    toast.success("Mood recorded! Keep going 💪");
+    toast.success(t("mentor.mood_recorded"));
   };
 
   // ── Send chat message ────────────────────────────────────────────────────
@@ -210,7 +212,7 @@ export default function MentorPage() {
       ]);
 
       try {
-        const response = await mentorApi.chat(history);
+        const response = await mentorApi.chat(history, language);
         if (!response.ok) throw new Error("Chat request failed");
 
         const reader = response.body?.getReader();
@@ -254,7 +256,7 @@ export default function MentorPage() {
               : m,
           ),
         );
-        toast.error("Connection issue. Please try again.");
+        toast.error(t("mentor.connection_error"));
       } finally {
         setIsSending(false);
         setStreamingId(null);
@@ -280,7 +282,7 @@ export default function MentorPage() {
           <div className="text-center">
             <Loader2 className="w-10 h-10 animate-spin text-primary-500 mx-auto mb-3" />
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Your mentor is preparing a message for you…
+              {t("mentor.preparing")}
             </p>
           </div>
         </main>
@@ -302,10 +304,10 @@ export default function MentorPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                    Your AI Mentor
+                    {t("mentor.title")}
                   </h1>
                   <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                    Personalised guidance, motivation & someone to talk to
+                    {t("mentor.subtitle")}
                   </p>
                 </div>
               </div>
@@ -318,7 +320,7 @@ export default function MentorPage() {
                   <RefreshCw
                     className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
                   />
-                  Refresh
+                  {t("mentor.refresh")}
                 </button>
               )}
             </div>
@@ -334,7 +336,7 @@ export default function MentorPage() {
                 }`}
               >
                 <Sparkles className="w-4 h-4" />
-                Daily Brief
+                {t("mentor.daily_brief")}
               </button>
               <button
                 onClick={() => {
@@ -348,7 +350,7 @@ export default function MentorPage() {
                 }`}
               >
                 <MessageSquare className="w-4 h-4" />
-                Chat with Mentor
+                {t("mentor.chat")}
                 {chatMessages.length > 1 && (
                   <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] font-black flex items-center justify-center">
                     {chatMessages.filter(m => m.role === "user").length}
@@ -384,7 +386,7 @@ export default function MentorPage() {
                   <div className="flex items-center gap-2 mb-4">
                     <Heart className="w-5 h-5 text-pink-500" />
                     <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                      How are you feeling today?
+                      {t("mentor.how_feeling")}
                     </h3>
                   </div>
                   {mentorData.moodCheck && (
@@ -411,8 +413,7 @@ export default function MentorPage() {
                   {moodSaved && selectedMood && (
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                        ✓ You said you&apos;re feeling &quot;{selectedMood}
-                        &quot; today
+                        ✓ {t("mentor.felt_dialog", { mood: selectedMood.split(" ")[1] || selectedMood.split(" ")[0] })}
                       </p>
                       <button
                         onClick={() => {
@@ -423,8 +424,7 @@ export default function MentorPage() {
                         }}
                         className="text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline flex items-center gap-1"
                       >
-                        <MessageSquare className="w-3 h-3" /> Talk to Mentor
-                        about it
+                        <MessageSquare className="w-3 h-3" /> {t("mentor.talk_about")}
                       </button>
                     </div>
                   )}
@@ -436,7 +436,7 @@ export default function MentorPage() {
                       <div className="flex items-center gap-2 mb-3">
                         <Star className="w-5 h-5 text-yellow-500" />
                         <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                          Recent Feedback
+                          {t("mentor.recent_feedback")}
                         </h3>
                       </div>
                       <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
@@ -449,7 +449,7 @@ export default function MentorPage() {
                       <div className="flex items-center gap-2 mb-3">
                         <Target className="w-5 h-5 text-blue-500" />
                         <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                          Today&apos;s Action
+                          {t("mentor.today_action")}
                         </h3>
                       </div>
                       <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
@@ -498,7 +498,7 @@ export default function MentorPage() {
                   className="w-full rounded-2xl p-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-lg shadow-orange-500/25"
                 >
                   <MessageSquare className="w-5 h-5" />
-                  Chat with your Mentor about anything →
+                  {t("mentor.chat_cta")}
                 </button>
               </div>
             )}
@@ -543,7 +543,7 @@ export default function MentorPage() {
                       onChange={e => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       disabled={isSending}
-                      placeholder="Type your message… (Enter to send, Shift+Enter for new line)"
+                      placeholder={t("mentor.type_message")}
                       rows={1}
                       style={{ resize: "none" }}
                       className="w-full rounded-2xl px-4 py-3 pr-12 text-sm bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 focus:outline-none focus:border-orange-400 dark:focus:border-orange-500 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 transition-colors"
@@ -567,7 +567,7 @@ export default function MentorPage() {
                   </button>
                 </div>
                 <p className="text-center text-[10px] text-slate-400 dark:text-slate-600 mt-2">
-                  Your mentor remembers this conversation during your session
+                  {t("mentor.session_memory")}
                 </p>
               </div>
             )}

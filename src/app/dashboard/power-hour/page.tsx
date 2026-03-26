@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { streakApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Zap, Lock, X, Clock, Star, Flame, CheckCircle2 } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -42,9 +43,11 @@ function useCountdown(endsAt: Date | null) {
 function ActiveBanner({
   powerHourEnds,
   onDismiss,
+  t,
 }: {
   powerHourEnds: string;
   onDismiss: () => void;
+  t: (key: string) => string;
 }) {
   const endsAt = new Date(powerHourEnds);
   const { mins, secs, msLeft } = useCountdown(endsAt);
@@ -66,13 +69,13 @@ function ActiveBanner({
           </div>
           <div className="min-w-0">
             <p className="text-base font-black text-yellow-700 dark:text-yellow-300 flex items-center gap-2 flex-wrap">
-              ⚡ Power Hour is Active!
+              {t("power_hour.active")}
               <span className="text-xs font-semibold text-yellow-600 dark:text-yellow-400 bg-yellow-400/15 dark:bg-yellow-400/20 px-2 py-0.5 rounded-full border border-yellow-400/30">
-                2× XP on every task
+                {t("power_hour.double_xp")}
               </span>
             </p>
             <p className="text-sm text-yellow-600/80 dark:text-yellow-400/70 mt-0.5">
-              Head to Dashboard and complete missions now to earn double XP!
+              {t("power_hour.complete_missions")}
             </p>
           </div>
         </div>
@@ -85,7 +88,7 @@ function ActiveBanner({
                 {String(mins).padStart(2, "0")}
               </span>
               <span className="text-[9px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50 mt-0.5">
-                min
+                {t("common.time_min")}
               </span>
             </div>
             <span className="text-yellow-500 font-black text-2xl leading-none mb-3">
@@ -96,7 +99,7 @@ function ActiveBanner({
                 {String(secs).padStart(2, "0")}
               </span>
               <span className="text-[9px] uppercase tracking-wider text-yellow-600/60 dark:text-yellow-400/50 mt-0.5">
-                sec
+                {t("common.time_sec")}
               </span>
             </div>
           </div>
@@ -126,10 +129,12 @@ function ScheduleCard({
   powerHourTime,
   powerHourSetThisMonth,
   onLocked,
+  t,
 }: {
   powerHourTime?: string | null;
   powerHourSetThisMonth?: boolean;
   onLocked: (time: string) => void;
+  t: (key: string) => string;
 }) {
   const [hour, setHour] = useState(20);
   const [minute, setMinute] = useState(0);
@@ -180,14 +185,14 @@ function ScheduleCard({
           </div>
           <div>
             <p className="text-base font-black text-yellow-700 dark:text-yellow-300">
-              ⚡ Power Hour — Locked In
+              {t("power_hour.locked_in")}
             </p>
             <p className="text-sm text-yellow-600/70 dark:text-yellow-400/60">
-              Fires every day at{" "}
+              {t("power_hour.fires_at")}{" "}
               <span className="font-bold font-mono text-yellow-700 dark:text-yellow-300">
                 {fmtTime(powerHourTime)}
               </span>{" "}
-              for 60 minutes
+              {t("power_hour.for_60_min")}
             </p>
           </div>
         </div>
@@ -196,7 +201,7 @@ function ScheduleCard({
         <div className="flex items-center gap-3 flex-wrap mb-4 opacity-50 pointer-events-none select-none">
           <div className="flex flex-col gap-1">
             <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-              Hour
+              {t("power_hour.hour")}
             </label>
             <select
               disabled
@@ -216,7 +221,7 @@ function ScheduleCard({
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-              Minute
+              {t("power_hour.minute")}
             </label>
             <select
               disabled
@@ -239,7 +244,7 @@ function ScheduleCard({
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-dark-700 text-slate-400 text-sm font-black cursor-not-allowed"
             >
               <Lock className="w-4 h-4" />
-              Locked
+              {t("power_hour.locked")}
             </button>
           </div>
         </div>
@@ -248,12 +253,9 @@ function ScheduleCard({
         <div className="flex items-start gap-2 rounded-xl bg-yellow-400/10 dark:bg-yellow-500/10 border border-yellow-400/20 px-4 py-3">
           <Lock className="w-4 h-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-yellow-700 dark:text-yellow-400 leading-snug">
-            This cannot be changed until{" "}
-            <span className="font-bold">{resetDateLabel}</span>. You have{" "}
-            <span className="font-bold">
-              {daysLeft} day{daysLeft !== 1 ? "s" : ""}
-            </span>{" "}
-            of 2× XP remaining this month!
+            {t("power_hour.cannot_change")}{" "}
+            <span className="font-bold">{resetDateLabel}</span>. {daysLeft} day{daysLeft !== 1 ? "s" : ""}{" "}
+            {t("power_hour.days_remaining")}
           </p>
         </div>
       </div>
@@ -269,14 +271,14 @@ function ScheduleCard({
         </div>
         <div>
           <p className="text-base font-black text-slate-900 dark:text-slate-100">
-            Set Your Power Hour
+            {t("power_hour.set_your_hour")}
           </p>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Pick a time — every day this month you get{" "}
+            {t("power_hour.pick_time")}{" "}
             <span className="text-yellow-600 dark:text-yellow-400 font-bold">
               2× XP
             </span>{" "}
-            for 1 hour.
+            {t("power_hour.for_1_hour")}
           </p>
         </div>
       </div>
@@ -285,7 +287,7 @@ function ScheduleCard({
         {/* Hour picker */}
         <div className="flex flex-col gap-1">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-            Hour
+            {t("power_hour.hour")}
           </label>
           <select
             value={hour}
@@ -307,7 +309,7 @@ function ScheduleCard({
         {/* Minute picker */}
         <div className="flex flex-col gap-1">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-            Minute
+            {t("power_hour.minute")}
           </label>
           <select
             value={minute}
@@ -333,12 +335,12 @@ function ScheduleCard({
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-sm font-black shadow shadow-yellow-400/30 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60"
           >
             <Lock className="w-4 h-4" />
-            {saving ? "Saving…" : "Lock In"}
+            {saving ? t("power_hour.saving") : t("power_hour.lock_in")}
           </button>
         </div>
 
         <p className="text-xs text-slate-400 dark:text-slate-500 self-end pb-2.5">
-          {daysLeft} day{daysLeft !== 1 ? "s" : ""} remaining
+          {daysLeft} {t("power_hour.days_left")}
         </p>
       </div>
 
@@ -346,9 +348,8 @@ function ScheduleCard({
       <div className="flex items-start gap-2 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-4 py-2.5">
         <Lock className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-red-600 dark:text-red-400 leading-snug">
-          <span className="font-bold">Choose carefully —</span> this is locked
-          until <span className="font-bold">{resetDateLabel}</span> and cannot
-          be changed until then.
+          <span className="font-bold">{t("power_hour.choose_carefully")}</span> {t("power_hour.cannot_change_until")}{" "}
+          <span className="font-bold">{resetDateLabel}</span> {t("power_hour.and_cannot_change")}
         </p>
       </div>
     </div>
@@ -357,43 +358,45 @@ function ScheduleCard({
 
 // ── How It Works explainer ────────────────────────────────────────────────────
 
-const howItWorks = [
-  {
-    icon: Clock,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10 dark:bg-blue-500/15",
-    title: "Pick Your Time Once",
-    desc: "Choose any hour of the day. This becomes your personal Power Hour for the entire month.",
-  },
-  {
-    icon: Zap,
-    color: "text-yellow-500",
-    bg: "bg-yellow-400/10 dark:bg-yellow-500/15",
-    title: "Auto-Activates Daily",
-    desc: "Every day at your chosen time, Power Hour activates automatically for exactly 60 minutes.",
-  },
-  {
-    icon: Star,
-    color: "text-purple-500",
-    bg: "bg-purple-500/10 dark:bg-purple-500/15",
-    title: "2× XP on All Tasks",
-    desc: "Complete any mission during Power Hour and earn double XP — stack it with your streak!",
-  },
-  {
-    icon: Flame,
-    color: "text-orange-500",
-    bg: "bg-orange-500/10 dark:bg-orange-500/15",
-    title: "Build a Habit",
-    desc: "Locking in a time forces you to study at the same hour every day, building a strong habit.",
-  },
-  {
-    icon: CheckCircle2,
-    color: "text-green-500",
-    bg: "bg-green-500/10 dark:bg-green-500/15",
-    title: "Resets Monthly",
-    desc: "On the 1st of every month your schedule clears, so you can pick a new time that suits you.",
-  },
-];
+function getHowItWorks(t: (key: string) => string) {
+  return [
+    {
+      icon: Clock,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10 dark:bg-blue-500/15",
+      title: t("power_hour.pick_once"),
+      desc: t("power_hour.pick_once_desc"),
+    },
+    {
+      icon: Zap,
+      color: "text-yellow-500",
+      bg: "bg-yellow-400/10 dark:bg-yellow-500/15",
+      title: t("power_hour.auto_activates"),
+      desc: t("power_hour.auto_desc"),
+    },
+    {
+      icon: Star,
+      color: "text-purple-500",
+      bg: "bg-purple-500/10 dark:bg-purple-500/15",
+      title: t("power_hour.double_xp_tasks"),
+      desc: t("power_hour.double_xp_desc"),
+    },
+    {
+      icon: Flame,
+      color: "text-orange-500",
+      bg: "bg-orange-500/10 dark:bg-orange-500/15",
+      title: t("power_hour.build_habit"),
+      desc: t("power_hour.build_habit_desc"),
+    },
+    {
+      icon: CheckCircle2,
+      color: "text-green-500",
+      bg: "bg-green-500/10 dark:bg-green-500/15",
+      title: t("power_hour.resets_monthly"),
+      desc: t("power_hour.resets_desc"),
+    },
+  ];
+}
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
@@ -401,6 +404,7 @@ export default function PowerHourPage() {
   const [data, setData] = useState<PowerHourData | null>(null);
   const [loading, setLoading] = useState(true);
   const [dismissed, setDismissed] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -434,6 +438,8 @@ export default function PowerHourPage() {
     );
   };
 
+  const howItWorks = getHowItWorks((key: string) => t(key));
+
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-dark-950 overflow-hidden">
       <Sidebar />
@@ -448,10 +454,10 @@ export default function PowerHourPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                  Power Hour
+                  {t("power_hour.title")}
                 </h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Your daily 2× XP boost window
+                  {t("power_hour.subtitle")}
                 </p>
               </div>
             </div>
@@ -472,6 +478,7 @@ export default function PowerHourPage() {
                 <ActiveBanner
                   powerHourEnds={data.powerHourEnds}
                   onDismiss={() => setDismissed(true)}
+                  t={t}
                 />
               )}
 
@@ -480,11 +487,11 @@ export default function PowerHourPage() {
                 <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-100 dark:bg-dark-800 border border-slate-200 dark:border-dark-700">
                   <div className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500" />
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Power Hour is{" "}
+                    {t("power_hour.inactive")}{" "}
                     <span className="font-bold text-slate-700 dark:text-slate-300">
-                      inactive
+                      {t("power_hour.inactive_state")}
                     </span>{" "}
-                    right now. It will fire at{" "}
+                    {t("power_hour.fire_at_today")}{" "}
                     <span className="font-bold font-mono text-yellow-600 dark:text-yellow-400">
                       {(() => {
                         const [h, m] = (data.powerHourTime ?? "0:0")
@@ -494,7 +501,7 @@ export default function PowerHourPage() {
                         return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${period}`;
                       })()}
                     </span>{" "}
-                    today.
+                    {t("power_hour.today_suffix")}
                   </p>
                 </div>
               )}
@@ -504,12 +511,13 @@ export default function PowerHourPage() {
                 powerHourTime={data.powerHourTime}
                 powerHourSetThisMonth={data.powerHourSetThisMonth}
                 onLocked={handleLocked}
+                t={t}
               />
 
               {/* ── How it works ───────────────────────────────────────── */}
               <div>
                 <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 px-1">
-                  How It Works
+                  {t("power_hour.how_it_works")}
                 </h2>
                 <div className="rounded-2xl border border-slate-200 dark:border-dark-700 bg-white dark:bg-dark-900 divide-y divide-slate-100 dark:divide-dark-800 overflow-hidden">
                   {howItWorks.map((item, i) => (

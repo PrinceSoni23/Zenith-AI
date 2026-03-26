@@ -6,6 +6,7 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   PenTool,
   Loader2,
@@ -37,6 +38,7 @@ interface WritingResult {
 }
 
 export default function WritingCoachPage() {
+  const { t } = useTranslation();
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [writingType, setWritingType] = useState("essay");
@@ -48,7 +50,7 @@ export default function WritingCoachPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!originalText.trim() || originalText.length < 50) {
-      toast.error("Please write at least 50 characters to get feedback");
+      toast.error(t("writing_coach.min_characters"));
       return;
     }
     setLoading(true);
@@ -61,9 +63,9 @@ export default function WritingCoachPage() {
         writingType,
       });
       setResult(res.data.data);
-      toast.success("Writing feedback ready!");
+      toast.success(t("writing_coach.feedback_ready"));
     } catch {
-      toast.error("Failed to get writing feedback. Please try again.");
+      toast.error(t("writing_coach.error"));
     } finally {
       setLoading(false);
     }
@@ -97,23 +99,23 @@ export default function WritingCoachPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                Writing Coach
+                {t("sidebar.writing_coach")}
               </h1>
               <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                Get AI feedback on grammar, structure, and vocabulary
+                {t("writing_coach.subtitle")}
               </p>
             </div>
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
             <h2 className="text-base font-bold mb-4 text-slate-900 dark:text-slate-100">
-              Submit your writing for feedback
+              {t("writing_coach.submit_writing")}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Writing Type
+                    {t("writing_coach.type")}
                   </label>
                   <select
                     value={writingType}
@@ -129,25 +131,25 @@ export default function WritingCoachPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Subject
+                    {t("writing_coach.subject")}
                   </label>
                   <input
                     type="text"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
-                    placeholder="e.g., English"
+                    placeholder={t("writing_coach.subject_example")}
                     className="input-field"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
-                    Topic / Title
+                    {t("writing_coach.topic_title")}
                   </label>
                   <input
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
-                    placeholder="e.g., My favourite season"
+                    placeholder={t("writing_coach.topic_example")}
                     className="input-field"
                   />
                 </div>
@@ -159,7 +161,7 @@ export default function WritingCoachPage() {
                 <textarea
                   value={originalText}
                   onChange={e => setOriginalText(e.target.value)}
-                  placeholder="Paste or write your text here (minimum 50 characters)..."
+                    placeholder={t("writing_coach.writing_placeholder")}
                   rows={8}
                   className="input-field resize-none"
                   required
@@ -175,12 +177,11 @@ export default function WritingCoachPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Analysing your
-                    writing…
+                    <Loader2 className="w-4 h-4 animate-spin" /> {t("writing_coach.analyzing")}
                   </>
                 ) : (
                   <>
-                    <PenTool className="w-4 h-4" /> Get Feedback
+                    <PenTool className="w-4 h-4" /> {t("writing_coach.get_feedback")}
                   </>
                 )}
               </button>

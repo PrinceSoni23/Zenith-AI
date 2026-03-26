@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
@@ -27,9 +28,10 @@ export default function MathsHelperPage() {
   );
   const [result, setResult] = useState<MathResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSolve = async () => {
-    if (!problem.trim()) return toast.error("Please enter a maths problem");
+    if (!problem.trim()) return toast.error(t("maths_solver.error_enter_problem"));
     setLoading(true);
     try {
       const res = await agentApi.dispatch("maths-solver", {
@@ -40,19 +42,19 @@ export default function MathsHelperPage() {
       });
       setResult(res.data.data as MathResult);
     } catch {
-      toast.error("Failed to solve. Please try again.");
+      toast.error(t("maths_solver.error_failed"));
     } finally {
       setLoading(false);
     }
   };
 
   const modeOptions = [
-    { value: "hint", label: " Hint Mode", desc: "Get hints only" },
-    { value: "step-by-step", label: " Step by Step", desc: "See each step" },
+    { value: "hint", label: "🔦 " + t("maths_solver.hint_mode"), desc: t("maths_solver.hints_only") },
+    { value: "step-by-step", label: "📋 " + t("maths_solver.step_by_step"), desc: t("maths_solver.see_steps") },
     {
       value: "full-solution",
-      label: " Full Solution",
-      desc: "Complete answer",
+      label: "✨ " + t("maths_solver.full_solution"),
+      desc: t("maths_solver.complete_answer"),
     },
   ];
 
@@ -67,17 +69,17 @@ export default function MathsHelperPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                Maths Helper
+                {t("sidebar.maths_solver")}
               </h1>
               <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                Paste any maths problem — get hints, steps, or full solution!
+                {t("maths_solver.subtitle")}
               </p>
             </div>
           </div>
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
             <div className="mb-5">
               <label className="block text-sm font-semibold mb-3 text-slate-800 dark:text-slate-200">
-                Choose Mode
+                {t("maths_solver.choose_mode")}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {modeOptions.map(opt => (
@@ -98,22 +100,22 @@ export default function MathsHelperPage() {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-semibold mb-2 text-slate-800 dark:text-slate-200">
-                Topic (optional)
+                {t("maths_solver.topic")}
               </label>
               <input
                 className="input-field"
-                placeholder="e.g. Algebra, Trigonometry..."
+                placeholder={t("maths_solver.topic_placeholder")}
                 value={topic}
                 onChange={e => setTopic(e.target.value)}
               />
             </div>
             <div className="mb-5">
               <label className="block text-sm font-semibold mb-2 text-slate-800 dark:text-slate-200">
-                Your Maths Problem
+                {t("maths_solver.problem")}
               </label>
               <textarea
                 className="input-field min-h-[120px] resize-none font-mono"
-                placeholder="Type your maths problem here..."
+                placeholder={t("maths_solver.problem_placeholder")}
                 value={problem}
                 onChange={e => setProblem(e.target.value)}
               />
@@ -125,10 +127,10 @@ export default function MathsHelperPage() {
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Solving…
+                  <Loader2 className="w-4 h-4 animate-spin" /> {t("common.solving")}
                 </>
               ) : (
-                <>🧮 Solve Problem</>
+                <>🧮 {t("maths_solver.solve")}</>
               )}
             </button>
           </div>
@@ -137,7 +139,7 @@ export default function MathsHelperPage() {
               {result.hints && result.hints.length > 0 && (
                 <div className="rounded-2xl p-6 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30">
                   <h3 className="font-bold mb-3 text-yellow-600 dark:text-yellow-400">
-                    💡 Hints
+                    💡 {t("maths_solver.hints")}
                   </h3>
                   <ol className="space-y-2">
                     {result.hints.map((hint, i) => (
@@ -157,7 +159,7 @@ export default function MathsHelperPage() {
               {result.steps && result.steps.length > 0 && (
                 <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
                   <h3 className="font-bold mb-4 text-slate-900 dark:text-slate-100">
-                    🔢 Step-by-Step Solution
+                    🔢 {t("maths_solver.solutions")}
                   </h3>
                   <div className="space-y-3">
                     {result.steps.map(step => (
@@ -183,7 +185,7 @@ export default function MathsHelperPage() {
               {result.fullSolution && (
                 <div className="rounded-2xl p-6 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30">
                   <h3 className="font-bold mb-2 text-green-600 dark:text-green-400">
-                    ✅ Full Solution
+                    ✅ {t("maths_solver.full")}
                   </h3>
                   <p className="text-sm whitespace-pre-wrap text-slate-800 dark:text-slate-200">
                     {result.fullSolution}
@@ -193,7 +195,7 @@ export default function MathsHelperPage() {
               {result.answer && (
                 <div className="rounded-2xl p-6 bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/30">
                   <h3 className="font-bold mb-1 text-primary-600 dark:text-primary-400">
-                    🎯 Answer
+                    🎯 {t("maths_solver.answer")}
                   </h3>
                   <p className="text-xl font-black text-primary-600 dark:text-primary-400">
                     {result.answer}
@@ -203,7 +205,7 @@ export default function MathsHelperPage() {
               {result.conceptsUsed && result.conceptsUsed.length > 0 && (
                 <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
                   <h3 className="font-bold mb-3 text-slate-900 dark:text-slate-100">
-                    📚 Concepts Used
+                    📚 {t("maths_solver.concepts")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {result.conceptsUsed.map((c, i) => (

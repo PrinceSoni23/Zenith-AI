@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useTheme } from "next-themes";
+import { useLanguage } from "@/context/LanguageContext";
+import { useTranslation } from "@/hooks/useTranslation";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import {
@@ -27,29 +29,30 @@ import {
   User,
   Menu,
   X,
+  Globe,
 } from "lucide-react";
 
-const modules = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/power-hour", icon: Zap, label: "Power Hour" },
+const moduleConfig = [
+  { href: "/dashboard", icon: LayoutDashboard, labelKey: "sidebar.dashboard" },
+  { href: "/dashboard/power-hour", icon: Zap, labelKey: "sidebar.smart_notes" },
   {
     href: "/dashboard/class-translator",
     icon: Brain,
-    label: "Understand Class",
+    labelKey: "sidebar.class_translator",
   },
-  { href: "/dashboard/smart-notes", icon: Camera, label: "Vision Lens" },
-  { href: "/dashboard/study-planner", icon: Calendar, label: "Study Planner" },
-  { href: "/dashboard/story-mode", icon: BookOpen, label: "Story Mode" },
-  { href: "/dashboard/revision", icon: RefreshCw, label: "Auto Revision" },
-  { href: "/dashboard/writing-coach", icon: PenTool, label: "Writing Coach" },
-  { href: "/dashboard/maths-helper", icon: Calculator, label: "Maths Helper" },
+  { href: "/dashboard/smart-notes", icon: Camera, labelKey: "sidebar.vision_lens" },
+  { href: "/dashboard/study-planner", icon: Calendar, labelKey: "sidebar.study_planner" },
+  { href: "/dashboard/story-mode", icon: BookOpen, labelKey: "sidebar.story_mode" },
+  { href: "/dashboard/revision", icon: RefreshCw, labelKey: "sidebar.revision" },
+  { href: "/dashboard/writing-coach", icon: PenTool, labelKey: "sidebar.writing_coach" },
+  { href: "/dashboard/maths-helper", icon: Calculator, labelKey: "sidebar.maths_solver" },
   {
     href: "/dashboard/question-generator",
     icon: HelpCircle,
-    label: "Question Bank",
+    labelKey: "sidebar.question_generator",
   },
-  { href: "/dashboard/mentor", icon: MessageSquare, label: "AI Mentor" },
-  { href: "/dashboard/leaderboard", icon: Trophy, label: "Leaderboard" },
+  { href: "/dashboard/mentor", icon: MessageSquare, labelKey: "sidebar.explore" },
+  { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "sidebar.leaderboard" },
 ];
 
 export default function Sidebar() {
@@ -57,6 +60,8 @@ export default function Sidebar() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -150,14 +155,15 @@ export default function Sidebar() {
 
       {/* Nav Links */}
       <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-0.5">
-        {modules.map((mod, idx) => {
+        {moduleConfig.map((mod, idx) => {
           const isActive = pathname === mod.href;
+          const label = t(mod.labelKey);
           return (
             <Link
               key={mod.href}
               href={mod.href}
               onClick={() => setMobileOpen(false)}
-              title={collapsed ? mod.label : undefined}
+              title={collapsed ? label : undefined}
               style={{ animationDelay: `${idx * 40}ms` }}
               className={clsx(
                 "flex items-center rounded-xl text-sm font-medium transition-all duration-150 group animate-slide-right",
@@ -176,7 +182,7 @@ export default function Sidebar() {
                     : "text-slate-400 group-hover:text-primary-500",
                 )}
               />
-              {!collapsed && <span>{mod.label}</span>}
+              {!collapsed && <span>{label}</span>}
             </Link>
           );
         })}
@@ -184,6 +190,26 @@ export default function Sidebar() {
 
       {/* Bottom Controls */}
       <div className="px-2 pb-4 pt-2 border-t border-slate-200 dark:border-dark-700 space-y-1">
+        {/* Language Selector */}
+        {mounted && (
+          <select
+            value={language}
+            onChange={(e) =>
+              setLanguage(e.target.value as "english" | "hinglish" | "hindi")
+            }
+            className={clsx(
+              "w-full flex items-center rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer",
+              collapsed ? "justify-center w-10 h-10 mx-auto px-1" : "gap-3 px-3 py-2.5",
+              "sidebar-link bg-white dark:bg-dark-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700",
+            )}
+            title={collapsed ? "Language" : undefined}
+          >
+            <option value="english">🇬🇧 English</option>
+            <option value="hinglish">🇮🇳 Hinglish</option>
+            <option value="hindi">हिंदी</option>
+          </select>
+        )}
+
         {/* Dark mode toggle */}
         {mounted && (
           <button
@@ -230,12 +256,12 @@ export default function Sidebar() {
               : "gap-3 px-3 py-2.5",
             "text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400",
           )}
-          title={collapsed ? "Sign Out" : undefined}
+          title={collapsed ? t("common.logout") : undefined}
         >
           <LogOut
             className={clsx("flex-shrink-0", collapsed ? "w-5 h-5" : "w-4 h-4")}
           />
-          {!collapsed && <span>Sign Out</span>}
+          {!collapsed && <span>{t("common.logout")}</span>}
         </button>
       </div>
     </>

@@ -6,6 +6,7 @@ import { useState, useRef } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { agentApi } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/useTranslation";
 import {
   Camera,
   Loader2,
@@ -20,12 +21,12 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const QUICK_PROMPTS = [
-  "Explain what this image is showing",
-  "What topic does this relate to?",
-  "Summarise the key points from this",
-  "What questions could be asked from this?",
-  "What do I need to memorise from this?",
+const QUICK_PROMPT_KEYS = [
+  "vision_lens.explain",
+  "vision_lens.related_topic",
+  "vision_lens.summarize",
+  "vision_lens.questions",
+  "vision_lens.memorise",
 ];
 
 interface VisionResult {
@@ -43,10 +44,11 @@ export default function VisionLensPage() {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file.");
+      toast.error(t("vision_lens.error_upload_image"));
       return;
     }
     setImageFile(file);
@@ -63,8 +65,8 @@ export default function VisionLensPage() {
   };
 
   const handleAsk = async () => {
-    if (!imageFile) return toast.error("Please upload an image first.");
-    if (!question.trim()) return toast.error("Please enter a question.");
+    if (!imageFile) return toast.error(t("vision_lens.error_upload_image_first"));
+    if (!question.trim()) return toast.error(t("common.enter_question"));
 
     setLoading(true);
     try {
@@ -78,9 +80,9 @@ export default function VisionLensPage() {
       });
 
       setResult(res.data.data as VisionResult);
-      toast.success("Image analysed!");
+      toast.success(t("vision_lens.success_analysed"));
     } catch {
-      toast.error("Failed to analyse image. Please try again.");
+      toast.error(t("vision_lens.error_analyse"));
     } finally {
       setLoading(false);
     }
@@ -105,11 +107,10 @@ export default function VisionLensPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                Vision Lens
+                {t("sidebar.vision_lens")}
               </h1>
               <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                Snap a photo of anything — diagram, textbook, whiteboard — and
-                ask the AI to explain it!
+                {t("vision_lens.subtitle")}
               </p>
             </div>
           </div>
@@ -129,18 +130,17 @@ export default function VisionLensPage() {
                 </div>
                 <div className="text-center">
                   <p className="font-semibold text-slate-700 dark:text-slate-300">
-                    Drop your image here or{" "}
+                    {t("vision_lens.drop_image")}{" "}
                     <span className="text-violet-600 dark:text-violet-400 underline underline-offset-2">
-                      browse
+                      {t("common.browse")}
                     </span>
                   </p>
                   <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                    Supports JPG, PNG, WEBP — textbooks, diagrams, whiteboards,
-                    notes
+                    {t("vision_lens.supported")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <Upload className="w-3.5 h-3.5" /> Click or drag &amp; drop
+                  <Upload className="w-3.5 h-3.5" /> {t("vision_lens.click_drag")}
                 </div>
               </div>
             ) : (
@@ -176,20 +176,20 @@ export default function VisionLensPage() {
           {/* Quick prompts */}
           <div className="mb-4 animate-fade-up stagger-3">
             <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-              Quick questions
+              {t("vision_lens.quick_questions")}
             </p>
             <div className="flex flex-wrap gap-2">
-              {QUICK_PROMPTS.map(p => (
+              {QUICK_PROMPT_KEYS.map(key => (
                 <button
-                  key={p}
-                  onClick={() => setQuestion(p)}
+                  key={key}
+                  onClick={() => setQuestion(t(key))}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 ${
-                    question === p
+                    question === t(key)
                       ? "bg-violet-600 text-white border-violet-600"
                       : "bg-white dark:bg-dark-900 border-slate-200 dark:border-dark-700 text-slate-600 dark:text-slate-400 hover:border-violet-400 hover:text-violet-600 dark:hover:text-violet-400"
                   }`}
                 >
-                  {p}
+                  {t(key)}
                 </button>
               ))}
             </div>
@@ -199,12 +199,12 @@ export default function VisionLensPage() {
           <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-4">
             <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
               <MessageSquare className="w-4 h-4 inline mr-1.5 text-violet-500" />
-              Your question about this image
+              {t("vision_lens.your_question")}
             </label>
             <div className="flex gap-3">
               <input
                 className="input-field flex-1"
-                placeholder="e.g. What does this diagram show? Explain this to me simply."
+                placeholder={t("vision_lens.question_placeholder")}
                 value={question}
                 onChange={e => setQuestion(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && handleAsk()}
@@ -219,7 +219,7 @@ export default function VisionLensPage() {
                 ) : (
                   <Send className="w-4 h-4" />
                 )}
-                {loading ? "Analysing…" : "Ask"}
+                {loading ? t("common.analysing") : t("common.ask")}
               </button>
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function VisionLensPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="w-5 h-5 text-violet-500" />
                     <h3 className="font-bold text-violet-700 dark:text-violet-300">
-                      AI Explanation
+                      {t("vision_lens.ai_explanation")}
                     </h3>
                   </div>
                   <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
@@ -246,7 +246,7 @@ export default function VisionLensPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <BookOpen className="w-5 h-5 text-cyan-500" />
                     <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                      Key Points
+                      {t("vision_lens.key_points")}
                     </h3>
                   </div>
                   <ul className="space-y-1.5">
@@ -268,7 +268,7 @@ export default function VisionLensPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <AlertCircle className="w-5 h-5 text-cyan-500" />
                     <h3 className="font-bold text-cyan-700 dark:text-cyan-300">
-                      Related Topics to Explore
+                      {t("vision_lens.related_topics")}
                     </h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -289,7 +289,7 @@ export default function VisionLensPage() {
                   <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="w-5 h-5 text-amber-500" />
                     <h3 className="font-bold text-amber-700 dark:text-amber-300">
-                      Study Tip
+                      {t("vision_lens.study_tip")}
                     </h3>
                   </div>
                   <p className="text-sm text-slate-700 dark:text-slate-300">
