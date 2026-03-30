@@ -30,6 +30,7 @@ import {
   Menu,
   X,
   Globe,
+  BarChart3,
 } from "lucide-react";
 
 const moduleConfig = [
@@ -53,6 +54,7 @@ const moduleConfig = [
   },
   { href: "/dashboard/mentor", icon: MessageSquare, labelKey: "sidebar.explore" },
   { href: "/dashboard/leaderboard", icon: Trophy, labelKey: "sidebar.leaderboard" },
+  { href: "/dashboard/monitoring", icon: BarChart3, labelKey: "sidebar.monitoring" },
 ];
 
 export default function Sidebar() {

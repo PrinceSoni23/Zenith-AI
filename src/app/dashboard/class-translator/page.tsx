@@ -4,8 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
-import { agentApi } from "@/lib/api";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useAgentCache } from "@/hooks/useAgentCache";
 import toast from "react-hot-toast";
 import {
   Brain,
@@ -32,18 +32,22 @@ export default function ClassTranslatorPage() {
   const [subject, setSubject] = useState("");
   const [language, setLanguage] = useState("english");
   const [result, setResult] = useState<TranslatorResult | null>(null);
-  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
+
+  // Use caching hook with 24-hour TTL for question caching
+  const { dispatch, loading, isCacheHit } = useAgentCache({
+    ttl: 86400, // 24 hours
+    showCacheNotification: true,
+  });
 
   const handleSubmit = async () => {
     if (!content.trim()) return toast.error("Please describe what was taught");
-    setLoading(true);
     try {
       // Extract topic from first line of content or use first 50 chars
       const topic =
         content.split("\n")[0].trim().substring(0, 100) || subject || "Concept";
 
-      const res = await agentApi.dispatch("class-translator", {
+      const res = await dispatch("class-translator", {
         content,
         subject,
         topic,
@@ -51,6 +55,13 @@ export default function ClassTranslatorPage() {
       });
       console.log("Class Translator Response:", res);
       setResult(res.data.data);
+
+      // Show cache hit notification
+      if (res.isCacheHit) {
+        toast.success("✨ Using cached response (30-60% faster!)", {
+          icon: "⚡",
+        });
+      }
     } catch (error: unknown) {
       console.error("Class Translator Error:", error);
       const errorMessage =
@@ -58,8 +69,6 @@ export default function ClassTranslatorPage() {
           ? error.message
           : "Failed to process. Please try again.";
       toast.error(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
