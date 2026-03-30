@@ -50,11 +50,19 @@ class FrontendCacheService {
       const parsed = JSON.parse(stored);
       const now = Date.now();
       let loadedCount = 0;
+      let skippedFallbacks = 0;
 
       for (const [key, entry] of Object.entries(parsed)) {
         const cacheEntry = entry as any;
         // Only load non-expired entries
         if (cacheEntry.expiresAt > now) {
+          // CRITICAL: Never load fallback responses
+          // isFallback is at response.data.isFallback level
+          if (cacheEntry.value?.data?.isFallback === true) {
+            console.warn(`[Cache] SKIPPING fallback entry on load: ${key}`);
+            skippedFallbacks++;
+            continue;
+          }
           this.cache.set(key, cacheEntry);
           this.currentSize += this.estimateSize(cacheEntry.value);
           loadedCount++;
@@ -63,6 +71,11 @@ class FrontendCacheService {
 
       if (loadedCount > 0) {
         console.log(`[Cache] LOADED from localStorage: ${loadedCount} entries`);
+      }
+      if (skippedFallbacks > 0) {
+        console.log(
+          `[Cache] SKIPPED ${skippedFallbacks} fallback entries on load`,
+        );
       }
     } catch (error) {
       console.warn("[Cache] Failed to load from localStorage:", error);
@@ -148,6 +161,16 @@ class FrontendCacheService {
     value: T,
     ttlSeconds: number = 3600,
   ): void {
+    // CRITICAL: Prevent caching fallback responses
+    // isFallback is at response.data.isFallback level
+    const anyValue = value as any;
+    if (anyValue?.data?.isFallback === true) {
+      console.warn(
+        `[Cache] REJECTED: Will not cache fallback for ${agentType}`,
+      );
+      return;
+    }
+
     const key = this.generateKey(agentType, params);
     const size = this.estimateSize(value);
 
@@ -182,6 +205,20 @@ class FrontendCacheService {
     if (Date.now() > entry.expiresAt) {
       this.cache.delete(key);
       this.currentSize -= this.estimateSize(entry.value);
+      this.stats.misses++;
+      return null;
+    }
+
+    // CRITICAL: Never return fallback responses, even if cached
+    // isFallback is at response.data.isFallback level
+    const value = entry.value as any;
+    if (value?.data?.isFallback === true) {
+      console.warn(
+        `[Cache] REJECTING fallback return for ${key}, deleting from cache`,
+      );
+      this.cache.delete(key);
+      this.currentSize -= this.estimateSize(entry.value);
+      this.saveToStorage();
       this.stats.misses++;
       return null;
     }
@@ -235,6 +272,46 @@ class FrontendCacheService {
     // Persist to storage
     this.saveToStorage();
     console.log(`[Cache] INVALIDATED: ${agentType} (${deletedCount} entries)`);
+  }
+
+  /**
+   * Clear all fallback responses from cache
+   * Fallback responses were generated when AI failed - they should not be reused
+   */
+  clearFallbackResponses(): void {
+    let deletedCount = 0;
+    const keysToDelete: string[] = [];
+
+    this.cache.forEach((entry, key) => {
+      // Check if the cached value contains a fallback response
+      // Structure: entry.value = { data: { success, agentName, isFallback: true, data: {...} } }
+      if (
+        entry.value &&
+        entry.value.data &&
+        entry.value.data.isFallback === true
+      ) {
+        console.log(`[Cache] Removing fallback entry: ${key}`);
+        keysToDelete.push(key);
+      }
+    });
+
+    keysToDelete.forEach(key => {
+      const entry = this.cache.get(key);
+      if (entry) {
+        this.currentSize -= this.estimateSize(entry.value);
+        this.cache.delete(key);
+        deletedCount++;
+      }
+    });
+
+    // Persist to storage
+    this.saveToStorage();
+
+    if (deletedCount > 0) {
+      console.log(`[Cache] CLEARED ${deletedCount} fallback response(s)`);
+    } else {
+      console.log(`[Cache] No fallback responses found to clear`);
+    }
   }
 
   /**

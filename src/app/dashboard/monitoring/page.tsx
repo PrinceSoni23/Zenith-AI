@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { RequestTracker } from "@/components/RequestTracker";
 import { FrontendCacheMonitor } from "@/components/FrontendCacheMonitor";
+import { RedisStatsMonitor } from "@/components/RedisStatsMonitor";
 
 export default function MonitoringPage() {
   return (
@@ -37,6 +38,21 @@ export default function MonitoringPage() {
               Real-time statistics from your browser cache (zero API costs)
             </p>
             <FrontendCacheMonitor />
+          </div>
+
+          {/* Divider */}
+          <div className="my-10 border-t-2 border-slate-300 dark:border-slate-700"></div>
+
+          {/* Redis Cache Monitor */}
+          <div className="mb-10">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+              Backend Redis Cache
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
+              Persistent server-side cache that survives restarts (30-60% API
+              cost reduction)
+            </p>
+            <RedisStatsMonitor />
           </div>
 
           {/* Footer Info */}

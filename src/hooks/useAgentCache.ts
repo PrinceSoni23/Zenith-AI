@@ -16,35 +16,43 @@ interface UseAgentCacheOptions {
 /**
  * Validate if response is worth caching
  * Prevents caching errors, empty responses, or fallback text
+ * Response structure from backend: { success, data: { success, agentName, isFallback?, data: {...} } }
  */
 const isValidResponseForCache = (response: any): boolean => {
-  // Check if response has data
+  // Check if response exists
   if (!response) return false;
 
-  // Don't cache fallback responses
-  if (response.isFallback === true) {
+  // Axios returns response as { data: { success, agentName, isFallback?, data } }
+  const outerData = response.data;
+  if (!outerData) return false;
+
+  // Check for fallback flag at the first level (not nested in data)
+  if (outerData.isFallback === true) {
     console.log(
       "⚠️ NOT storing fallback response (AI failed to generate content)",
     );
     return false;
   }
 
-  // Check if data field exists
-  const data = response.data;
-  if (!data) return false;
+  // The actual content is in the data field
+  const actualData = outerData.data;
+  if (!actualData) return false;
 
-  // Check if data is empty object
-  if (typeof data === "object" && Object.keys(data).length === 0) {
+  // Check if actual data is empty object
+  if (typeof actualData === "object" && Object.keys(actualData).length === 0) {
     return false;
   }
 
-  // Check if data is empty array
-  if (Array.isArray(data) && data.length === 0) {
+  // Check if actual data is empty array
+  if (Array.isArray(actualData) && actualData.length === 0) {
     return false;
   }
 
-  // Check if data is empty string
-  if (typeof data === "string" && (!data || data.trim().length === 0)) {
+  // Check if actual data is empty string
+  if (
+    typeof actualData === "string" &&
+    (!actualData || actualData.trim().length === 0)
+  ) {
     return false;
   }
 
@@ -77,20 +85,32 @@ export function useAgentCache(options: UseAgentCacheOptions = {}) {
         // Check cache first
         const cachedResult = cacheService.get<any>(agentType, payload);
         if (cachedResult) {
-          setData((cachedResult as any).data);
-          setIsCacheHit(true);
-          setLoading(false);
+          const cachedData = (cachedResult as any).data;
 
-          if (showCacheNotification) {
-            console.log(
-              `✨ [Cache HIT] Using cached response for ${agentType}`,
+          // Double-check: Never return cached fallback responses
+          // isFallback is at response.data.isFallback level
+          if (cachedData?.isFallback === true) {
+            console.warn(
+              `⚠️ [Cache] Cached fallback detected, skipping and making fresh API call for ${agentType}`,
             );
-          }
+            // Continue to fresh API call below
+          } else {
+            // Valid cached response, use it
+            setData(cachedData);
+            setIsCacheHit(true);
+            setLoading(false);
 
-          return { data: (cachedResult as any).data, isCacheHit: true };
+            if (showCacheNotification) {
+              console.log(
+                `✨ [Cache HIT] Using cached response for ${agentType}`,
+              );
+            }
+
+            return { data: cachedData, isCacheHit: true };
+          }
         }
 
-        // Cache miss - call API
+        // Cache miss or fallback detected - call API
         const response = await agentApi.dispatch(agentType, payload);
 
         // Only cache if response is valid (not empty/error/fallback)

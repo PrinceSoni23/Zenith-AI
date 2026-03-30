@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { mentorApi } from "@/lib/api";
+import { cacheService } from "@/lib/cacheService";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
@@ -157,7 +158,30 @@ export default function MentorPage() {
   const fetchMentorMessage = async (isRefresh = false) => {
     isRefresh ? setRefreshing(true) : setLoading(true);
     try {
+      const cacheKey = "mentor-daily-message";
+      const cachePayload = { language };
+
+      // Check cache if not refreshing
+      if (!isRefresh) {
+        const cached = cacheService.get<any>(cacheKey, cachePayload);
+        if (cached) {
+          setMentorData(cached.data);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fetch fresh data
       const res = await mentorApi.getMessage(language);
+
+      // Store in cache
+      cacheService.set<any>(
+        cacheKey,
+        cachePayload,
+        { data: res.data.data },
+        86400, // 24 hour TTL
+      );
+
       setMentorData(res.data.data);
     } catch {
       toast.error(t("mentor.load_error"));
@@ -413,7 +437,12 @@ export default function MentorPage() {
                   {moodSaved && selectedMood && (
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                        ✓ {t("mentor.felt_dialog", { mood: selectedMood.split(" ")[1] || selectedMood.split(" ")[0] })}
+                        ✓{" "}
+                        {t("mentor.felt_dialog", {
+                          mood:
+                            selectedMood.split(" ")[1] ||
+                            selectedMood.split(" ")[0],
+                        })}
                       </p>
                       <button
                         onClick={() => {
@@ -424,7 +453,8 @@ export default function MentorPage() {
                         }}
                         className="text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline flex items-center gap-1"
                       >
-                        <MessageSquare className="w-3 h-3" /> {t("mentor.talk_about")}
+                        <MessageSquare className="w-3 h-3" />{" "}
+                        {t("mentor.talk_about")}
                       </button>
                     </div>
                   )}
