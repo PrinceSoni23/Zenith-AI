@@ -1,4 +1,5 @@
 import axios from "axios";
+import { smartNormalizeToolParams } from "./inputNormalization";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -55,23 +56,32 @@ export const agentApi = {
         ? localStorage.getItem("studentLanguage")
         : null) || "english";
 
+    // Use SMART normalization: automatically detects math content in input
+    // If input contains math symbols (x², √, ∫) → preserves them
+    // If input is regular text (Biology, History) → removes special chars
+    // Works for ANY agent and ANY field - no hardcoding needed!
+    const normalizedPayload = smartNormalizeToolParams(payloadObj);
+
     // Always include preferredLanguage (for agents that don't have page-level override)
     // If page has language parameter, it will override preferredLanguage in backend
     const requestBody: any = {
       agentType,
       preferredLanguage: dashboardLanguage,
-      ...payloadObj,
+      ...normalizedPayload,
     };
 
+    console.log(
+      `[agentApi.dispatch] Agent type: ${agentType}, using SMART normalization (auto-detects math symbols)`,
+    );
     console.log(
       "[agentApi.dispatch] Dashboard language (preferredLanguage):",
       dashboardLanguage,
     );
     console.log(
       "[agentApi.dispatch] Page-level language override:",
-      payloadObj?.language,
+      normalizedPayload?.language,
     );
-    console.log("[agentApi.dispatch] Final request body:", requestBody);
+    console.log("[agentApi.dispatch] Normalized request body:", requestBody);
 
     return api.post("/agents/dispatch", requestBody);
   },

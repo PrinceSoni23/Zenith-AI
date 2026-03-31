@@ -3,6 +3,7 @@
  * Implements smart caching to reduce API calls by 30-60%
  * Cache key format: `{agentType}:{question}:{params}`
  */
+import { normalizeParams } from "./inputNormalization";
 
 interface CacheEntry<T> {
   value: T;
@@ -130,12 +131,17 @@ class FrontendCacheService {
 
   /**
    * Generate cache key from agent type and parameters
+   * Normalizes string parameters for consistent caching across case/whitespace variations
    */
   private generateKey(agentType: string, params: Record<string, any>): string {
-    // Normalize params to ensure consistent cache keys
-    const sortedParams = Object.keys(params)
+    // Normalize all string parameters to ensure consistent cache keys
+    // Handles: "Photosynthesis" vs "photosynthesis" vs "photosynthesis " are all treated the same
+    const normalizedParams = normalizeParams(params);
+
+    // Sort parameters alphabetically for deterministic key generation
+    const sortedParams = Object.keys(normalizedParams)
       .sort()
-      .map(k => `${k}=${JSON.stringify(params[k])}`)
+      .map(k => `${k}=${JSON.stringify(normalizedParams[k])}`)
       .join("&");
 
     return `${agentType}:${sortedParams}`;
