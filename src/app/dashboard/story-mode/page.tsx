@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useAgentCache } from "@/hooks/useAgentCache";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -71,18 +73,21 @@ export default function StoryModePage() {
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-          <div className="mb-8 flex items-center gap-4 animate-fade-up stagger-1">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center animate-bounce-gentle">
-              <BookOpen className="w-6 h-6 text-white" />
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4 animate-fade-up stagger-1">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center animate-bounce-gentle">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                  {t("sidebar.story_mode")}
+                </h1>
+                <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
+                  {t("story_mode.subtitle")}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                {t("sidebar.story_mode")}
-              </h1>
-              <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                {t("story_mode.subtitle")}
-              </p>
-            </div>
+            <HelpButton tutorial={dashboardTutorials.storyMode} />
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
@@ -96,6 +101,7 @@ export default function StoryModePage() {
                     {t("story_mode.subject")}
                   </label>
                   <input
+                    data-tutorial="subject-select"
                     type="text"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
@@ -109,6 +115,7 @@ export default function StoryModePage() {
                     {t("story_mode.topic")}
                   </label>
                   <input
+                    data-tutorial="topic-enter"
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
@@ -119,6 +126,7 @@ export default function StoryModePage() {
                 </div>
               </div>
               <button
+                data-tutorial="generate-story"
                 type="submit"
                 disabled={loading}
                 className="btn-primary w-full flex items-center justify-center gap-2"

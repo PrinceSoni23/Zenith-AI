@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState, useRef } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useAgentCache } from "@/hooks/useAgentCache";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -112,18 +114,21 @@ export default function VisionLensPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-3xl mx-auto">
           {/* Header */}
-          <div className="mb-8 flex items-center gap-4 animate-fade-up stagger-1">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center animate-bounce-gentle">
-              <Camera className="w-6 h-6 text-white" />
+          <div className="mb-8 flex items-center justify-between gap-4 animate-fade-up stagger-1">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center animate-bounce-gentle">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                  {t("sidebar.vision_lens")}
+                </h1>
+                <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
+                  {t("vision_lens.subtitle")}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                {t("sidebar.vision_lens")}
-              </h1>
-              <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                {t("vision_lens.subtitle")}
-              </p>
-            </div>
+            <HelpButton tutorial={dashboardTutorials.smartNotes} />
           </div>
 
           {/* Upload area */}
@@ -208,7 +213,10 @@ export default function VisionLensPage() {
           </div>
 
           {/* Question input */}
-          <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-4">
+          <div
+            data-tutorial="input-area"
+            className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-4"
+          >
             <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">
               <MessageSquare className="w-4 h-4 inline mr-1.5 text-violet-500" />
               {t("vision_lens.your_question")}
@@ -222,6 +230,7 @@ export default function VisionLensPage() {
                 onKeyDown={e => e.key === "Enter" && handleAsk()}
               />
               <button
+                data-tutorial="summarize-button"
                 onClick={handleAsk}
                 disabled={loading || !imageFile}
                 className="btn-primary flex items-center gap-2 px-5 shrink-0"
@@ -238,7 +247,10 @@ export default function VisionLensPage() {
 
           {/* Result */}
           {result && (
-            <div className="mt-6 space-y-4 animate-fade-in">
+            <div
+              data-tutorial="summary-output"
+              className="mt-6 space-y-4 animate-fade-in"
+            >
               {result.explanation && (
                 <div className="rounded-2xl p-6 bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20">
                   <div className="flex items-center gap-2 mb-3">

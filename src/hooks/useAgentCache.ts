@@ -111,7 +111,11 @@ export function useAgentCache(options: UseAgentCacheOptions = {}) {
         }
 
         // Cache miss or fallback detected - call API
-        const response = await agentApi.dispatch(agentType, payload);
+        // Use dispatchWithSimilaritySearch for smart cache-first approach
+        const response = await agentApi.dispatchWithSimilaritySearch(
+          agentType,
+          payload,
+        );
 
         // Only cache if response is valid (not empty/error/fallback)
         if (isValidResponseForCache(response)) {

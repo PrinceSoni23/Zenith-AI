@@ -4,7 +4,9 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
 import { agentApi } from "@/lib/api";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
@@ -94,25 +96,34 @@ export default function StudyPlannerPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={generatePlan}
-              disabled={loading}
-              className="btn-primary flex items-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> {t("study_planner.generating")}
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" /> {t("study_planner.generate")}
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <HelpButton tutorial={dashboardTutorials.studyPlanner} />
+              <button
+                onClick={generatePlan}
+                disabled={loading}
+                data-tutorial="generate-plan-button"
+                className="btn-primary flex items-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />{" "}
+                    {t("study_planner.generating")}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />{" "}
+                    {t("study_planner.generate")}
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {!result && (
-            <div className="rounded-2xl p-16 text-center bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
+            <div
+              data-tutorial="empty-state"
+              className="rounded-2xl p-16 text-center bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700"
+            >
               <Calendar className="w-12 h-12 mx-auto mb-4 text-primary-500" />
               <h3 className="text-lg font-bold mb-2 text-slate-900 dark:text-slate-100">
                 {t("study_planner.waiting")}
@@ -131,7 +142,10 @@ export default function StudyPlannerPage() {
           )}
 
           {result && (
-            <div className="space-y-5 animate-fade-in">
+            <div
+              data-tutorial="plan-results"
+              className="space-y-4 animate-fade-in"
+            >
               {result.totalEstimatedMinutes && (
                 <div className="rounded-2xl p-5 flex items-center justify-between bg-primary-50 dark:bg-primary-500/10 border border-primary-200 dark:border-primary-500/20">
                   <div>
@@ -144,7 +158,8 @@ export default function StudyPlannerPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-primary-500">
-                      {result.todaysTasks?.length || 0} {t("study_planner.tasks_label")}
+                      {result.todaysTasks?.length || 0}{" "}
+                      {t("study_planner.tasks_label")}
                     </p>
                     <p className="text-sm font-semibold text-primary-600 dark:text-primary-400">
                       {completedTasks.size} {t("study_planner.done")}
@@ -202,7 +217,8 @@ export default function StudyPlannerPage() {
                             </span>
                           </div>
                           <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
-                            {task.subject} · {task.estimatedMinutes} {t("study_planner.min")}
+                            {task.subject} · {task.estimatedMinutes}{" "}
+                            {t("study_planner.min")}
                           </p>
                           {task.description && (
                             <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
@@ -241,7 +257,9 @@ export default function StudyPlannerPage() {
               {result.studyTip && (
                 <div className="rounded-2xl p-5 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20">
                   <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                    <span className="font-bold">{t("study_planner.study_tip")} </span>
+                    <span className="font-bold">
+                      {t("study_planner.study_tip")}{" "}
+                    </span>
                     {result.studyTip}
                   </p>
                 </div>

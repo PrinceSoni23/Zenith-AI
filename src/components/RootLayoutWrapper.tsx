@@ -3,8 +3,10 @@
 import React, { useEffect } from "react";
 import { LoaderProvider } from "@/context/LoaderContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { TutorialProvider } from "@/context/TutorialContext";
 import { PageTransitionLoader } from "@/components/PageTransitionLoader";
 import { GlobalClickInterceptor } from "@/components/GlobalClickInterceptor";
+import { TutorialOverlay } from "@/components/Tutorial/TutorialOverlay";
 import { cacheService } from "@/lib/cacheService";
 
 export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -21,9 +23,12 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
       <LoaderProvider>
-        <GlobalClickInterceptor />
-        <PageTransitionLoader />
-        {children}
+        <TutorialProvider>
+          <GlobalClickInterceptor />
+          <PageTransitionLoader />
+          <TutorialOverlay />
+          {children}
+        </TutorialProvider>
       </LoaderProvider>
     </LanguageProvider>
   );

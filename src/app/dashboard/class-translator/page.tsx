@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAgentCache } from "@/hooks/useAgentCache";
 import toast from "react-hot-toast";
@@ -78,8 +80,8 @@ export default function ClassTranslatorPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-4xl mx-auto">
           {/* Header with animated gradient */}
-          <div className="mb-10 animate-fade-up stagger-1">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="mb-10 animate-fade-up stagger-1 flex items-center justify-between">
+            <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center animate-bounce-gentle shadow-lg shadow-purple-300/50 dark:shadow-purple-500/20">
                 <Brain className="w-7 h-7 text-white" />
               </div>
@@ -92,6 +94,7 @@ export default function ClassTranslatorPage() {
                 </p>
               </div>
             </div>
+            <HelpButton tutorial={dashboardTutorials.classTranslator} />
           </div>
 
           {/* Input Section with engaging design */}
@@ -120,6 +123,7 @@ export default function ClassTranslatorPage() {
                   Choose Language
                 </label>
                 <select
+                  data-tutorial="language-select"
                   value={language}
                   onChange={e => setLanguage(e.target.value)}
                   className="input-field rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white dark:bg-dark-800 cursor-pointer"
@@ -137,6 +141,7 @@ export default function ClassTranslatorPage() {
                 {t("class_translator.content")}?
               </label>
               <textarea
+                data-tutorial="concept-input"
                 className="input-field min-h-[160px] resize-none rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder={t("class_translator.content")}
                 value={content}
@@ -219,7 +224,10 @@ export default function ClassTranslatorPage() {
 
           {/* Results Grid - Interactive Cards */}
           {result && (
-            <div className="space-y-0 animate-fade-in">
+            <div
+              data-tutorial="explanation"
+              className="space-y-0 animate-fade-in"
+            >
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 <div
                   className="animate-card-in"

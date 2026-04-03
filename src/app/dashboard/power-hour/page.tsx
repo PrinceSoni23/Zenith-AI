@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { streakApi } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -254,8 +256,8 @@ function ScheduleCard({
           <Lock className="w-4 h-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-yellow-700 dark:text-yellow-400 leading-snug">
             {t("power_hour.cannot_change")}{" "}
-            <span className="font-bold">{resetDateLabel}</span>. {daysLeft} day{daysLeft !== 1 ? "s" : ""}{" "}
-            {t("power_hour.days_remaining")}
+            <span className="font-bold">{resetDateLabel}</span>. {daysLeft} day
+            {daysLeft !== 1 ? "s" : ""} {t("power_hour.days_remaining")}
           </p>
         </div>
       </div>
@@ -264,7 +266,10 @@ function ScheduleCard({
 
   // ── UNLOCKED STATE ──────────────────────────────────────────────────────────
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-dark-700 bg-white dark:bg-dark-900 px-6 py-5">
+    <div
+      data-tutorial="power-status"
+      className="rounded-2xl border border-slate-200 dark:border-dark-700 bg-white dark:bg-dark-900 px-6 py-5"
+    >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow shadow-yellow-400/20">
           <Zap className="w-6 h-6 text-white fill-white" />
@@ -283,7 +288,10 @@ function ScheduleCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-3 flex-wrap mb-4">
+      <div
+        data-tutorial="time-selector"
+        className="flex items-center gap-3 flex-wrap mb-4"
+      >
         {/* Hour picker */}
         <div className="flex flex-col gap-1">
           <label className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
@@ -330,6 +338,7 @@ function ScheduleCard({
             Go
           </label>
           <button
+            data-tutorial="confirm-button"
             onClick={handleLock}
             disabled={saving}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-sm font-black shadow shadow-yellow-400/30 hover:opacity-90 active:scale-95 transition-all disabled:opacity-60"
@@ -348,8 +357,10 @@ function ScheduleCard({
       <div className="flex items-start gap-2 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 px-4 py-2.5">
         <Lock className="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-red-600 dark:text-red-400 leading-snug">
-          <span className="font-bold">{t("power_hour.choose_carefully")}</span> {t("power_hour.cannot_change_until")}{" "}
-          <span className="font-bold">{resetDateLabel}</span> {t("power_hour.and_cannot_change")}
+          <span className="font-bold">{t("power_hour.choose_carefully")}</span>{" "}
+          {t("power_hour.cannot_change_until")}{" "}
+          <span className="font-bold">{resetDateLabel}</span>{" "}
+          {t("power_hour.and_cannot_change")}
         </p>
       </div>
     </div>
@@ -447,7 +458,7 @@ export default function PowerHourPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
           {/* ── Page Header ─────────────────────────────────────────────── */}
-          <div>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 mb-1">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow shadow-yellow-400/30">
                 <Zap className="w-5 h-5 text-white fill-white" />
@@ -461,6 +472,7 @@ export default function PowerHourPage() {
                 </p>
               </div>
             </div>
+            <HelpButton tutorial={dashboardTutorials.powerHour} />
           </div>
 
           {/* ── Loading skeleton ─────────────────────────────────────────── */}
@@ -473,7 +485,7 @@ export default function PowerHourPage() {
 
           {!loading && data && (
             <>
-              {/* ── Active banner ──────────────────────────────────────── */}
+              {/* ── Active banner ──────────────────────────────────────– */}
               {data.powerHourActive && data.powerHourEnds && !dismissed && (
                 <ActiveBanner
                   powerHourEnds={data.powerHourEnds}

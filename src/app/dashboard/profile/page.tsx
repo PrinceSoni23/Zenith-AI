@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { profileApi } from "@/lib/api";
 import toast from "react-hot-toast";
 import {
@@ -217,8 +219,8 @@ export default function ProfilePage() {
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-10 animate-fade-up">
-            <div className="flex items-center gap-4 mb-4">
+          <div className="mb-10 animate-fade-up flex items-center justify-between">
+            <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center animate-bounce-gentle shadow-lg shadow-purple-300/50 dark:shadow-purple-500/20">
                 <User className="w-7 h-7 text-white" />
               </div>
@@ -231,11 +233,15 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
+            <HelpButton tutorial={dashboardTutorials.profile} />
           </div>
 
           {/* User Info Card */}
           {user && (
-            <div className="rounded-3xl p-6 md:p-8 mb-8 bg-white dark:bg-dark-900 border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+            <div
+              data-tutorial="account-info"
+              className="rounded-3xl p-6 md:p-8 mb-8 bg-white dark:bg-dark-900 border border-slate-200/50 dark:border-slate-700/50 shadow-lg"
+            >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
                   <Mail className="w-5 h-5 text-blue-500" />
@@ -299,7 +305,10 @@ export default function ProfilePage() {
           )}
 
           {/* Profile Settings Card */}
-          <div className="rounded-3xl p-6 md:p-8 bg-white dark:bg-dark-900 border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+          <div
+            data-tutorial="settings"
+            className="rounded-3xl p-6 md:p-8 bg-white dark:bg-dark-900 border border-slate-200/50 dark:border-slate-700/50 shadow-lg"
+          >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
                 <Settings className="w-5 h-5 text-purple-500" />

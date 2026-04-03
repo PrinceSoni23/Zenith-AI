@@ -4,7 +4,9 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
 import { studyLogApi } from "@/lib/api";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useAgentCache } from "@/hooks/useAgentCache";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
@@ -460,45 +462,53 @@ export default function RevisionPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-4xl mx-auto">
           {/* ── Header ── */}
-          <div className="mb-8">
-            <div className="flex items-center gap-4 mb-2">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
-                <RotateCcw className="w-6 h-6 text-white" />
+          <div className="mb-8 flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-blue-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
+                  <RotateCcw className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                    Auto Revision
+                  </h1>
+                  <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
+                    Pick any topic you've studied — AI will generate your
+                    revision instantly ✨
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                  Auto Revision
-                </h1>
-                <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                  Pick any topic you've studied — AI will generate your revision
-                  instantly ✨
-                </p>
-              </div>
-            </div>
 
-            {/* Stats strip */}
-            {!logsLoading && topicGroups.length > 0 && (
-              <div className="mt-5 grid grid-cols-3 gap-3">
-                <div className="rounded-2xl p-4 bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md shadow-violet-500/20">
-                  <p className="text-2xl font-black">{topicGroups.length}</p>
-                  <p className="text-xs font-semibold text-violet-200 mt-0.5">
-                    Topics Studied
-                  </p>
+              {/* Stats strip */}
+              {!logsLoading && topicGroups.length > 0 && (
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  <div className="rounded-2xl p-4 bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-md shadow-violet-500/20">
+                    <p className="text-2xl font-black">{topicGroups.length}</p>
+                    <p className="text-xs font-semibold text-violet-200 mt-0.5">
+                      Topics Studied
+                    </p>
+                  </div>
+                  <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-md shadow-blue-500/20">
+                    <p className="text-2xl font-black">
+                      {totalMinutesFiltered}
+                    </p>
+                    <p className="text-xs font-semibold text-blue-200 mt-0.5">
+                      Minutes Total
+                    </p>
+                  </div>
+                  <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20">
+                    <p className="text-2xl font-black">{cachedTopics.size}</p>
+                    <p className="text-xs font-semibold text-emerald-200 mt-0.5">
+                      Cached Briefs
+                    </p>
+                  </div>
                 </div>
-                <div className="rounded-2xl p-4 bg-gradient-to-br from-blue-500 to-cyan-500 text-white shadow-md shadow-blue-500/20">
-                  <p className="text-2xl font-black">{totalMinutesFiltered}</p>
-                  <p className="text-xs font-semibold text-blue-200 mt-0.5">
-                    Minutes Total
-                  </p>
-                </div>
-                <div className="rounded-2xl p-4 bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/20">
-                  <p className="text-2xl font-black">{cachedTopics.size}</p>
-                  <p className="text-xs font-semibold text-emerald-200 mt-0.5">
-                    Cached Briefs
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+            <HelpButton
+              tutorial={dashboardTutorials.revision}
+              className="flex-shrink-0 mt-1"
+            />
           </div>
 
           {/* ── Time Filter ── */}
@@ -550,7 +560,7 @@ export default function RevisionPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div data-tutorial="topic-selector" className="space-y-3">
               {topicGroups.map(group => {
                 const ck = user
                   ? getCacheKey(user.id, group.topic, group.subject)
@@ -602,7 +612,7 @@ export default function RevisionPage() {
                   </button>
                 </div>
 
-                <div className="p-5 space-y-5">
+                <div data-tutorial="study-materials" className="p-5 space-y-5">
                   {/* Quick Summary */}
                   <div className="rounded-2xl p-5 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-500/10 dark:to-purple-500/10 border border-violet-200 dark:border-violet-500/20">
                     <div className="flex items-center justify-between mb-3">
@@ -651,7 +661,10 @@ export default function RevisionPage() {
 
                   {/* Flash Cards */}
                   {activeResult.result.flashCards?.length > 0 && (
-                    <div className="rounded-2xl p-5 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700">
+                    <div
+                      data-tutorial="practice-problems"
+                      className="rounded-2xl p-5 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700"
+                    >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                           <Zap className="w-5 h-5 text-yellow-500" />

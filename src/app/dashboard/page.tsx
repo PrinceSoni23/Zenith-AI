@@ -6,7 +6,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
 import { dashboardApi, agentApi, streakApi, leaderboardApi } from "@/lib/api";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import {
   useDashboard,
   useStreak,
@@ -541,13 +543,32 @@ function MilestoneCelebration({
   if (!m) return null;
 
   // Milestone-specific translation keys
-  const milestoneData: Record<number, { titleKey: string; subtitleKey: string; badgeKey: string }> = {
-    7: { titleKey: "milestone.7day_title", subtitleKey: "milestone.7day_subtitle", badgeKey: "milestone.7day_badge" },
-    14: { titleKey: "milestone.14day_title", subtitleKey: "milestone.14day_subtitle", badgeKey: "milestone.14day_badge" },
-    30: { titleKey: "milestone.30day_title", subtitleKey: "milestone.30day_subtitle", badgeKey: "milestone.30day_badge" },
+  const milestoneData: Record<
+    number,
+    { titleKey: string; subtitleKey: string; badgeKey: string }
+  > = {
+    7: {
+      titleKey: "milestone.7day_title",
+      subtitleKey: "milestone.7day_subtitle",
+      badgeKey: "milestone.7day_badge",
+    },
+    14: {
+      titleKey: "milestone.14day_title",
+      subtitleKey: "milestone.14day_subtitle",
+      badgeKey: "milestone.14day_badge",
+    },
+    30: {
+      titleKey: "milestone.30day_title",
+      subtitleKey: "milestone.30day_subtitle",
+      badgeKey: "milestone.30day_badge",
+    },
   };
 
-  const mData = milestoneData[streak] || { titleKey: m.title, subtitleKey: m.subtitle, badgeKey: m.badge };
+  const mData = milestoneData[streak] || {
+    titleKey: m.title,
+    subtitleKey: m.subtitle,
+    badgeKey: m.badge,
+  };
 
   // ── Heavy confetti sequence ──────────────────────────────────────────────
   useEffect(() => {
@@ -857,7 +878,7 @@ function MilestoneCelebration({
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  
+
   // ── React Query hooks (with intelligent caching) ──
   const dashboardQuery = useDashboard();
   const streakQuery = useStreak();
@@ -1109,7 +1130,9 @@ export default function DashboardPage() {
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
                 {isHydrated && greeting()},{" "}
                 <span className="gradient-text">
-                  {isHydrated && (user?.name?.split(" ")[0] || t("dashboard.default_user_name"))}
+                  {isHydrated &&
+                    (user?.name?.split(" ")[0] ||
+                      t("dashboard.default_user_name"))}
                 </span>{" "}
                 👋
               </h1>
@@ -1120,9 +1143,17 @@ export default function DashboardPage() {
                   : t("dashboard.setup_profile_hint")}
               </p>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 hover-lift border-glow flex-shrink-0">
-              <Target className="w-4 h-4 text-primary-500" />
-              <span className="hidden sm:inline">{t("dashboard.level_up_mode_badge")}</span>
+            <div className="flex items-center gap-3">
+              <div
+                className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 text-slate-700 dark:text-slate-300 hover-lift border-glow flex-shrink-0"
+                data-tutorial="level-badge"
+              >
+                <Target className="w-4 h-4 text-primary-500" />
+                <span className="hidden sm:inline">
+                  {t("dashboard.level_up_mode_badge")}
+                </span>
+              </div>
+              <HelpButton tutorial={dashboardTutorials.dashboard} />
             </div>
           </div>
 
@@ -1130,7 +1161,10 @@ export default function DashboardPage() {
           {streakData?.powerHourActive &&
             streakData.powerHourEnds &&
             !phDismissed && (
-              <div className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+              <div
+                className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
+                data-tutorial="power-hour-banner"
+              >
                 <PowerHourInline
                   powerHourEnds={streakData.powerHourEnds}
                   onDismiss={() => setPhDismissed(true)}
@@ -1139,20 +1173,27 @@ export default function DashboardPage() {
             )}
 
           {/* ── Streak Hero ── */}
-          <StreakHero streakData={streakData} stats={stats} />
+          <div data-tutorial="streak-hero">
+            <StreakHero streakData={streakData} stats={stats} />
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* ── Today's Missions ── */}
-            <MissionsTile
-              missions={missions}
-              completedCount={completedMissions}
-              progress={missionProgress}
-              completingId={completingId}
-              onComplete={handleCompleteTask}
-            />
+            <div data-tutorial="missions-section">
+              <MissionsTile
+                missions={missions}
+                completedCount={completedMissions}
+                progress={missionProgress}
+                completingId={completingId}
+                onComplete={handleCompleteTask}
+              />
+            </div>
 
             {/* ── Quick Modules ── */}
-            <div className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-5">
+            <div
+              className="rounded-2xl p-4 sm:p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-5"
+              data-tutorial="quick-access"
+            >
               <div className="flex items-center gap-2 mb-4 sm:mb-5">
                 <Zap className="w-5 h-5 text-primary-500" />
                 <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
@@ -1194,7 +1235,8 @@ export default function DashboardPage() {
                   href="/dashboard/leaderboard"
                   className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold w-fit"
                 >
-                  {t("dashboard.leaderboard_full_board_link")} <ChevronRight className="w-3.5 h-3.5" />
+                  {t("dashboard.leaderboard_full_board_link")}{" "}
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
@@ -1225,7 +1267,9 @@ export default function DashboardPage() {
                   <Flame className="w-4 h-4 text-orange-400 flex-shrink-0" />
                   {lbPreview.rank ? (
                     <span className="whitespace-nowrap">
-                      {t("dashboard.leaderboard_your_rank", { rank: lbPreview.rank })}
+                      {t("dashboard.leaderboard_your_rank", {
+                        rank: lbPreview.rank,
+                      })}
                     </span>
                   ) : (
                     <span className="text-slate-500">
@@ -1298,7 +1342,9 @@ function StreakHero({
     const entries = Object.entries(streakData.last7Days).sort(([a], [b]) =>
       a < b ? -1 : 1,
     );
-    const dayLabels = ["su", "mo", "tu", "we", "th", "fr", "sa"].map(day => t(`common.day_abbr_${day}`));
+    const dayLabels = ["su", "mo", "tu", "we", "th", "fr", "sa"].map(day =>
+      t(`common.day_abbr_${day}`),
+    );
     entries.forEach(([dateStr, active]) => {
       const d = new Date(dateStr + "T12:00:00");
       const isToday = dateStr === todayKey();
@@ -1306,9 +1352,11 @@ function StreakHero({
     });
   } else {
     // Skeleton dots
-    ["su", "mo", "tu", "we", "th", "fr", "sa"].map(day => t(`common.day_abbr_${day}`)).forEach((label, i) =>
-      dotDays.push({ label, active: false, isToday: i === 6 }),
-    );
+    ["su", "mo", "tu", "we", "th", "fr", "sa"]
+      .map(day => t(`common.day_abbr_${day}`))
+      .forEach((label, i) =>
+        dotDays.push({ label, active: false, isToday: i === 6 }),
+      );
   }
 
   // Pulse fire when big streak
@@ -1344,8 +1392,8 @@ function StreakHero({
                 {/* ── Shield badge ── */}
                 {(streakData?.streakShields ?? 0) > 0 ? (
                   <div
-                    title={t("dashboard.shield_earned_tooltip", { 
-                      count: streakData?.streakShields ?? 0 
+                    title={t("dashboard.shield_earned_tooltip", {
+                      count: streakData?.streakShields ?? 0,
                     })}
                     className="group relative mb-1 sm:mb-1.5 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl bg-white/20 border border-white/30 backdrop-blur-sm cursor-default select-none hover:bg-white/30 transition-colors flex-shrink-0"
                   >
@@ -1360,8 +1408,8 @@ function StreakHero({
                       {t("dashboard.streak_shield_singular")}
                       <br />
                       <span className="text-slate-300">
-                        {t("dashboard.shield_earned_tooltip", { 
-                          count: streakData?.streakShields ?? 0 
+                        {t("dashboard.shield_earned_tooltip", {
+                          count: streakData?.streakShields ?? 0,
                         })}
                       </span>
                     </div>
@@ -1437,7 +1485,8 @@ function StreakHero({
             <div>
               <div className="flex items-center justify-between mb-1 sm:mb-1.5">
                 <p className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-widest">
-                  {t("dashboard.xp_to")} {nextMilestone}{t("dashboard.day_badge_suffix")}
+                  {t("dashboard.xp_to")} {nextMilestone}
+                  {t("dashboard.day_badge_suffix")}
                 </p>
                 <p className="text-white text-[10px] sm:text-xs font-bold">
                   {xp} / {nextMilestone * 10} XP
@@ -1461,10 +1510,14 @@ function StreakHero({
                   : "bg-white/20 border border-white/30 text-white"
               }`}
             >
-              {studiedToday ? t("dashboard.done_today") : t("dashboard.not_yet")}
+              {studiedToday
+                ? t("dashboard.done_today")
+                : t("dashboard.not_yet")}
             </div>
             <p className="text-white/60 text-[10px] sm:text-xs text-center mt-1 sm:mt-1.5 font-medium">
-              {t("dashboard.score_label")} {streakData?.studyScore ?? stats?.studyScore ?? 0} {t("common.points_abbr")}
+              {t("dashboard.score_label")}{" "}
+              {streakData?.studyScore ?? stats?.studyScore ?? 0}{" "}
+              {t("common.points_abbr")}
             </p>
           </div>
         </div>
@@ -1530,9 +1583,9 @@ function MissionsTile({
               ? t("dashboard.missions_0_complete_msg")
               : allDone
                 ? t("dashboard.missions_100_complete_msg")
-                : t("dashboard.missions_partial_complete_msg", { 
+                : t("dashboard.missions_partial_complete_msg", {
                     remaining: missions.length - completedCount,
-                    plural: missions.length - completedCount !== 1 ? "s" : ""
+                    plural: missions.length - completedCount !== 1 ? "s" : "",
                   })}
           </p>
         </div>

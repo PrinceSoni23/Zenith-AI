@@ -4,7 +4,9 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
 import { mentorApi } from "@/lib/api";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { cacheService } from "@/lib/cacheService";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -335,18 +337,21 @@ export default function MentorPage() {
                   </p>
                 </div>
               </div>
-              {tab === "brief" && (
-                <button
-                  onClick={() => fetchMentorMessage(true)}
-                  disabled={refreshing}
-                  className="flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 mt-2"
-                >
-                  <RefreshCw
-                    className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-                  />
-                  {t("mentor.refresh")}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                <HelpButton tutorial={dashboardTutorials.mentor} />
+                {tab === "brief" && (
+                  <button
+                    onClick={() => fetchMentorMessage(true)}
+                    disabled={refreshing}
+                    className="flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 mt-2"
+                  >
+                    <RefreshCw
+                      className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                    />
+                    {t("mentor.refresh")}
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* ── Tabs ── */}
@@ -566,9 +571,10 @@ export default function MentorPage() {
 
                 {/* Input */}
                 <div className="flex items-end gap-2">
-                  <div className="flex-1 relative">
+                  <div data-tutorial="chat-input" className="flex-1 relative">
                     <textarea
                       ref={inputRef}
+                      data-tutorial="chat-input"
                       value={input}
                       onChange={e => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
@@ -585,6 +591,7 @@ export default function MentorPage() {
                     />
                   </div>
                   <button
+                    data-tutorial="send-button"
                     onClick={() => sendMessage(input)}
                     disabled={!input.trim() || isSending}
                     className="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"

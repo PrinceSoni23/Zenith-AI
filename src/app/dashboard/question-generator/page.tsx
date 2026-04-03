@@ -4,7 +4,9 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
 import { useAgentCache } from "@/hooks/useAgentCache";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
@@ -157,18 +159,21 @@ export default function QuestionGeneratorPage() {
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-          <div className="mb-8 flex items-center gap-4 animate-fade-up stagger-1">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-bounce-gentle">
-              <HelpCircle className="w-6 h-6 text-white" />
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4 animate-fade-up stagger-1">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center animate-bounce-gentle">
+                <HelpCircle className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                  {t("question_generator.title")}
+                </h1>
+                <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
+                  {t("question_generator.subtitle")}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                {t("question_generator.title")}
-              </h1>
-              <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                {t("question_generator.subtitle")}
-              </p>
-            </div>
+            <HelpButton tutorial={dashboardTutorials.questionGenerator} />
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
@@ -182,6 +187,7 @@ export default function QuestionGeneratorPage() {
                     {t("question_generator.subject")}
                   </label>
                   <input
+                    data-tutorial="subject-input"
                     type="text"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
@@ -195,6 +201,7 @@ export default function QuestionGeneratorPage() {
                     {t("question_generator.topic")}
                   </label>
                   <input
+                    data-tutorial="topic-input"
                     type="text"
                     value={topic}
                     onChange={e => setTopic(e.target.value)}
@@ -208,6 +215,7 @@ export default function QuestionGeneratorPage() {
                     {t("question_generator.per_level")}
                   </label>
                   <select
+                    data-tutorial="difficulty-select"
                     value={count}
                     onChange={e => setCount(e.target.value)}
                     className="input-field"
@@ -221,6 +229,7 @@ export default function QuestionGeneratorPage() {
                 </div>
               </div>
               <button
+                data-tutorial="generate-questions"
                 type="submit"
                 disabled={loading}
                 className="btn-primary w-full flex items-center justify-center gap-2"

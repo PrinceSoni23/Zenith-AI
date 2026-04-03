@@ -1,5 +1,6 @@
 import axios from "axios";
 import { smartNormalizeToolParams } from "./inputNormalization";
+import { cacheService } from "./cacheService";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -85,6 +86,76 @@ export const agentApi = {
 
     return api.post("/agents/dispatch", requestBody);
   },
+
+  /**
+   * 🎯 SMART DISPATCH - Try similarity search BEFORE API call
+   * If user searches "photns" (typo), find "photons" in cache first!
+   */
+  dispatchWithSimilaritySearch: async (
+    agentType: string,
+    payload: object,
+  ): Promise<any> => {
+    const payloadObj = payload as any;
+    const dashboardLanguage =
+      (typeof window !== "undefined"
+        ? localStorage.getItem("studentLanguage")
+        : null) || "english";
+
+    const normalizedPayload = smartNormalizeToolParams(payloadObj);
+
+    // STEP 1: Try exact cache hit first
+    const exactCacheHit = cacheService.get(agentType, normalizedPayload);
+    if (exactCacheHit) {
+      console.log(
+        `[agentApi.dispatchWithSimilaritySearch] ✅ EXACT cache hit for ${agentType}`,
+      );
+      return exactCacheHit;
+    }
+
+    // STEP 2: Try similarity search in cache
+    // If topic field exists, search for similar cached topics
+    if (
+      normalizedPayload.topic &&
+      typeof normalizedPayload.topic === "string"
+    ) {
+      const similarMatch = cacheService.findSimilarCachedResponse(
+        agentType,
+        normalizedPayload.topic,
+      );
+
+      if (similarMatch) {
+        console.log(
+          `[agentApi.dispatchWithSimilaritySearch] 🎯 SIMILARITY HIT: "${normalizedPayload.topic}" → "${similarMatch.cachedTopic}" (${Math.round(similarMatch.similarity * 100)}% match)`,
+        );
+        console.log(
+          `[agentApi.dispatchWithSimilaritySearch] ✅ Returning cached response instead of API call!`,
+        );
+        return similarMatch.response;
+      }
+
+      // Log all available cached topics for this agent (for debugging)
+      const allCachedTopics = cacheService.getAllCachedTopics(agentType);
+      if (allCachedTopics.length > 0) {
+        console.log(
+          `[agentApi.dispatchWithSimilaritySearch] ℹ️ Available cached topics: ${allCachedTopics.join(", ")}`,
+        );
+      }
+    }
+
+    // STEP 3: No cache hit, make API call
+    console.log(
+      `[agentApi.dispatchWithSimilaritySearch] 📡 Making API call for ${agentType} (no cache/similarity match)`,
+    );
+
+    const requestBody: any = {
+      agentType,
+      preferredLanguage: dashboardLanguage,
+      ...normalizedPayload,
+    };
+
+    return api.post("/agents/dispatch", requestBody);
+  },
+
   getDailyFlow: () => api.get("/agents/daily-flow"),
 };
 

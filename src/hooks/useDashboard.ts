@@ -66,7 +66,11 @@ export const useRefreshDailyFlow = () => {
 
   return useMutation({
     mutationFn: async () => {
-      const response = await agentApi.dispatch("mentor", {});
+      // Use dispatchWithSimilaritySearch for smart cache-first approach
+      const response = await agentApi.dispatchWithSimilaritySearch(
+        "mentor",
+        {},
+      );
       return response.data.data;
     },
     onSuccess: data => {

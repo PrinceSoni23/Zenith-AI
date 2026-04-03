@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useAgentCache } from "@/hooks/useAgentCache";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -103,18 +105,21 @@ export default function WritingCoachPage() {
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-          <div className="mb-8 flex items-center gap-4 animate-fade-up stagger-1">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center animate-bounce-gentle">
-              <PenTool className="w-6 h-6 text-white" />
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4 animate-fade-up stagger-1">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center animate-bounce-gentle">
+                <PenTool className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                  {t("sidebar.writing_coach")}
+                </h1>
+                <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
+                  {t("writing_coach.subtitle")}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">
-                {t("sidebar.writing_coach")}
-              </h1>
-              <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
-                {t("writing_coach.subtitle")}
-              </p>
-            </div>
+            <HelpButton tutorial={dashboardTutorials.writingCoach} />
           </div>
 
           <div className="rounded-2xl p-6 mb-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 animate-fade-up stagger-2">
@@ -169,6 +174,7 @@ export default function WritingCoachPage() {
                   Your Writing
                 </label>
                 <textarea
+                  data-tutorial="writing-input"
                   value={originalText}
                   onChange={e => setOriginalText(e.target.value)}
                   placeholder={t("writing_coach.writing_placeholder")}
@@ -181,6 +187,7 @@ export default function WritingCoachPage() {
                 </p>
               </div>
               <button
+                data-tutorial="analyze-button"
                 type="submit"
                 disabled={loading}
                 className="btn-primary w-full flex items-center justify-center gap-2"
@@ -201,7 +208,10 @@ export default function WritingCoachPage() {
           </div>
 
           {result && (
-            <div className="space-y-5 animate-fade-in">
+            <div
+              data-tutorial="feedback-output"
+              className="space-y-5 animate-fade-in"
+            >
               <div className="rounded-2xl p-6 bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20">
                 <div className="flex items-center justify-between">
                   <div>

@@ -3,6 +3,8 @@
 export const dynamic = "force-dynamic";
 
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { RequestTracker } from "@/components/RequestTracker";
 import { FrontendCacheMonitor } from "@/components/FrontendCacheMonitor";
 import { RedisStatsMonitor } from "@/components/RedisStatsMonitor";
@@ -14,23 +16,28 @@ export default function MonitoringPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="p-6 lg:p-8 max-w-7xl mx-auto">
           {/* Page Header */}
-          <div className="mb-10">
-            <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 mb-2">
-              System Monitoring
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400">
-              Real-time tracking of API requests and cache performance
-            </p>
+          <div className="mb-10 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 mb-2">
+                System Monitoring
+              </h1>
+              <p className="text-slate-600 dark:text-slate-400">
+                Real-time tracking of API requests and cache performance
+              </p>
+            </div>
+            <HelpButton tutorial={dashboardTutorials.monitoring} />
           </div>
 
           {/* Request Tracker */}
-          <RequestTracker refreshInterval={20000} compact={false} />
+          <div data-tutorial="request-tracker">
+            <RequestTracker refreshInterval={20000} compact={false} />
+          </div>
 
           {/* Divider */}
           <div className="my-10 border-t-2 border-slate-300 dark:border-slate-700"></div>
 
           {/* Frontend Cache Monitor */}
-          <div className="mb-10">
+          <div data-tutorial="cache-monitor" className="mb-10">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               Browser Cache Performance
             </h2>
@@ -44,7 +51,7 @@ export default function MonitoringPage() {
           <div className="my-10 border-t-2 border-slate-300 dark:border-slate-700"></div>
 
           {/* Redis Cache Monitor */}
-          <div className="mb-10">
+          <div data-tutorial="redis-stats" className="mb-10">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               Backend Redis Cache
             </h2>

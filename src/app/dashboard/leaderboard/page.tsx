@@ -6,6 +6,8 @@ import { useEffect, useState, useCallback } from "react";
 import { leaderboardApi } from "@/lib/api";
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { HelpButton } from "@/components/Tutorial/HelpButton";
+import { dashboardTutorials } from "@/config/tutorialConfig";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   Trophy,
@@ -109,21 +111,24 @@ export default function LeaderboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async (silent = false) => {
-    if (!silent) setLoading(true);
-    else setRefreshing(true);
-    setError(null);
-    try {
-      const res = await leaderboardApi.getLeaderboard();
-      setData(res.data.data);
-    } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      setError(e?.response?.data?.message || t("leaderboard.load_error"));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [t]);
+  const load = useCallback(
+    async (silent = false) => {
+      if (!silent) setLoading(true);
+      else setRefreshing(true);
+      setError(null);
+      try {
+        const res = await leaderboardApi.getLeaderboard();
+        setData(res.data.data);
+      } catch (err: unknown) {
+        const e = err as { response?: { data?: { message?: string } } };
+        setError(e?.response?.data?.message || t("leaderboard.load_error"));
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
     load();
@@ -204,21 +209,27 @@ export default function LeaderboardPage() {
                 </span>
               </p>
             </div>
-            <button
-              onClick={() => load(true)}
-              disabled={refreshing}
-              className="mt-1 p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-all disabled:opacity-50"
-              title="Refresh"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-              />
-            </button>
+            <div className="flex items-center gap-2">
+              <HelpButton tutorial={dashboardTutorials.leaderboard} />
+              <button
+                onClick={() => load(true)}
+                disabled={refreshing}
+                className="mt-1 p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-all disabled:opacity-50"
+                title="Refresh"
+              >
+                <RefreshCw
+                  className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                />
+              </button>
+            </div>
           </div>
 
           {/* My Standing Card */}
           {data.myEntry && (
-            <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-600/10 p-4 animate-fade-up stagger-2">
+            <div
+              data-tutorial="your-rank"
+              className="rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-600/10 p-4 animate-fade-up stagger-2"
+            >
               <p className="text-xs uppercase tracking-widest text-indigo-500 dark:text-indigo-400 mb-3 flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5" /> {t("leaderboard.standings")}
               </p>
@@ -278,7 +289,8 @@ export default function LeaderboardPage() {
                         </>
                       ) : (
                         <>
-                          {t("leaderboard.tied")} — {t("leaderboard.push_harder")} 💪
+                          {t("leaderboard.tied")} —{" "}
+                          {t("leaderboard.push_harder")} 💪
                         </>
                       )}
                     </p>
@@ -317,7 +329,10 @@ export default function LeaderboardPage() {
 
           {/* ── Podium ──────────────────────────────────────────────────── */}
           {podium.length > 0 && (
-            <div className="rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] p-5 animate-fade-up stagger-3">
+            <div
+              data-tutorial="top-performers"
+              className="rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] p-5 animate-fade-up stagger-3"
+            >
               <p className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-6 text-center">
                 🏆 {t("leaderboard.top3")}
               </p>
@@ -355,7 +370,9 @@ export default function LeaderboardPage() {
                         <p
                           className={`text-xs font-bold truncate max-w-[72px] ${entry.isMe ? "text-indigo-500 dark:text-indigo-300" : "text-slate-700 dark:text-slate-200"}`}
                         >
-                          {entry.isMe ? t("common.you") : entry.name.split(" ")[0]}
+                          {entry.isMe
+                            ? t("common.you")
+                            : entry.name.split(" ")[0]}
                         </p>
                         <p className={`text-sm font-black ${cfg.text}`}>
                           {entry.weeklyScore}
@@ -398,7 +415,10 @@ export default function LeaderboardPage() {
 
           {/* ── Rankings 4th onwards ────────────────────────────────────── */}
           {rest.length > 0 && (
-            <div className="space-y-1.5 animate-fade-up stagger-4">
+            <div
+              data-tutorial="student-list"
+              className="space-y-1.5 animate-fade-up stagger-4"
+            >
               <p className="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 px-1 mb-3">
                 {t("leaderboard.rankings")}
               </p>
