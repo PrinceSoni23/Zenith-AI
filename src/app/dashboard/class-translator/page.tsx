@@ -25,8 +25,8 @@ interface TranslatorResult {
   simpleExplanation: string;
   realLifeExample: string;
   keyPoints: string[];
-  relatedConcepts: string[];
   translatedContent: string;
+  formalDefinition: string;
 }
 
 export default function ClassTranslatorPage() {
@@ -228,10 +228,28 @@ export default function ClassTranslatorPage() {
               data-tutorial="explanation"
               className="space-y-0 animate-fade-in"
             >
+              {/* Formal Definition Section - At Top in Blue/Purple */}
+              {result.formalDefinition && (
+                <div
+                  className="animate-card-in mb-6"
+                  style={{ animationDelay: "0s" }}
+                >
+                  <ResultCard
+                    icon={<BookOpen className="w-6 h-6" />}
+                    title="Formal Definition (For Exam)"
+                    content={result.formalDefinition}
+                    gradient="from-blue-600 via-purple-600 to-purple-700"
+                    bgGradient="from-blue-50 via-purple-50 to-blue-50 dark:from-blue-500/20 dark:via-purple-500/20 dark:to-blue-500/20"
+                    emoji="📚"
+                    fullWidth
+                  />
+                </div>
+              )}
+
               <div className="grid md:grid-cols-2 gap-4 mb-4">
                 <div
                   className="animate-card-in"
-                  style={{ animationDelay: "0s" }}
+                  style={{ animationDelay: "0.1s" }}
                 >
                   <ResultCard
                     icon={<Lightbulb className="w-6 h-6" />}
@@ -244,7 +262,7 @@ export default function ClassTranslatorPage() {
                 </div>
                 <div
                   className="animate-card-in"
-                  style={{ animationDelay: "0.1s" }}
+                  style={{ animationDelay: "0.2s" }}
                 >
                   <ResultCard
                     icon={<Globe className="w-6 h-6" />}
@@ -308,7 +326,7 @@ export default function ClassTranslatorPage() {
               {result.translatedContent && (
                 <div
                   className="animate-card-in"
-                  style={{ animationDelay: "0.2s" }}
+                  style={{ animationDelay: "0.3s" }}
                 >
                   <ResultCard
                     icon={<BookOpen className="w-6 h-6" />}

@@ -46,3 +46,11 @@ yarn-error.log*
 # Cache
 .eslintcache
 .turbo/
+
+# Development & Documentation Files (not for production)
+# These are development guides, implementation notes, and temporary documentation
+*.md
+!README.md
+
+# Development outputs
+build_output.txt

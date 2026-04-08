@@ -22,10 +22,8 @@ import {
 interface StoryResult {
   storyTitle: string;
   story: string;
-  characters: { name: string; role: string }[];
   moralOrLesson: string;
-  conceptsExplained: string[];
-  discussionQuestions: string[];
+  conceptsExplained: { [key: string]: string };
   funFact: string;
 }
 
@@ -146,130 +144,314 @@ export default function StoryModePage() {
           </div>
 
           {result && (
-            <div className="space-y-5 animate-fade-in">
-              <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border-2 border-violet-200 dark:border-violet-500/30">
-                <div className="flex items-center gap-2 mb-4">
-                  <BookOpen className="w-5 h-5 text-violet-500" />
-                  <h3 className="text-xl font-black text-slate-900 dark:text-slate-100">
-                    {result.storyTitle}
-                  </h3>
+            <div className="space-y-6 animate-fade-in">
+              {/* Story Title & Content */}
+              <div className="group rounded-2xl overflow-hidden bg-gradient-to-br from-violet-50 via-purple-50 to-white dark:from-violet-900/20 dark:via-purple-900/20 dark:to-dark-900 border-2 border-violet-200 dark:border-violet-500/30 shadow-lg hover:shadow-2xl transition-all duration-500 p-8">
+                <style>{`
+                  @keyframes slideInRight {
+                    from {
+                      opacity: 0;
+                      transform: translateX(-20px);
+                    }
+                    to {
+                      opacity: 1;
+                      transform: translateX(0);
+                    }
+                  }
+                  
+                  .story-section {
+                    animation: slideInRight 0.7s ease-out;
+                  }
+                  
+                  @keyframes fadeInUp {
+                    from {
+                      opacity: 0;
+                      transform: translateY(10px);
+                    }
+                    to {
+                      opacity: 1;
+                      transform: translateY(0);
+                    }
+                  }
+                  
+                  .story-paragraph {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                  }
+                `}</style>
+
+                <div className="flex items-center gap-3 mb-6 story-section">
+                  <div className="p-3 rounded-lg bg-violet-100 dark:bg-violet-500/20 group-hover:scale-110 transition-transform duration-300">
+                    <BookOpen className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                      {result.storyTitle}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      An interactive story to help you understand
+                    </p>
+                  </div>
                 </div>
-                {result.story.split("\n").map(
-                  (p, i) =>
-                    p.trim() && (
-                      <p
-                        key={i}
-                        className="leading-relaxed mb-3 last:mb-0 text-sm text-slate-700 dark:text-slate-300"
-                      >
-                        {p}
-                      </p>
-                    ),
-                )}
+
+                <div className="space-y-4 text-slate-700 dark:text-slate-300">
+                  {result.story.split("\n").map(
+                    (p, i) =>
+                      p.trim() && (
+                        <p
+                          key={i}
+                          className="story-paragraph leading-relaxed text-sm group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors duration-300"
+                          style={{ animationDelay: `${i * 0.05}s` }}
+                        >
+                          {p}
+                        </p>
+                      ),
+                  )}
+                </div>
+
+                {/* Decorative line */}
+                <div className="mt-6 h-1 rounded-full bg-gradient-to-r from-violet-600 via-purple-600 to-transparent opacity-30 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
-              {result.characters && result.characters.length > 0 && (
-                <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Users className="w-5 h-5 text-blue-500" />
-                    <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                      {t("story_mode.characters")}
+              {/* Moral/Lesson Section */}
+              <div className="group rounded-2xl overflow-hidden bg-gradient-to-br from-yellow-50 via-orange-50 to-white dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-dark-900 border-2 border-yellow-200 dark:border-yellow-500/30 shadow-lg hover:shadow-2xl transition-all duration-500 p-8">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-lg bg-yellow-100 dark:bg-yellow-500/20 mt-1 group-hover:scale-110 transition-transform duration-300">
+                    <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 mb-3 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors duration-300">
+                      {t("story_mode.moral")}
                     </h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {result.characters.map((char, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20"
-                      >
-                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm flex-shrink-0">
-                          {char.name?.[0]?.toUpperCase() || "?"}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm text-slate-800 dark:text-slate-200">
-                            {char.name}
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            {char.role}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                    <p className="italic leading-relaxed text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors duration-300 px-4 py-3 rounded-lg bg-white/50 dark:bg-dark-800/50 border-l-4 border-yellow-400 dark:border-yellow-600">
+                      &quot;{result.moralOrLesson}&quot;
+                    </p>
                   </div>
                 </div>
-              )}
-
-              <div className="rounded-2xl p-6 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20">
-                <div className="flex items-center gap-2 mb-3">
-                  <Star className="w-5 h-5 text-yellow-500" />
-                  <h3 className="font-bold text-yellow-600 dark:text-yellow-400">
-                    {t("story_mode.moral")}
-                  </h3>
-                </div>
-                <p className="italic leading-relaxed text-sm text-slate-700 dark:text-slate-300">
-                  &quot;{result.moralOrLesson}&quot;
-                </p>
               </div>
 
               {result.conceptsExplained &&
-                result.conceptsExplained.length > 0 && (
-                  <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Lightbulb className="w-5 h-5 text-yellow-500" />
-                      <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                        {t("story_mode.concepts")}
-                      </h3>
+                Object.keys(result.conceptsExplained).length > 0 && (
+                  <div className="rounded-2xl p-8 bg-gradient-to-br from-slate-50 to-white dark:from-dark-800 dark:to-dark-900 border border-slate-200 dark:border-dark-700 shadow-lg hover-lift transition-all duration-500">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-500/20">
+                        <Lightbulb className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-xl text-slate-900 dark:text-slate-100">
+                          {t("story_mode.concepts")}
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          Learn the key ideas explained simply
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {result.conceptsExplained.map((c, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1.5 rounded-full text-sm font-semibold bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400"
-                        >
-                          {c}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
-              {result.discussionQuestions &&
-                result.discussionQuestions.length > 0 && (
-                  <div className="rounded-2xl p-6 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 hover-lift border-glow">
-                    <div className="flex items-center gap-2 mb-4">
-                      <MessageCircle className="w-5 h-5 text-green-500" />
-                      <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                        {t("story_mode.discussion")}
-                      </h3>
-                    </div>
-                    <div className="space-y-2">
-                      {result.discussionQuestions.map((q, i) => (
-                        <div
-                          key={i}
-                          className="flex gap-3 p-3 rounded-xl bg-green-50 dark:bg-green-500/10"
-                        >
-                          <span className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-sm font-bold flex items-center justify-center flex-shrink-0">
-                            {i + 1}
-                          </span>
-                          <p className="text-sm text-slate-700 dark:text-slate-300">
-                            {q}
-                          </p>
-                        </div>
-                      ))}
+                    <style>{`
+                      @keyframes slideInUp {
+                        from {
+                          opacity: 0;
+                          transform: translateY(20px);
+                        }
+                        to {
+                          opacity: 1;
+                          transform: translateY(0);
+                        }
+                      }
+                      
+                      .concept-card {
+                        animation: slideInUp 0.6s ease-out forwards;
+                      }
+                    `}</style>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {Object.entries(result.conceptsExplained).map(
+                        ([concept, definition], i) => (
+                          <div
+                            key={i}
+                            className="concept-card group relative overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl"
+                            style={{
+                              animationDelay: `${i * 0.1}s`,
+                              background: `linear-gradient(135deg, ${
+                                [
+                                  "from-blue-50 to-cyan-50",
+                                  "from-purple-50 to-pink-50",
+                                  "from-green-50 to-emerald-50",
+                                  "from-orange-50 to-yellow-50",
+                                  "from-indigo-50 to-blue-50",
+                                  "from-rose-50 to-red-50",
+                                ][i % 6]
+                              }) dark:to-transparent`,
+                            }}
+                          >
+                            {/* Gradient Border Effect */}
+                            <div
+                              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              style={{
+                                background: `linear-gradient(135deg, 
+                                  ${
+                                    [
+                                      "#0099ff66",
+                                      "#a855f766",
+                                      "#10b98166",
+                                      "#f97316b3",
+                                      "#4f46e566",
+                                      "#e11d4866",
+                                    ][i % 6]
+                                  }, 
+                                  transparent)`,
+                                padding: "2px",
+                              }}
+                            />
+
+                            {/* Card Content */}
+                            <div className="relative p-5 rounded-xl bg-white/80 dark:bg-dark-900/80 backdrop-blur-sm border border-current/10 group-hover:border-current/30 transition-all duration-300 h-full">
+                              {/* Icon Badge */}
+                              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
+                                  style={{
+                                    background: `linear-gradient(135deg, 
+                                      ${
+                                        [
+                                          "#06b6d4",
+                                          "#d946ef",
+                                          "#10b981",
+                                          "#f97316",
+                                          "#6366f1",
+                                          "#e11d48",
+                                        ][i % 6]
+                                      }, 
+                                      ${
+                                        [
+                                          "#0ea5e9",
+                                          "#ec4899",
+                                          "#34d399",
+                                          "#fb923c",
+                                          "#818cf8",
+                                          "#f43f5e",
+                                        ][i % 6]
+                                      })`,
+                                  }}
+                                >
+                                  ✨
+                                </div>
+                              </div>
+
+                              {/* Concept Title */}
+                              <div className="mb-3 pr-8">
+                                <p
+                                  className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-transparent group-hover:bg-clip-text group-hover:font-black transition-all duration-300"
+                                  style={{
+                                    backgroundImage: `linear-gradient(135deg, 
+                                       ${
+                                         [
+                                           "#06b6d4",
+                                           "#d946ef",
+                                           "#10b981",
+                                           "#f97316",
+                                           "#6366f1",
+                                           "#e11d48",
+                                         ][i % 6]
+                                       }, 
+                                       ${
+                                         [
+                                           "#0ea5e9",
+                                           "#ec4899",
+                                           "#34d399",
+                                           "#fb923c",
+                                           "#818cf8",
+                                           "#f43f5e",
+                                         ][i % 6]
+                                       })`,
+                                    backgroundClip: "text",
+                                    WebkitBackgroundClip: "text",
+                                  }}
+                                >
+                                  {concept}
+                                </p>
+                              </div>
+
+                              {/* Definition */}
+                              <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-all duration-300 line-clamp-4 group-hover:line-clamp-none">
+                                {definition}
+                              </p>
+
+                              {/* Animated Line Bottom */}
+                              <div
+                                className="h-0.5 mt-4 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
+                                style={{
+                                  background: `linear-gradient(90deg, 
+                                    ${
+                                      [
+                                        "#06b6d4",
+                                        "#d946ef",
+                                        "#10b981",
+                                        "#f97316",
+                                        "#6366f1",
+                                        "#e11d48",
+                                      ][i % 6]
+                                    }, 
+                                    ${
+                                      [
+                                        "#0ea5e9",
+                                        "#ec4899",
+                                        "#34d399",
+                                        "#fb923c",
+                                        "#818cf8",
+                                        "#f43f5e",
+                                      ][i % 6]
+                                    }, 
+                                    transparent)`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ),
+                      )}
                     </div>
                   </div>
                 )}
 
               {result.funFact && (
-                <div className="rounded-2xl p-6 bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="w-5 h-5 text-purple-500" />
-                    <h3 className="font-bold text-purple-600 dark:text-purple-400">
-                      {t("story_mode.fun_fact")}
-                    </h3>
+                <div className="group rounded-2xl overflow-hidden bg-gradient-to-br from-purple-50 via-pink-50 to-white dark:from-purple-900/20 dark:via-pink-900/20 dark:to-dark-900 border-2 border-purple-200 dark:border-purple-500/30 shadow-lg hover:shadow-2xl transition-all duration-500 p-8">
+                  <style>{`
+                    @keyframes bounce-soft {
+                      0%, 100% {
+                        transform: translateY(0);
+                      }
+                      50% {
+                        transform: translateY(-4px);
+                      }
+                    }
+                    
+                    @keyframes shimmer {
+                      0% {
+                        background-position: -1000px 0;
+                      }
+                      100% {
+                        background-position: 1000px 0;
+                      }
+                    }
+                    
+                    .fun-fact-icon {
+                      animation: bounce-soft 2s ease-in-out infinite;
+                    }
+                  `}</style>
+
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-purple-100 dark:bg-purple-500/20 fun-fact-icon">
+                      <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-3 group-hover:from-purple-700 group-hover:to-pink-700 transition-all duration-300">
+                        {t("story_mode.fun_fact")} ✨
+                      </h3>
+                      <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors duration-300 px-4 py-3 rounded-lg bg-white/50 dark:bg-dark-800/50 border-l-4 border-purple-400 dark:border-purple-600 relative overflow-hidden">
+                        <span className="relative z-10">{result.funFact}</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-200/0 via-purple-200/20 to-purple-200/0 dark:from-purple-800/0 dark:via-purple-800/20 dark:to-purple-800/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-700 dark:text-slate-300">
-                    {result.funFact}
-                  </p>
                 </div>
               )}
             </div>

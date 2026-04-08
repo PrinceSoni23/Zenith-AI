@@ -9,6 +9,7 @@ interface CacheEntry<T> {
   value: T;
   expiresAt: number;
   hits: number; // Track cache hit count for analytics
+  language: string; // Track what language this cache entry was generated in
 }
 
 interface CacheStats {
@@ -160,12 +161,14 @@ class FrontendCacheService {
    * @param params Parameters used in the request
    * @param value The cached value
    * @param ttlSeconds Time to live in seconds (default: 3600s = 1 hour for questions)
+   * @param language Language this response was generated in (e.g., "english", "hindi", "hinglish")
    */
   set<T>(
     agentType: string,
     params: Record<string, any>,
     value: T,
     ttlSeconds: number = 3600,
+    language: string = "english",
   ): void {
     // CRITICAL: Prevent caching fallback responses
     // isFallback is at response.data.isFallback level
@@ -186,13 +189,20 @@ class FrontendCacheService {
     }
 
     const expiresAt = Date.now() + ttlSeconds * 1000;
-    this.cache.set(key, { value, expiresAt, hits: 0 });
+    this.cache.set(key, {
+      value,
+      expiresAt,
+      hits: 0,
+      language: language.toLowerCase(),
+    });
     this.currentSize += size;
 
     // Persist to localStorage
     this.saveToStorage();
 
-    console.log(`[Cache] SET: ${key} (size: ${size}B, TTL: ${ttlSeconds}s)`);
+    console.log(
+      `[Cache] SET: ${key} (language: ${language}, size: ${size}B, TTL: ${ttlSeconds}s)`,
+    );
   }
 
   /**
@@ -237,6 +247,57 @@ class FrontendCacheService {
     );
 
     return entry.value as T;
+  }
+
+  /**
+   * Get cache value with language information
+   * Returns both the cached data AND the language it was generated in
+   * Used for language-aware cache checking (to detect language mismatches)
+   */
+  getWithLanguage<T>(
+    agentType: string,
+    params: Record<string, any>,
+  ): { data: T; language: string } | null {
+    const key = this.generateKey(agentType, params);
+    const entry = this.cache.get(key);
+
+    if (!entry) {
+      this.stats.misses++;
+      return null;
+    }
+
+    // Check if expired
+    if (Date.now() > entry.expiresAt) {
+      this.cache.delete(key);
+      this.currentSize -= this.estimateSize(entry.value);
+      this.stats.misses++;
+      return null;
+    }
+
+    // CRITICAL: Never return fallback responses, even if cached
+    const value = entry.value as any;
+    if (value?.data?.isFallback === true) {
+      console.warn(
+        `[Cache] REJECTING fallback return for ${key}, deleting from cache`,
+      );
+      this.cache.delete(key);
+      this.currentSize -= this.estimateSize(entry.value);
+      this.saveToStorage();
+      this.stats.misses++;
+      return null;
+    }
+
+    // Cache hit!
+    entry.hits++;
+    this.stats.hits++;
+    console.log(
+      `[Cache] HIT with language check: ${key} (language: ${entry.language}, hits: ${entry.hits})`,
+    );
+
+    return {
+      data: entry.value as T,
+      language: entry.language || "english", // Fallback for legacy entries without language
+    };
   }
 
   /**
